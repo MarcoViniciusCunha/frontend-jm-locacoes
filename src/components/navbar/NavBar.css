@@ -1,34 +1,57 @@
 .cabecalho {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 3em;
-    padding-right: 2em;
-    background-color: rgb(33, 35, 36);
-    color: white;
-    font-size: 20px;
-    height: 110px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 3em;
+  padding-right: 1em;
+  background-color: rgb(33, 35, 36);
+  color: white;
+  font-size: 20px;
+  height: 110px;
 }
 
+/* logo */
 .cabecalho img {
-    width: 90px;
-    height: 60px;
+  width: 100px;
+  height: 100px;
+}
+
+/* nav links container */
+.cabecalho nav {
+  display: flex;
+  align-items: center;
 }
 
 /* todos os links da nav */
-.cabecalho a {
-    text-decoration: none;
-    color: white;
-    margin: 0 30px; /* espaçamento entre links */
+.cabecalho nav a,
+.cabecalho nav button {
+  text-decoration: none;
+  color: white;
+  margin: 0 25px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  font-family: inherit;
+  transition: color 0.3s;
 }
 
 /* hover */
-.cabecalho a:hover {
-    color: rgb(92, 168, 156);
+.cabecalho nav a:hover,
+.cabecalho nav button:hover {
+  transition: color 0.6s;
+}
+
+.cabecalho nav a:hover {
+  color: #12add6;
+}
+
+.cabecalho nav button:hover {
+  color: #dd5e5e;
 }
 
 /* link ativo */
-.cabecalho a.active {
-    color: rgb(92, 168, 156); /* mesma cor do hover ou outra que quiser */
-    font-weight: bold;         /* deixa o ativo em negrito */
+.cabecalho nav a.active {
+  color: #12add6;
+  font-weight: bold;
 }

@@ -13,7 +13,7 @@
   align-items: center;
   padding: 20px 0;
   font-size: 20px;
-  background-color: rgb(7, 97, 67);
+  background-color: #12add6;
   color: white;
   box-shadow: 0 4px 12px black;
 }
@@ -24,7 +24,7 @@
   padding: 20px;
   font-size: 25px;
   border-radius: 12px;
-  background-color: rgb(7, 97, 67);
+  background-color: #12add6;
   box-shadow: 0 4px 12px black;
   color: white;
   display: inline-block;

@@ -4,10 +4,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #37898f, #053238);
+  background: linear-gradient(135deg, #12add6, #b8edfc);
   font-family: "Arial", sans-serif;
   padding: 20px;
-  color: #fff;
+  color: #ffffff;
 }
 
 .login-container h2 {
@@ -18,7 +18,7 @@
 }
 
 .login-container form {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(29, 29, 29, 0.096);
   padding: 30px 40px;
   border-radius: 12px;
   backdrop-filter: blur(10px);
@@ -35,20 +35,20 @@
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
-  background: rgba(255, 255, 255, 0.8);
-  color: #333;
+  background: rgba(0, 0, 0, 0.8);
+  color: #e7e7e7;
   transition: all 0.2s;
 }
 
 .login-container input:focus {
   transform: scale(1.02);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
 .login-container button {
   padding: 12px 15px;
-  background-color: #fff;
-  color: #3df2ff;
+  background-color: #000000;
+  color: #12add6;
   font-weight: bold;
   font-size: 1rem;
   border: none;
@@ -58,7 +58,7 @@
 }
 
 .login-container button:hover {
-  background-color: #e0e0ff;
+  background-color: #2e2e33;
   transform: translateY(-2px);
 }
 
