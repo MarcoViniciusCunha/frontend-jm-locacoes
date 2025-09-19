@@ -1,42 +1,49 @@
 import { useState } from "react";
+import { api } from "../../utils/config";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/authS"
+import "./Login.css";
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await login(email, password);
-
-    if (res.token) {
-      navigate("/dashboard");
-    } else {
-      alert("Email ou senha incorretos");
+    try {
+      const res = await api.post("/login", { email, password });
+      const { token, expiresIn } = res.data;
+      login(token, expiresIn);
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Erro no login");
     }
   };
 
   return (
-    <div>
+    <div className="login-container">
+      <h2>Login</h2>
+      {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button type="submit">Entrar</button>
       </form>
     </div>
   );
-};
-
-export default Login;
+}

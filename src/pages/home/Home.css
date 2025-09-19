@@ -1,115 +1,115 @@
 /* Container principal */
 .container {
-    display: grid;
-    grid-template-columns: 1fr; /* apenas uma coluna por enquanto, já que tirou lista2 */
-    gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr; /* apenas uma coluna por enquanto, já que tirou lista2 */
+  gap: 20px;
 }
 
 /* Home */
 .home {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0;
-    font-size: 20px;
-    background-color: rgb(7, 97, 67);
-    color: white;
-    box-shadow: 0 4px 12px black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  font-size: 20px;
+  background-color: rgb(7, 97, 67);
+  color: white;
+  box-shadow: 0 4px 12px black;
 }
 
 /* Lista de dashboard */
 .lista {
-    margin: 60px;
-    padding: 20px;
-    font-size: 25px;
-    border-radius: 12px;
-    background-color: rgb(7, 97, 67);
-    box-shadow: 0 4px 12px black;
-    color: white;
-    display: inline-block;
+  margin: 60px;
+  padding: 20px;
+  font-size: 25px;
+  border-radius: 12px;
+  background-color: rgb(7, 97, 67);
+  box-shadow: 0 4px 12px black;
+  color: white;
+  display: inline-block;
 }
 
 .lista h2 {
-    margin-bottom: 20px;
-    border-left: 6px solid white;
-    padding-left: 10px;
+  margin-bottom: 20px;
+  border-left: 6px solid white;
+  padding-left: 10px;
 }
 
 .lista ul {
-    margin: 0;
-    padding-left: 0;
-    list-style: none; /* remove bullets */
+  margin: 0;
+  padding-left: 0;
+  list-style: none; /* remove bullets */
 }
 
 .lista li {
-    margin: 7px 0;
+  margin: 7px 0;
 }
 
 /* Cards de informações */
 .info,
 .info2 {
-    margin: 20px 0;
-    padding: 10px;
-    border-radius: 10px;
-    display: inline-block;
-    font-weight: bold;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  font-weight: bold;
 }
 
 .info {
-    background-color: rgb(29, 145, 0);
-    color: white;
+  background-color: rgb(29, 145, 0);
+  color: white;
 }
 
 .info2 {
-    background-color: rgb(255, 174, 0);
-    color: black;
+  background-color: rgb(255, 174, 0);
+  color: black;
 }
 
 /* Lista 2 (opcional, pode remover se não usar) */
 .lista2 {
-    margin: 60px;
-    padding: 20px;
-    font-size: 25px;
-    border-radius: 12px;
-    background-color: rgb(7, 97, 67);
-    box-shadow: 0 4px 12px black;
-    color: white;
-    display: inline-block;
-    position: absolute;
-    right: 1px;
+  margin: 60px;
+  padding: 20px;
+  font-size: 25px;
+  border-radius: 12px;
+  background-color: rgb(7, 97, 67);
+  box-shadow: 0 4px 12px black;
+  color: white;
+  display: inline-block;
+  position: absolute;
+  right: 1px;
 }
 
 /* Carros (não usado agora) */
 .carro {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
-    box-shadow: 1px 1px 5px black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px black;
 }
 
 .carro img {
-    width: 200px;
-    height: 120px;
-    border-radius: 5px;
-    margin-right: 15px;
+  width: 200px;
+  height: 120px;
+  border-radius: 5px;
+  margin-right: 15px;
 }
 
 .infocarro {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .infocarro p {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-weight: bold;
-    font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
 }
