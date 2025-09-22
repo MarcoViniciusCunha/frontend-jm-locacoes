@@ -21,7 +21,7 @@ const NavBar = () => {
   return (
     <header className="cabecalho">
       <Link to="/">
-        <img src={logo} alt="Logo JM Locações" />
+        <img src={logo} alt="Logo" />
       </Link>
       <nav>
         <NavLink to="/">Home</NavLink>

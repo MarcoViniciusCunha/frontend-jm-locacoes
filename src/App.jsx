@@ -2,14 +2,17 @@ import { AuthProvider } from "./context/AuthContext";
 import PublicRoute from "./hooks/PublicRoute";
 import PrivateRoute from "./hooks/PrivateRoute";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import "./App.css";
+
+// Components
 import NavBar from "./components/navbar/NavBar";
 import Footer from "./components/footer/Footer";
-import "./App.css";
 
 // Pages
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Locacoes from "./pages/locacoes/Locacoes";
+import Veiculos from "./pages/veiculos/Veiculos";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -51,6 +54,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Locacoes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/veiculos"
+              element={
+                <PrivateRoute>
+                  <Veiculos />
                 </PrivateRoute>
               }
             />
