@@ -1,14 +1,32 @@
-import Cores from "../../components/veiculos/Cores";
+import CrudEntidade from "../../components/veiculos/EntidadeVeiculos";
+import { VeiculosService } from "../../services/VeiculosService";
 import "./Veiculos.css";
 import { useState } from "react";
 
 const Veiculos = () => {
   const [activeTab, setActiveTab] = useState("Veiculos");
-  const [activeAction, setActiveAction] = useState("Listar");
+  const [activeAction, setActiveAction] = useState("Lista");
 
   const tabs = ["Veiculos", "Categorias", "Marcas", "Cores", "Seguros"];
 
-  const actions = ["Listar", "Cadastrar", "Editar", "Excluir"];
+  const actions = ["Lista", "Cadastrar", "Editar", "Excluir"];
+
+  const getComponent = (tab) => {
+    switch (tab) {
+      case "Cores":
+        return { service: VeiculosService.cores, label: "cor" };
+      case "Marcas":
+        return { service: VeiculosService.marcas, label: "marca" };
+      case "Seguros":
+        return { service: VeiculosService.seguros, label: "seguro" };
+      case "Categorias":
+        return { service: VeiculosService.categorias, label: "categoria" };
+      default:
+        return null;
+    }
+  };
+
+  const { service, label } = getComponent(activeTab) || {};
 
   return (
     <div className="veiculos-container">
@@ -44,7 +62,38 @@ const Veiculos = () => {
           {activeTab} - {activeAction}
         </h2>
 
-        {activeTab === "Cores" && <Cores action={activeAction} />}
+        {(activeTab === "Cores" || activeTab === "Marcas") && (
+          <CrudEntidade
+            action={activeAction}
+            service={service}
+            label={label}
+            fields={[{ key: "nome", label: "Nome" }]}
+          />
+        )}
+        {activeTab === "Seguros" && (
+          <CrudEntidade
+            action={activeAction}
+            service={VeiculosService.seguros}
+            label="seguro"
+            fields={[
+              { key: "empresa", label: "Empresa" },
+              { key: "validade", label: "Validade" },
+              { key: "valor", label: "Valor" },
+            ]}
+          />
+        )}
+
+        {activeTab === "Categorias" && (
+          <CrudEntidade
+            action={activeAction}
+            service={VeiculosService.categorias}
+            label="categoria"
+            fields={[
+              { key: "nome", label: "Nome" },
+              { key: "descricao", label: "Descrição" },
+            ]}
+          />
+        )}
       </main>
     </div>
   );
