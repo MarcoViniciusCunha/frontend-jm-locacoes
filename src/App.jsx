@@ -13,6 +13,8 @@ import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Locacoes from "./pages/locacoes/Locacoes";
 import Veiculos from "./pages/veiculos/Veiculos";
+import { setAuthToken } from "./utils/config";
+import { useEffect } from "react";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -28,6 +30,13 @@ function Layout({ children }) {
 }
 
 function App() {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setAuthToken(token); // garante que axios já tenha o token antes de qualquer chamada
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>

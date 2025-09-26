@@ -1,3 +1,4 @@
+import ComponentVeiculos from "../../components/veiculos/ComponentVeiculos";
 import CrudEntidade from "../../components/veiculos/EntidadeVeiculos";
 import { VeiculosService } from "../../services/VeiculosService";
 import "./Veiculos.css";
@@ -7,7 +8,14 @@ const Veiculos = () => {
   const [activeTab, setActiveTab] = useState("Veiculos");
   const [activeAction, setActiveAction] = useState("Lista");
 
-  const tabs = ["Veiculos", "Categorias", "Marcas", "Cores", "Seguros"];
+  const tabs = [
+    "Veiculos",
+    "Categorias",
+    "Marcas",
+    "Modelos",
+    "Cores",
+    "Seguros",
+  ];
 
   const actions = ["Lista", "Cadastrar", "Editar", "Excluir"];
 
@@ -17,10 +25,14 @@ const Veiculos = () => {
         return { service: VeiculosService.cores, label: "cor" };
       case "Marcas":
         return { service: VeiculosService.marcas, label: "marca" };
+      case "Modelos":
+        return { service: VeiculosService.modelos, label: "modelos" };
       case "Seguros":
         return { service: VeiculosService.seguros, label: "seguro" };
       case "Categorias":
         return { service: VeiculosService.categorias, label: "categoria" };
+      case "Veiculos":
+        return { service: VeiculosService.veiculos, label: "veiculos" };
       default:
         return null;
     }
@@ -62,7 +74,9 @@ const Veiculos = () => {
           {activeTab} - {activeAction}
         </h2>
 
-        {(activeTab === "Cores" || activeTab === "Marcas") && (
+        {(activeTab === "Cores" ||
+          activeTab === "Marcas" ||
+          activeTab === "Modelos") && (
           <CrudEntidade
             action={activeAction}
             service={service}
@@ -92,6 +106,14 @@ const Veiculos = () => {
               { key: "nome", label: "Nome" },
               { key: "descricao", label: "Descrição" },
             ]}
+          />
+        )}
+
+        {activeTab === "Veiculos" && (
+          <ComponentVeiculos
+            action={activeAction}
+            service={VeiculosService.veiculos}
+            label="veiculos"
           />
         )}
       </main>

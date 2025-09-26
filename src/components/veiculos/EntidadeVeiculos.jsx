@@ -8,7 +8,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
 
   useEffect(() => {
     if (action !== "Cadastrar") listaItens();
-  }, [action]);
+  }, [action, service]);
 
   const listaItens = async () => {
     try {
@@ -22,8 +22,9 @@ export default function CrudEntidade({ action, service, label, fields }) {
 
   const handleAdd = async () => {
     try {
+      console.log(novoItem);
       await service.add(novoItem);
-      alert(`${label} adicionada com sucesso!`);
+      alert("Cadastro realizado com sucesso!");
       setNovoItem({});
       listaItens();
     } catch (err) {
@@ -35,7 +36,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
   const handleEdit = async (id) => {
     try {
       await service.editar(id, editItemData);
-      alert(`${label} editada com sucesso!`);
+      alert("Edição concluída com sucesso!");
       setEditItemId(null);
       setEditItemData({});
       listaItens();
@@ -49,7 +50,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
     if (!window.confirm(`Confirmar exclusão de ${label}?`)) return;
     try {
       await service.excluir(id);
-      alert(`${label} excluída com sucesso!`);
+      alert("Exclusão bem-sucedida!");
       listaItens();
     } catch (err) {
       console.error(err);
@@ -60,17 +61,29 @@ export default function CrudEntidade({ action, service, label, fields }) {
   if (action === "Cadastrar") {
     return (
       <form>
-        {fields.map((field) => (
-          <input
-            key={field.key}
-            type="text"
-            placeholder={field.label}
-            value={novoItem[field.key] || ""}
-            onChange={(e) =>
-              setNovoItem({ ...novoItem, [field.key]: e.target.value })
-            }
-          />
-        ))}
+        {fields.map((field) =>
+          field.key === "validade" ? (
+            <input
+              key={field.key}
+              type="date"
+              placeholder={field.label}
+              value={novoItem[field.key] || ""}
+              onChange={(e) =>
+                setNovoItem({ ...novoItem, [field.key]: e.target.value })
+              }
+            />
+          ) : (
+            <input
+              key={field.key}
+              type="text"
+              placeholder={field.label}
+              value={novoItem[field.key] || ""}
+              onChange={(e) =>
+                setNovoItem({ ...novoItem, [field.key]: e.target.value })
+              }
+            />
+          )
+        )}
         <button type="button" onClick={handleAdd}>
           Salvar
         </button>
