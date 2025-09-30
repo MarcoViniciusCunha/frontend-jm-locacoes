@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { api } from "../../utils/config";
+import { api, setAuthToken } from "../../utils/config";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login } = useAuthContext(); // ✅ pegar do contexto
@@ -14,9 +14,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/login", { email, password });
+      const res = await api.post("/login", { username, password });
       const { token } = res.data;
       login(token);
+      setAuthToken(token);
       navigate("/"); // redireciona após login
     } catch (err) {
       setError(err.response?.data?.message || "Erro no login");
@@ -29,10 +30,10 @@ export default function Login() {
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
