@@ -53,25 +53,25 @@ function App() {
             <Route
               path="/"
               element={
-                <PrivateRoute>
+                <PublicRoute>
                   <Home />
-                </PrivateRoute>
+                </PublicRoute>
               }
             />
             <Route
               path="/locacoes"
               element={
-                <PrivateRoute>
+                <PublicRoute>
                   <Locacoes />
-                </PrivateRoute>
+                </PublicRoute>
               }
             />
             <Route
               path="/veiculos"
               element={
-                <PrivateRoute>
+                <PublicRoute>
                   <Veiculos />
-                </PrivateRoute>
+                </PublicRoute>
               }
             />
           </Routes>
