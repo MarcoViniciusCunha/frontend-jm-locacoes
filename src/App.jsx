@@ -3,6 +3,8 @@ import PublicRoute from "./hooks/PublicRoute";
 import PrivateRoute from "./hooks/PrivateRoute";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
+import { setAuthToken } from "./utils/config";
+import { useEffect } from "react";
 
 // Components
 import NavBar from "./components/navbar/NavBar";
@@ -13,8 +15,8 @@ import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Locacoes from "./pages/locacoes/Locacoes";
 import Veiculos from "./pages/veiculos/Veiculos";
-import { setAuthToken } from "./utils/config";
-import { useEffect } from "react";
+import Clientes from "./pages/clientes/Clientes";
+import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -71,6 +73,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <Veiculos />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/clientes"
+              element={
+                <PrivateRoute>
+                  <Clientes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/clientes/:id"
+              element={
+                <PrivateRoute>
+                  <ClienteDetalhe />
                 </PrivateRoute>
               }
             />
