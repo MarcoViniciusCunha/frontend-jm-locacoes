@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import { Link } from "react-router-dom";
+import styles from "./Clientes.module.css";
 
 const Clientes = () => {
   const [customers, setCustomers] = useState([]);
@@ -39,8 +40,8 @@ const Clientes = () => {
   };
 
   return (
-    <div>
-      <form action="">
+    <div className={styles.container}>
+      <form>
         <input
           type="text"
           placeholder="Digite o nome"
@@ -52,9 +53,15 @@ const Clientes = () => {
         </button>
       </form>
       <ul>
+        <li className={styles.header}>
+          <span className={styles.nome}>Clientes</span>
+          <span className={styles.cpf}>CPF</span>
+        </li>
+
         {customers.map((item) => (
           <li key={item.id}>
-            <span>{item.nome}</span> - <span>{item.cpf}</span>{" "}
+            <span className={styles.nome}>{item.nome}</span>
+            <span className={styles.cpf}>{item.cpf}</span>
             <Link to={`/clientes/${item.id}`}>
               <button>Perfil</button>
             </Link>

@@ -1,0 +1,123 @@
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", sans-serif;
+}
+
+/* Formulário de busca */
+.container form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.container form input {
+  flex: 1;
+  max-width: 60%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.container form input:focus {
+  border-color: #007bff;
+}
+
+.container form button {
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.container form button:hover {
+  background-color: #0056b3;
+}
+
+/* Lista de clientes */
+.container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Cabeçalho da lista */
+.header {
+  font-weight: 700;
+  color: #000;
+  border-bottom: 2px solid #ccc;
+  padding: 8px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.header .nome {
+  flex: 2;
+  text-align: left;
+}
+
+.header .cpf {
+  flex: 2;
+  text-align: center;
+}
+
+/* Itens da lista */
+.container li {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.container li:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+li span.nome,
+span.cpf {
+  font-size: 16px;
+  color: #333;
+}
+
+li span.nome {
+  flex: 2;
+  text-align: left;
+}
+
+li span.cpf {
+  flex: 1;
+  text-align: center;
+}
+
+li button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  margin-left: 10px;
+}
+
+li button:hover {
+  background-color: #1e7e34;
+}

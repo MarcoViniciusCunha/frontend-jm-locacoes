@@ -2,9 +2,9 @@ import { AuthProvider } from "./context/AuthContext";
 import PublicRoute from "./hooks/PublicRoute";
 import PrivateRoute from "./hooks/PrivateRoute";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import "./App.css";
 import { setAuthToken } from "./utils/config";
-import { useEffect } from "react";
 
 // Components
 import NavBar from "./components/navbar/NavBar";
