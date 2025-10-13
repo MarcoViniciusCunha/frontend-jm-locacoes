@@ -26,7 +26,14 @@ const Veiculos = () => {
       case "Marcas":
         return { service: VeiculosService.marcas, label: "marca" };
       case "Modelos":
-        return { service: VeiculosService.modelos, label: "modelos" };
+        return {
+          service: VeiculosService.modelos,
+          label: "modelo",
+          fields: [
+            { key: "nome", label: "Nome do Modelo" },
+            { key: "brandId", label: "Marca" },
+          ],
+        };
       case "Seguros":
         return { service: VeiculosService.seguros, label: "seguro" };
       case "Categorias":
@@ -74,14 +81,30 @@ const Veiculos = () => {
           {activeTab} - {activeAction}
         </h2>
 
-        {(activeTab === "Cores" ||
-          activeTab === "Marcas" ||
-          activeTab === "Modelos") && (
+        {(activeTab === "Cores" || activeTab === "Marcas") && (
           <CrudEntidade
             action={activeAction}
             service={service}
             label={label}
             fields={[{ key: "nome", label: "Nome" }]}
+          />
+        )}
+        {activeTab === "Modelos" && (
+          <CrudEntidade
+            action={activeAction}
+            service={service}
+            label={label}
+            fields={[
+              { key: "nome", label: "Nome" },
+              {
+                key: "brandId",
+                label: "Marca",
+                type: "select",
+                optionLabel: "nome",
+                optionValue: "id",
+                loadOptions: VeiculosService.marcas.lista,
+              },
+            ]}
           />
         )}
         {activeTab === "Seguros" && (
@@ -91,7 +114,7 @@ const Veiculos = () => {
             label="seguro"
             fields={[
               { key: "empresa", label: "Empresa" },
-              { key: "validade", label: "Validade" },
+              { key: "validade", label: "Validade", type: "date" },
               { key: "valor", label: "Valor" },
             ]}
           />

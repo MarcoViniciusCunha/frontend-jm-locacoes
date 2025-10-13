@@ -13,6 +13,7 @@ export const VeiculosService = {
     add: async (data) => api.post("/brand", data),
     editar: async (id, data) => api.put(`/brand/${id}`, data),
     excluir: async (id) => api.delete(`/brand/${id}`),
+    listaModelosPorMarca: async (brandId) => api.get(`brand/${brandId}/models`),
   },
 
   modelos: {

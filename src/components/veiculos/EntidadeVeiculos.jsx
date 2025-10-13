@@ -5,10 +5,30 @@ export default function CrudEntidade({ action, service, label, fields }) {
   const [novoItem, setNovoItem] = useState({});
   const [editItemId, setEditItemId] = useState(null);
   const [editItemData, setEditItemData] = useState({});
+  const [optionsData, setOptionsData] = useState({});
 
   useEffect(() => {
     if (action !== "Cadastrar") listaItens();
   }, [action, service]);
+
+  useEffect(() => {
+    fields.forEach(async (field) => {
+      if (field.type === "select" && field.loadOptions) {
+        try {
+          const res = await field.loadOptions();
+          setOptionsData((prev) => ({
+            ...prev,
+            [field.key]: res.data.map((opt) => ({
+              value: opt[field.optionValue],
+              label: opt[field.optionLabel],
+            })),
+          }));
+        } catch (err) {
+          console.error(`Erro ao carregar opções para ${field.label}:`, err);
+        }
+      }
+    });
+  }, [fields]);
 
   const listaItens = async () => {
     try {
@@ -61,29 +81,38 @@ export default function CrudEntidade({ action, service, label, fields }) {
   if (action === "Cadastrar") {
     return (
       <form>
-        {fields.map((field) =>
-          field.key === "validade" ? (
+        {fields.map((field) => {
+          if (field.type === "select") {
+            return (
+              <select
+                key={field.key}
+                value={novoItem[field.key] || ""}
+                onChange={(e) =>
+                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
+                }
+              >
+                <option value="">Selecione {field.label}</option>
+                {(optionsData[field.key] || []).map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            );
+          }
+
+          return (
             <input
               key={field.key}
-              type="date"
+              type={field.type || "text"}
               placeholder={field.label}
               value={novoItem[field.key] || ""}
               onChange={(e) =>
                 setNovoItem({ ...novoItem, [field.key]: e.target.value })
               }
             />
-          ) : (
-            <input
-              key={field.key}
-              type="text"
-              placeholder={field.label}
-              value={novoItem[field.key] || ""}
-              onChange={(e) =>
-                setNovoItem({ ...novoItem, [field.key]: e.target.value })
-              }
-            />
-          )
-        )}
+          );
+        })}
         <button type="button" onClick={handleAdd}>
           Salvar
         </button>
@@ -91,6 +120,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
     );
   }
 
+  // 🔹 Listagem
   if (action === "Lista") {
     return (
       <ul>
@@ -105,6 +135,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
     );
   }
 
+  // 🔹 Edição
   if (action === "Editar") {
     return (
       <ul>
@@ -112,19 +143,39 @@ export default function CrudEntidade({ action, service, label, fields }) {
           <li key={item.id}>
             {editItemId === item.id ? (
               <>
-                {fields.map((f) => (
-                  <input
-                    key={f.key}
-                    type="text"
-                    value={editItemData[f.key] || ""}
-                    onChange={(e) =>
-                      setEditItemData({
-                        ...editItemData,
-                        [f.key]: e.target.value,
-                      })
-                    }
-                  />
-                ))}
+                {fields.map((f) =>
+                  f.type === "select" ? (
+                    <select
+                      key={f.key}
+                      value={editItemData[f.key] || ""}
+                      onChange={(e) =>
+                        setEditItemData({
+                          ...editItemData,
+                          [f.key]: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Selecione {f.label}</option>
+                      {(optionsData[f.key] || []).map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      key={f.key}
+                      type={f.type || "text"}
+                      value={editItemData[f.key] || ""}
+                      onChange={(e) =>
+                        setEditItemData({
+                          ...editItemData,
+                          [f.key]: e.target.value,
+                        })
+                      }
+                    />
+                  )
+                )}
                 <button onClick={() => handleEdit(item.id)}>Salvar</button>
                 <button onClick={() => setEditItemId(null)}>Cancelar</button>
               </>
@@ -154,6 +205,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
     );
   }
 
+  // 🔹 Exclusão
   if (action === "Excluir") {
     return (
       <ul>
