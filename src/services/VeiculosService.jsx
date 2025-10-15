@@ -42,5 +42,42 @@ export const VeiculosService = {
     add: async (data) => api.post("/vehicles", data),
     editar: async (placa, data) => api.patch(`/vehicles/${placa}`, data),
     excluir: async (placa) => api.delete(`/vehicles/${placa}`),
+    individual: async (placa) => api.get(`/vehicles/${placa}`),
+    search: (params) => api.get("/vehicles/search", { params }),
   },
 };
+export const statusMap = {
+  Disponível: "DISPONIVEL",
+  Alugado: "ALUGADO",
+  Manutenção: "MANUTENCAO",
+};
+
+export const anos = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => 2026 - i);
+
+export const camposVeiculos = (
+  marcas = [],
+  modelos = [],
+  cores = [],
+  categorias = [],
+  seguros = []
+) => [
+  { key: "placa", label: "Placa" },
+  { key: "idMarca", label: "Marca", type: "select", options: marcas },
+  { key: "idModelo", label: "Modelo", type: "select", options: modelos },
+  { key: "ano", label: "Ano", type: "select", options: anos },
+  { key: "idCor", label: "Cor", type: "select", options: cores },
+  {
+    key: "status",
+    label: "Status",
+    type: "select",
+    options: Object.keys(statusMap),
+  },
+  { key: "descricao", label: "Descrição" },
+  {
+    key: "idCategoria",
+    label: "Categoria",
+    type: "select",
+    options: categorias,
+  },
+  { key: "idSeguro", label: "Seguro", type: "select", options: seguros },
+];

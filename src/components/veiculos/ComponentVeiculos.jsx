@@ -1,27 +1,37 @@
-import { useEffect, useState } from "react";
-import { VeiculosService } from "../../services/VeiculosService";
+import { useEffect, useMemo, useState } from "react";
+import {
+  anos,
+  camposVeiculos,
+  statusMap,
+  VeiculosService,
+} from "../../services/VeiculosService";
+import { Link } from "react-router-dom";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [itens, setItens] = useState([]);
   const [novoItem, setNovoItem] = useState({});
-  const [editItemId, setEditItemId] = useState(null);
-  const [editItemData, setEditItemData] = useState({});
   const [marcas, setMarcas] = useState([]);
   const [cores, setCores] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [seguros, setSeguros] = useState([]);
   const [modelos, setModelos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
-  const anos = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => 2026 - i);
-  const statusOptions = ["Disponível", "Alugado", "Manutenção"];
-  const statusMap = {
-    Disponível: "DISPONIVEL",
-    Alugado: "ALUGADO",
-    Manutenção: "MANUTENCAO",
-  };
+  const [filtros, setFiltros] = useState({
+    placa: "",
+    categoria: "",
+    brand: "",
+    color: "",
+    ano: "",
+    status: "",
+  });
 
-  // Carrega opções e lista inicial
+  const fields = useMemo(
+    () => camposVeiculos(marcas, modelos, cores, categorias, seguros),
+    [marcas, modelos, cores, categorias, seguros]
+  );
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -51,24 +61,26 @@ export default function ComponentVeiculos({ action, service, label }) {
     init();
   }, [action]);
 
-  const fields = [
-    { key: "placa", label: "Placa" },
-    { key: "idMarca", label: "Marca", type: "select", options: marcas },
-    { key: "idModelo", label: "Modelo", type: "select", options: modelos },
-    { key: "ano", label: "Ano", type: "select", options: anos },
-    { key: "idCor", label: "Cor", type: "select", options: cores },
-    { key: "status", label: "Status", type: "select", options: statusOptions },
-    { key: "descricao", label: "Descrição" },
-    {
-      key: "idCategoria",
-      label: "Categoria",
-      type: "select",
-      options: categorias,
-    },
-    { key: "idSeguro", label: "Seguro", type: "select", options: seguros },
-  ];
-
-  const editFields = fields;
+  // Atualiza modelos ao mudar marca (cadastro)
+  useEffect(() => {
+    const fetchModelos = async () => {
+      if (!novoItem.idMarca) {
+        setModelos([]);
+        return;
+      }
+      try {
+        const res = await VeiculosService.marcas.listaModelosPorMarca(
+          novoItem.idMarca
+        );
+        setModelos(res.data || []);
+      } catch (err) {
+        console.error("Erro ao carregar modelos:", err);
+        setModelos([]);
+      }
+    };
+    fetchModelos();
+    setNovoItem((prev) => ({ ...prev, idModelo: "" }));
+  }, [novoItem.idMarca]);
 
   const listFields = ["placa", "brand", "model", "ano", "color", "status"];
 
@@ -117,38 +129,35 @@ export default function ComponentVeiculos({ action, service, label }) {
     }
   };
 
-  const handleEdit = async (id) => {
+  const handleSearch = async () => {
     try {
-      const payload = {
-        ...editItemData,
-        status: statusMap[editItemData.status] || editItemData.status,
-      };
-      await service.editar(id, payload);
-      alert("Edição concluída com sucesso!");
-      setEditItemId(null);
-      setEditItemData({});
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao editar ${label}.`);
-    }
-  };
+      setMessage(""); // limpa mensagem anterior
+      const payload = {};
+      if (filtros.placa) payload.placa = filtros.placa;
+      if (filtros.categoria) payload.categoria = filtros.categoria;
+      if (filtros.brand) payload.brand = filtros.brand;
+      if (filtros.color) payload.color = filtros.color;
+      if (filtros.ano) payload.ano = Number(filtros.ano);
+      if (filtros.status) payload.status = filtros.status.toUpperCase();
 
-  const handleExcluir = async (id) => {
-    if (!window.confirm(`Confirmar exclusão de ${label}?`)) return;
-    try {
-      await service.excluir(id);
-      alert("Exclusão bem-sucedida!");
-      listaItens();
+      const res = await service.search(payload);
+      setItens(res.data || []);
+      if (res.data?.length === 0) {
+        setMessage("Nenhum veículo encontrado."); // quando a lista estiver vazia
+      }
     } catch (err) {
-      console.error(err);
-      alert(`Erro ao excluir ${label}.`);
+      if (err.response?.status === 404) {
+        setItens([]);
+        setMessage(err.response.data?.message || "Nenhum veículo encontrado.");
+      } else {
+        console.error(err);
+        alert("Erro ao pesquisar veículos");
+      }
     }
   };
 
   if (loading) return <p>Carregando...</p>;
 
-  // Render de cada ação
   if (action === "Cadastrar") {
     return (
       <form>
@@ -204,100 +213,98 @@ export default function ComponentVeiculos({ action, service, label }) {
     );
   }
 
-  if (action === "Lista" || action === "Editar" || action === "Excluir") {
+  if (action === "Lista") {
     return (
-      <ul>
-        {itens?.map((item) => (
-          <li key={item.placa || item.id}>
-            {action === "Editar" && editItemId === item.placa ? (
-              <>
-                {editFields.map((field) =>
-                  field.type === "select" ? (
-                    <select
-                      key={field.key}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Selecione {field.label}</option>
-                      {field.options?.map((opt) =>
-                        opt ? (
-                          typeof opt === "object" ? (
-                            <option key={opt.id} value={opt.id}>
-                              {opt.nome ?? opt.empresa}
-                            </option>
-                          ) : (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          )
-                        ) : null
-                      )}
-                    </select>
-                  ) : field.key === "descricao" ? (
-                    <textarea
-                      key={field.key}
-                      placeholder={field.label}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    />
-                  ) : (
-                    <input
-                      key={field.key}
-                      type="text"
-                      placeholder={field.label}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    />
-                  )
-                )}
-                <button onClick={() => handleEdit(item.placa)}>Salvar</button>
-                <button onClick={() => setEditItemId(null)}>Cancelar</button>
-              </>
-            ) : (
-              <>
+      <div>
+        <div>
+          <input
+            type="text"
+            placeholder="Placa"
+            value={filtros.placa}
+            onChange={(e) => setFiltros({ ...filtros, placa: e.target.value })}
+          />
+          <select
+            value={filtros.brand}
+            onChange={(e) => setFiltros({ ...filtros, brand: e.target.value })}
+          >
+            <option value="">Marca</option>
+            {marcas.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filtros.color}
+            onChange={(e) => setFiltros({ ...filtros, color: e.target.value })}
+          >
+            <option value="">Cor</option>
+            {cores.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filtros.categoria}
+            onChange={(e) =>
+              setFiltros({ ...filtros, categoria: e.target.value })
+            }
+          >
+            <option value="">Categoria</option>
+            {categorias.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filtros.status}
+            onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+          >
+            <option value="">Status</option>
+            <option value="DISPONIVEL">Disponível</option>
+            <option value="ALUGADO">Alugado</option>
+            <option value="MANUTENCAO">Manutenção</option>
+          </select>
+          <select
+            value={filtros.ano}
+            onChange={(e) =>
+              setFiltros({
+                ...filtros,
+                ano: e.target.value ? Number(e.target.value) : "",
+              })
+            }
+          >
+            <option value="">Ano</option>
+            {anos.map((ano) => (
+              <option key={ano} value={ano}>
+                {ano}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={handleSearch}>
+            Pesquisar
+          </button>
+        </div>
+
+        {itens?.length === 0 ? (
+          <p>{message}</p>
+        ) : (
+          <ul>
+            {itens.map((item) => (
+              <li key={item.placa || item.id}>
                 {listFields.map((key) => (
                   <span key={key}>{getDisplayValue(key, item)} </span>
                 ))}
-                {action === "Editar" && (
-                  <button
-                    onClick={() => {
-                      setEditItemId(item.placa);
-                      setEditItemData(
-                        editFields.reduce(
-                          (acc, f) => ({ ...acc, [f.key]: item[f.key] }),
-                          {}
-                        )
-                      );
-                    }}
-                  >
-                    Editar
-                  </button>
-                )}
-                {action === "Excluir" && (
-                  <button onClick={() => handleExcluir(item.placa)}>
-                    Excluir
-                  </button>
-                )}
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+                <Link to={`/veiculos/${item.placa}`}>
+                  <button>Detalhes</button>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     );
   }
 

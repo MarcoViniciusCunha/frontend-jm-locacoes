@@ -63,17 +63,18 @@ const Veiculos = () => {
         ))}
       </header>
       <header className="crud-header">
-        {actions.map((action) => (
-          <button
-            key={action}
-            onClick={() => {
-              setActiveAction(action);
-            }}
-            className={activeAction === action ? "active" : ""}
-          >
-            {action.charAt(0).toUpperCase() + action.slice(1)}
-          </button>
-        ))}
+        {actions.map((action) =>
+          activeTab === "Veiculos" &&
+          (action === "Excluir" || action === "Editar") ? null : (
+            <button
+              key={action}
+              onClick={() => setActiveAction(action)}
+              className={activeAction === action ? "active" : ""}
+            >
+              {action.charAt(0).toUpperCase() + action.slice(1)}
+            </button>
+          )
+        )}
       </header>
 
       <main className="veiculos-main">
