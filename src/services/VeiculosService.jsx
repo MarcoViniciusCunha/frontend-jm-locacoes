@@ -41,5 +41,6 @@ export const VeiculosService = {
     add: async (data) => api.post("/vehicles", data),
     editar: async (placa, data) => api.patch(`/vehicles/${placa}`, data),
     excluir: async (placa) => api.delete(`/vehicles/${placa}`),
+    buscarPorPlaca: async (placa) => api.get(`/vehicles/${placa}`),
   },
 };

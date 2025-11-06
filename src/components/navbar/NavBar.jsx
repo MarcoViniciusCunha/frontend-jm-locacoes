@@ -28,11 +28,7 @@ const NavBar = () => {
         <NavLink to="/locacoes">Locações</NavLink>
         <NavLink to="/veiculos">Veículos</NavLink>
         <NavLink to="/clientes">Clientes</NavLink>
-        <NavLink to="/seguros">Seguros</NavLink>
         <NavLink to="/pagamentos">Pagamentos</NavLink>
-        <NavLink to="/multas">Multas</NavLink>
-        <NavLink to="/inspecao">Inspeção</NavLink>
-        <NavLink to="/manutencao">Manutenção</NavLink>
         <button onClick={handleLogout} className="logout-button">
           Sair
         </button>

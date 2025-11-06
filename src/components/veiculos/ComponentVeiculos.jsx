@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { VeiculosService } from "../../services/VeiculosService";
+import { Link } from "react-router-dom";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [itens, setItens] = useState([]);
@@ -273,6 +274,12 @@ export default function ComponentVeiculos({ action, service, label }) {
                 {listFields.map((key) => (
                   <span key={key}>{getDisplayValue(key, item)} </span>
                 ))}
+
+                {action === "Lista" && (
+                  <Link to={`/veiculos/${item.placa}`}>
+                    <button>Detalhes</button>
+                  </Link>
+                )}
                 {action === "Editar" && (
                   <button
                     onClick={() => {

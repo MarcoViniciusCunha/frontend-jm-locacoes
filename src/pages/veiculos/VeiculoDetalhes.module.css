@@ -1,0 +1,105 @@
+.veiculoDetalhes {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #444;
+}
+
+strong {
+  color: #222;
+}
+
+.statusNormal {
+  color: #0a8f08;
+  font-weight: bold;
+}
+
+.statusManutencao {
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.botoes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.voltarBtn,
+.locarBtn,
+.manutencaoBtn {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.voltarBtn:hover {
+  background-color: #115293;
+}
+
+.locarBtn {
+  background-color: #43a047;
+}
+
+.locarBtn:hover {
+  background-color: #2e7d32;
+}
+
+.manutencaoBtn {
+  background-color: #e53935;
+}
+
+.manutencaoBtn:hover {
+  background-color: #c62828;
+}
+
+.formulario {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formulario h3 {
+  text-align: center;
+  color: #333;
+}
+
+.formulario input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.enviarBtn {
+  background-color: #43a047;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.enviarBtn:hover {
+  background-color: #2e7d32;
+}

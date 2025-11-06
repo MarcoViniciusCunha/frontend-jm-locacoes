@@ -2,7 +2,6 @@ import { AuthProvider } from "./context/AuthContext";
 import PublicRoute from "./hooks/PublicRoute";
 import PrivateRoute from "./hooks/PrivateRoute";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import "./App.css";
 import { setAuthToken } from "./utils/config";
 
@@ -17,6 +16,8 @@ import Locacoes from "./pages/locacoes/Locacoes";
 import Veiculos from "./pages/veiculos/Veiculos";
 import Clientes from "./pages/clientes/Clientes";
 import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
+import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
+import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -32,12 +33,10 @@ function Layout({ children }) {
 }
 
 function App() {
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setAuthToken(token); // garante que axios já tenha o token antes de qualquer chamada
-    }
-  }, []);
+  const token = localStorage.getItem("token");
+  if (token) {
+    setAuthToken(token); // garante que axios já tenha o token antes de qualquer chamada
+  }
 
   return (
     <AuthProvider>
@@ -69,10 +68,26 @@ function App() {
               }
             />
             <Route
+              path="/locacoes/:id"
+              element={
+                <PrivateRoute>
+                  <LocacaoDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/veiculos"
               element={
                 <PrivateRoute>
                   <Veiculos />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/veiculos/:placa"
+              element={
+                <PrivateRoute>
+                  <VeiculoDetalhes />
                 </PrivateRoute>
               }
             />
