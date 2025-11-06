@@ -1,24 +1,31 @@
 .veiculos-container {
-  padding: 2em;
-  font-family: Arial, sans-serif;
-  color: #222;
   display: flex;
   flex-direction: column;
-  text-align: center;
   align-items: center;
-  justify-content: center;
-  height: 50vh;
+  justify-content: flex-start; /* conteúdo começa do topo */
+  padding-top: 80px; /* espaço para o navbar fixo */
+  padding-bottom: 80px; /* espaço para o footer fixo */
+  min-height: 100vh; /* ocupa a tela inteira */
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  color: #222;
+  background-color: #f9f9f9;
 }
 
-.veiculos-header {
+/* Botões de navegação (abas) */
+.veiculos-header,
+.crud-header {
   display: flex;
   gap: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.5em;
 }
 
 .veiculos-header button,
 .crud-header button {
   color: rgb(33, 35, 36);
-  padding: 0.5em 1em;
+  padding: 0.6em 1.2em;
   border: none;
   background-color: transparent;
   cursor: pointer;
@@ -40,20 +47,21 @@
   font-weight: bold;
 }
 
-.veiculos-header,
-.crud-header {
-  padding: 1em;
-  border-radius: 8px;
-}
-
-.crud-header {
-  display: flex;
-  gap: 0.8em;
-  margin-bottom: 2em;
+/* Conteúdo principal */
+.veiculos-main {
+  width: 90%;
+  max-width: 1200px;
+  background: white;
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
 }
 
 .veiculos-main h2 {
   margin-bottom: 1em;
+  text-align: center;
+  color: #333;
 }
 
 .veiculos-main form {
@@ -61,6 +69,7 @@
   flex-direction: column;
   gap: 0.8em;
   max-width: 400px;
+  margin: 0 auto;
 }
 
 .veiculos-main input {
@@ -70,7 +79,8 @@
   border: 1px solid #ccc;
 }
 
-.veiculos-main button[type="submit"] {
+.veiculos-main button[type="submit"],
+.veiculos-main button[type="button"] {
   padding: 0.5em 1em;
   font-size: 16px;
   background-color: #12add6;
@@ -81,6 +91,7 @@
   transition: background-color 0.3s;
 }
 
-.veiculos-main button[type="submit"]:hover {
+.veiculos-main button[type="submit"]:hover,
+.veiculos-main button[type="button"]:hover {
   background-color: #0e8cae;
 }

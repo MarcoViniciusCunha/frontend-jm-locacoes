@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { VeiculosService } from "../../services/VeiculosService";
 import { Link } from "react-router-dom";
+import styles from "./EntidadeVeiculos.module.css";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [itens, setItens] = useState([]);
@@ -22,7 +23,6 @@ export default function ComponentVeiculos({ action, service, label }) {
     Manutenção: "MANUTENCAO",
   };
 
-  // Carrega opções e lista inicial
   useEffect(() => {
     const init = async () => {
       try {
@@ -68,8 +68,6 @@ export default function ComponentVeiculos({ action, service, label }) {
     },
     { key: "idSeguro", label: "Seguro", type: "select", options: seguros },
   ];
-
-  const editFields = fields;
 
   const listFields = ["placa", "brand", "model", "ano", "color", "status"];
 
@@ -149,22 +147,21 @@ export default function ComponentVeiculos({ action, service, label }) {
 
   if (loading) return <p>Carregando...</p>;
 
-  // Render de cada ação
-  if (action === "Cadastrar") {
-    return (
-      <form>
-        {fields.map((field) =>
-          field.type === "select" ? (
-            <select
-              key={field.key}
-              value={novoItem[field.key] || ""}
-              onChange={(e) =>
-                setNovoItem({ ...novoItem, [field.key]: e.target.value })
-              }
-            >
-              <option value="">Selecione {field.label}</option>
-              {field.options?.map((opt) =>
-                opt ? (
+  return (
+    <div className={styles.container}>
+      {action === "Cadastrar" && (
+        <form>
+          {fields.map((field) =>
+            field.type === "select" ? (
+              <select
+                key={field.key}
+                value={novoItem[field.key] || ""}
+                onChange={(e) =>
+                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
+                }
+              >
+                <option value="">Selecione {field.label}</option>
+                {field.options?.map((opt) =>
                   typeof opt === "object" ? (
                     <option key={opt.id} value={opt.id}>
                       {opt.nome ?? opt.empresa}
@@ -174,59 +171,55 @@ export default function ComponentVeiculos({ action, service, label }) {
                       {opt}
                     </option>
                   )
-                ) : null
-              )}
-            </select>
-          ) : field.key === "descricao" ? (
-            <textarea
-              key={field.key}
-              placeholder={field.label}
-              value={novoItem[field.key] || ""}
-              onChange={(e) =>
-                setNovoItem({ ...novoItem, [field.key]: e.target.value })
-              }
-            />
-          ) : (
-            <input
-              key={field.key}
-              type="text"
-              placeholder={field.label}
-              value={novoItem[field.key] || ""}
-              onChange={(e) =>
-                setNovoItem({ ...novoItem, [field.key]: e.target.value })
-              }
-            />
-          )
-        )}
-        <button type="button" onClick={handleAdd}>
-          Salvar
-        </button>
-      </form>
-    );
-  }
+                )}
+              </select>
+            ) : field.key === "descricao" ? (
+              <textarea
+                key={field.key}
+                placeholder={field.label}
+                value={novoItem[field.key] || ""}
+                onChange={(e) =>
+                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
+                }
+              />
+            ) : (
+              <input
+                key={field.key}
+                type="text"
+                placeholder={field.label}
+                value={novoItem[field.key] || ""}
+                onChange={(e) =>
+                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
+                }
+              />
+            )
+          )}
+          <button type="button" onClick={handleAdd}>
+            Salvar
+          </button>
+        </form>
+      )}
 
-  if (action === "Lista" || action === "Editar" || action === "Excluir") {
-    return (
-      <ul>
-        {itens?.map((item) => (
-          <li key={item.placa || item.id}>
-            {action === "Editar" && editItemId === item.placa ? (
-              <>
-                {editFields.map((field) =>
-                  field.type === "select" ? (
-                    <select
-                      key={field.key}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Selecione {field.label}</option>
-                      {field.options?.map((opt) =>
-                        opt ? (
+      {(action === "Lista" || action === "Editar" || action === "Excluir") && (
+        <ul>
+          {itens.map((item) => (
+            <li key={item.placa || item.id}>
+              {action === "Editar" && editItemId === item.placa ? (
+                <>
+                  {fields.map((field) =>
+                    field.type === "select" ? (
+                      <select
+                        key={field.key}
+                        value={editItemData[field.key] || ""}
+                        onChange={(e) =>
+                          setEditItemData({
+                            ...editItemData,
+                            [field.key]: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Selecione {field.label}</option>
+                        {field.options?.map((opt) =>
                           typeof opt === "object" ? (
                             <option key={opt.id} value={opt.id}>
                               {opt.nome ?? opt.empresa}
@@ -236,77 +229,81 @@ export default function ComponentVeiculos({ action, service, label }) {
                               {opt}
                             </option>
                           )
-                        ) : null
-                      )}
-                    </select>
-                  ) : field.key === "descricao" ? (
-                    <textarea
-                      key={field.key}
-                      placeholder={field.label}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    />
-                  ) : (
-                    <input
-                      key={field.key}
-                      type="text"
-                      placeholder={field.label}
-                      value={editItemData[field.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    />
-                  )
-                )}
-                <button onClick={() => handleEdit(item.placa)}>Salvar</button>
-                <button onClick={() => setEditItemId(null)}>Cancelar</button>
-              </>
-            ) : (
-              <>
-                {listFields.map((key) => (
-                  <span key={key}>{getDisplayValue(key, item)} </span>
-                ))}
-
-                {action === "Lista" && (
-                  <Link to={`/veiculos/${item.placa}`}>
-                    <button>Detalhes</button>
-                  </Link>
-                )}
-                {action === "Editar" && (
+                        )}
+                      </select>
+                    ) : field.key === "descricao" ? (
+                      <textarea
+                        key={field.key}
+                        value={editItemData[field.key] || ""}
+                        onChange={(e) =>
+                          setEditItemData({
+                            ...editItemData,
+                            [field.key]: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <input
+                        key={field.key}
+                        type="text"
+                        value={editItemData[field.key] || ""}
+                        onChange={(e) =>
+                          setEditItemData({
+                            ...editItemData,
+                            [field.key]: e.target.value,
+                          })
+                        }
+                      />
+                    )
+                  )}
+                  <button onClick={() => handleEdit(item.placa)}>Salvar</button>
                   <button
-                    onClick={() => {
-                      setEditItemId(item.placa);
-                      setEditItemData(
-                        editFields.reduce(
-                          (acc, f) => ({ ...acc, [f.key]: item[f.key] }),
-                          {}
-                        )
-                      );
-                    }}
+                    className={styles.cancelar}
+                    onClick={() => setEditItemId(null)}
                   >
-                    Editar
+                    Cancelar
                   </button>
-                )}
-                {action === "Excluir" && (
-                  <button onClick={() => handleExcluir(item.placa)}>
-                    Excluir
-                  </button>
-                )}
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    );
-  }
+                </>
+              ) : (
+                <>
+                  {listFields.map((key) => (
+                    <span key={key}>{getDisplayValue(key, item)} </span>
+                  ))}
 
-  return null;
+                  {action === "Lista" && (
+                    <Link to={`/veiculos/${item.placa}`}>
+                      <button>Detalhes</button>
+                    </Link>
+                  )}
+                  {action === "Editar" && (
+                    <button
+                      onClick={() => {
+                        setEditItemId(item.placa);
+                        setEditItemData(
+                          fields.reduce(
+                            (acc, f) => ({ ...acc, [f.key]: item[f.key] }),
+                            {}
+                          )
+                        );
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                  {action === "Excluir" && (
+                    <button
+                      className={styles.excluir}
+                      onClick={() => handleExcluir(item.placa)}
+                    >
+                      Excluir
+                    </button>
+                  )}
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
