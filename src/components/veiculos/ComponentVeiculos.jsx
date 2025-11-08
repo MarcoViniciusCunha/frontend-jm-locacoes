@@ -6,8 +6,7 @@ import styles from "./EntidadeVeiculos.module.css";
 export default function ComponentVeiculos({ action, service, label }) {
   const [itens, setItens] = useState([]);
   const [novoItem, setNovoItem] = useState({});
-  const [editItemId, setEditItemId] = useState(null);
-  const [editItemData, setEditItemData] = useState({});
+  const [filtros, setFiltros] = useState({});
   const [marcas, setMarcas] = useState([]);
   const [cores, setCores] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -41,7 +40,7 @@ export default function ComponentVeiculos({ action, service, label }) {
         setSeguros(segurosRes.data || []);
         setModelos(modelosRes.data || []);
 
-        if (action !== "Cadastrar") await listaItens();
+        if (action === "Lista") await listarVeiculos();
       } catch (err) {
         console.error(err);
         alert("Erro ao carregar dados iniciais");
@@ -52,45 +51,8 @@ export default function ComponentVeiculos({ action, service, label }) {
     init();
   }, [action]);
 
-  const fields = [
-    { key: "placa", label: "Placa" },
-    { key: "idMarca", label: "Marca", type: "select", options: marcas },
-    { key: "idModelo", label: "Modelo", type: "select", options: modelos },
-    { key: "ano", label: "Ano", type: "select", options: anos },
-    { key: "idCor", label: "Cor", type: "select", options: cores },
-    { key: "status", label: "Status", type: "select", options: statusOptions },
-    { key: "descricao", label: "Descrição" },
-    {
-      key: "idCategoria",
-      label: "Categoria",
-      type: "select",
-      options: categorias,
-    },
-    { key: "idSeguro", label: "Seguro", type: "select", options: seguros },
-  ];
-
-  const listFields = ["placa", "brand", "model", "ano", "color", "status"];
-
-  const getDisplayValue = (key, item) => {
-    switch (key) {
-      case "brand":
-        return item.brand?.nome || "";
-      case "model":
-        return item.model?.nome || "";
-      case "color":
-        return item.color?.nome || "";
-      case "category":
-        return item.category?.nome || "";
-      case "insurance":
-        return item.insurance?.empresa || "";
-      case "status":
-        return item.status || "";
-      default:
-        return item[key] || "";
-    }
-  };
-
-  const listaItens = async () => {
+  // Função de listagem padrão (sem filtros)
+  const listarVeiculos = async () => {
     try {
       const res = await service.lista();
       setItens(res.data || []);
@@ -100,48 +62,44 @@ export default function ComponentVeiculos({ action, service, label }) {
     }
   };
 
+  // Função de busca com filtros
+  const buscarVeiculos = async () => {
+    try {
+      const params = {};
+
+      if (filtros.placa) params.placa = filtros.placa;
+      if (filtros.idCategoria) params.categoria = filtros.idCategoria;
+      if (filtros.idMarca) params.brand = filtros.idMarca;
+      if (filtros.idModelo) params.model = filtros.idModelo;
+      if (filtros.idCor) params.color = filtros.idCor;
+      if (filtros.status) params.status = statusMap[filtros.status];
+      if (filtros.ano) params.ano = filtros.ano;
+
+      console.log("🔍 Enviando params:", params);
+
+      const res = await VeiculosService.veiculos.search(params);
+      setItens(res.data || []);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao buscar veículos.");
+    }
+  };
+
+  // Adiciona novo veículo
   const handleAdd = async () => {
     try {
       const payload = {
         ...novoItem,
+        valorDiario: parseFloat(novoItem.valorDiario) || 0,
         status: statusMap[novoItem.status] || novoItem.status,
       };
       await service.add(payload);
       alert("Cadastro realizado com sucesso!");
       setNovoItem({});
-      listaItens();
+      listarVeiculos();
     } catch (err) {
       console.error(err);
       alert(`Erro ao adicionar ${label}.`);
-    }
-  };
-
-  const handleEdit = async (id) => {
-    try {
-      const payload = {
-        ...editItemData,
-        status: statusMap[editItemData.status] || editItemData.status,
-      };
-      await service.editar(id, payload);
-      alert("Edição concluída com sucesso!");
-      setEditItemId(null);
-      setEditItemData({});
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao editar ${label}.`);
-    }
-  };
-
-  const handleExcluir = async (id) => {
-    if (!window.confirm(`Confirmar exclusão de ${label}?`)) return;
-    try {
-      await service.excluir(id);
-      alert("Exclusão bem-sucedida!");
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao excluir ${label}.`);
     }
   };
 
@@ -149,9 +107,41 @@ export default function ComponentVeiculos({ action, service, label }) {
 
   return (
     <div className={styles.container}>
+      {/* CADASTRAR */}
       {action === "Cadastrar" && (
         <form>
-          {fields.map((field) =>
+          {[
+            { key: "placa", label: "Placa" },
+            { key: "idMarca", label: "Marca", type: "select", options: marcas },
+            {
+              key: "idModelo",
+              label: "Modelo",
+              type: "select",
+              options: modelos,
+            },
+            { key: "ano", label: "Ano", type: "select", options: anos },
+            { key: "idCor", label: "Cor", type: "select", options: cores },
+            {
+              key: "status",
+              label: "Status",
+              type: "select",
+              options: statusOptions,
+            },
+            { key: "descricao", label: "Descrição" },
+            {
+              key: "idCategoria",
+              label: "Categoria",
+              type: "select",
+              options: categorias,
+            },
+            {
+              key: "idSeguro",
+              label: "Seguro",
+              type: "select",
+              options: seguros,
+            },
+            { key: "valorDiario", label: "Valor Diário (R$)", type: "number" },
+          ].map((field) =>
             field.type === "select" ? (
               <select
                 key={field.key}
@@ -185,7 +175,7 @@ export default function ComponentVeiculos({ action, service, label }) {
             ) : (
               <input
                 key={field.key}
-                type="text"
+                type={field.type || "text"}
                 placeholder={field.label}
                 value={novoItem[field.key] || ""}
                 onChange={(e) =>
@@ -200,109 +190,106 @@ export default function ComponentVeiculos({ action, service, label }) {
         </form>
       )}
 
-      {(action === "Lista" || action === "Editar" || action === "Excluir") && (
-        <ul>
-          {itens.map((item) => (
-            <li key={item.placa || item.id}>
-              {action === "Editar" && editItemId === item.placa ? (
-                <>
-                  {fields.map((field) =>
-                    field.type === "select" ? (
-                      <select
-                        key={field.key}
-                        value={editItemData[field.key] || ""}
-                        onChange={(e) =>
-                          setEditItemData({
-                            ...editItemData,
-                            [field.key]: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Selecione {field.label}</option>
-                        {field.options?.map((opt) =>
-                          typeof opt === "object" ? (
-                            <option key={opt.id} value={opt.id}>
-                              {opt.nome ?? opt.empresa}
-                            </option>
-                          ) : (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          )
-                        )}
-                      </select>
-                    ) : field.key === "descricao" ? (
-                      <textarea
-                        key={field.key}
-                        value={editItemData[field.key] || ""}
-                        onChange={(e) =>
-                          setEditItemData({
-                            ...editItemData,
-                            [field.key]: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <input
-                        key={field.key}
-                        type="text"
-                        value={editItemData[field.key] || ""}
-                        onChange={(e) =>
-                          setEditItemData({
-                            ...editItemData,
-                            [field.key]: e.target.value,
-                          })
-                        }
-                      />
-                    )
-                  )}
-                  <button onClick={() => handleEdit(item.placa)}>Salvar</button>
-                  <button
-                    className={styles.cancelar}
-                    onClick={() => setEditItemId(null)}
-                  >
-                    Cancelar
-                  </button>
-                </>
-              ) : (
-                <>
-                  {listFields.map((key) => (
-                    <span key={key}>{getDisplayValue(key, item)} </span>
-                  ))}
+      {/* LISTAR / BUSCAR */}
+      {action === "Lista" && (
+        <>
+          <div className={styles.filtros}>
+            <input
+              type="text"
+              placeholder="Placa"
+              value={filtros.placa || ""}
+              onChange={(e) =>
+                setFiltros({ ...filtros, placa: e.target.value })
+              }
+            />
 
-                  {action === "Lista" && (
-                    <Link to={`/veiculos/${item.placa}`}>
-                      <button>Detalhes</button>
-                    </Link>
-                  )}
-                  {action === "Editar" && (
-                    <button
-                      onClick={() => {
-                        setEditItemId(item.placa);
-                        setEditItemData(
-                          fields.reduce(
-                            (acc, f) => ({ ...acc, [f.key]: item[f.key] }),
-                            {}
-                          )
-                        );
-                      }}
-                    >
-                      Editar
-                    </button>
-                  )}
-                  {action === "Excluir" && (
-                    <button
-                      className={styles.excluir}
-                      onClick={() => handleExcluir(item.placa)}
-                    >
-                      Excluir
-                    </button>
-                  )}
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+            <select
+              value={filtros.idMarca || ""}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idMarca: e.target.value })
+              }
+            >
+              <option value="">Marca</option>
+              {marcas.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.nome}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filtros.idModelo || ""}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idModelo: e.target.value })
+              }
+            >
+              <option value="">Modelo</option>
+              {modelos.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.nome}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filtros.idCor || ""}
+              onChange={(e) =>
+                setFiltros({ ...filtros, idCor: e.target.value })
+              }
+            >
+              <option value="">Cor</option>
+              {cores.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filtros.status || ""}
+              onChange={(e) =>
+                setFiltros({ ...filtros, status: e.target.value })
+              }
+            >
+              <option value="">Status</option>
+              {statusOptions.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+
+            <select
+              value={filtros.ano || ""}
+              onChange={(e) => setFiltros({ ...filtros, ano: e.target.value })}
+            >
+              <option value="">Ano</option>
+              {anos.map((a) => (
+                <option key={a}>{a}</option>
+              ))}
+            </select>
+
+            <button onClick={buscarVeiculos}>Buscar</button>
+          </div>
+
+          <ul className={styles.lista}>
+            {itens.length === 0 ? (
+              <p>Nenhum veículo encontrado.</p>
+            ) : (
+              itens.map((item) => (
+                <li key={item.placa}>
+                  <span>{item.placa}</span>
+                  <span>{item.brand?.nome}</span>
+                  <span>{item.model?.nome}</span>
+                  <span>{item.ano}</span>
+                  <span>{item.color?.nome}</span>
+                  <span>{item.status}</span>
+                  <Link to={`/veiculos/${item.placa}`}>
+                    <button>Detalhes</button>
+                  </Link>
+                </li>
+              ))
+            )}
+          </ul>
+        </>
       )}
     </div>
   );

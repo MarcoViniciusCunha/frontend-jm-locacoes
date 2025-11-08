@@ -62,9 +62,8 @@ const Locacoes = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>📋 Locações</h1>
+      <h1 className={styles.title}>Locações</h1>
 
-      {/* 🔎 Formulário de Filtro */}
       <form className={styles.filterForm} onSubmit={handleFiltrar}>
         <input
           type="text"

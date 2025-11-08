@@ -1,11 +1,11 @@
-.veiculos-container {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* conteúdo começa do topo */
-  padding-top: 80px; /* espaço para o navbar fixo */
-  padding-bottom: 80px; /* espaço para o footer fixo */
-  min-height: 100vh; /* ocupa a tela inteira */
+  justify-content: flex-start;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  min-height: 100vh;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
   color: #222;
@@ -13,8 +13,8 @@
 }
 
 /* Botões de navegação (abas) */
-.veiculos-header,
-.crud-header {
+.header,
+.crudHeader {
   display: flex;
   gap: 1em;
   flex-wrap: wrap;
@@ -22,8 +22,8 @@
   margin-bottom: 1.5em;
 }
 
-.veiculos-header button,
-.crud-header button {
+.header button,
+.crudHeader button {
   color: rgb(33, 35, 36);
   padding: 0.6em 1.2em;
   border: none;
@@ -35,20 +35,20 @@
   font-weight: 400;
 }
 
-.veiculos-header button:hover,
-.crud-header button:hover {
+.header button:hover,
+.crudHeader button:hover {
   color: #12add6;
 }
 
-.veiculos-header button.active,
-.crud-header button.active {
+.header button.active,
+.crudHeader button.active {
   background-color: #12add6;
   color: white;
   font-weight: bold;
 }
 
 /* Conteúdo principal */
-.veiculos-main {
+.main {
   width: 90%;
   max-width: 1200px;
   background: white;
@@ -58,13 +58,13 @@
   overflow-y: auto;
 }
 
-.veiculos-main h2 {
+.main h2 {
   margin-bottom: 1em;
   text-align: center;
   color: #333;
 }
 
-.veiculos-main form {
+.main form {
   display: flex;
   flex-direction: column;
   gap: 0.8em;
@@ -72,15 +72,15 @@
   margin: 0 auto;
 }
 
-.veiculos-main input {
+.main input {
   padding: 0.5em;
   font-size: 16px;
   border-radius: 4px;
   border: 1px solid #ccc;
 }
 
-.veiculos-main button[type="submit"],
-.veiculos-main button[type="button"] {
+.main button[type="submit"],
+.main button[type="button"] {
   padding: 0.5em 1em;
   font-size: 16px;
   background-color: #12add6;
@@ -91,7 +91,7 @@
   transition: background-color 0.3s;
 }
 
-.veiculos-main button[type="submit"]:hover,
-.veiculos-main button[type="button"]:hover {
+.main button[type="submit"]:hover,
+.main button[type="button"]:hover {
   background-color: #0e8cae;
 }

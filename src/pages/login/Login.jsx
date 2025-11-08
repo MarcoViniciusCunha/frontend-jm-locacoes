@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "../../utils/config";
+import { api, setAuthToken } from "../../utils/config";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
@@ -15,7 +15,12 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await api.post("/login", { username, password });
-      login(res.data.token);
+      const token = res.data.token;
+
+      setAuthToken(token);
+
+      login(token);
+
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Erro no login");

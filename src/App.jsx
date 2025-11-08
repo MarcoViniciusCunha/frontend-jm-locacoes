@@ -18,6 +18,7 @@ import Clientes from "./pages/clientes/Clientes";
 import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
 import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
 import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
+import { useEffect } from "react";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -34,9 +35,12 @@ function Layout({ children }) {
 
 function App() {
   const token = localStorage.getItem("token");
-  if (token) {
-    setAuthToken(token); // garante que axios já tenha o token antes de qualquer chamada
-  }
+
+  useEffect(() => {
+    if (token) {
+      setAuthToken(token);
+    }
+  }, [token]);
 
   return (
     <AuthProvider>

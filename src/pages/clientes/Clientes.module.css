@@ -1,67 +1,88 @@
 .container {
-  max-width: 800px;
-  margin: 50px auto;
-  padding: 20px;
-  background: #fdfdfd;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 850px;
+  margin: 60px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
   font-family: "Inter", sans-serif;
 }
 
-/* Formulário de busca */
-.container form {
+/* 🔍 Busca */
+.searchForm {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 25px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
 }
 
-.container form input {
-  flex: 1;
-  max-width: 60%;
-  padding: 10px 12px;
-  border-radius: 8px;
+.searchBox {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.searchBox .icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.searchBox input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 15px;
   outline: none;
-  transition: border-color 0.2s ease-in-out;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.container form input:focus {
+.searchBox input:focus {
   border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-.container form button {
-  padding: 10px 16px;
+.searchForm button {
+  padding: 10px 18px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 }
 
-.container form button:hover {
+.searchForm button:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
-/* Lista de clientes */
-.container ul {
+.searchForm button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 🧾 Lista */
+ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Cabeçalho da lista */
 .header {
   font-weight: 700;
   color: #000;
   border-bottom: 2px solid #ccc;
-  padding: 8px 20px;
-  margin-bottom: 10px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .header .nome {
@@ -70,12 +91,16 @@
 }
 
 .header .cpf {
-  flex: 2;
+  flex: 1;
   text-align: center;
 }
 
-/* Itens da lista */
-.container li {
+.header .acoes {
+  flex: 1;
+  text-align: right;
+}
+
+li {
   background-color: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
@@ -86,19 +111,18 @@
   transition: box-shadow 0.2s ease-in-out;
 }
 
-.container li:hover {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+li:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 li span.nome,
-span.cpf {
+li span.cpf {
   font-size: 16px;
   color: #333;
 }
 
 li span.nome {
   flex: 2;
-  text-align: left;
 }
 
 li span.cpf {
@@ -106,18 +130,47 @@ li span.cpf {
   text-align: center;
 }
 
+li a {
+  flex: 1;
+  text-align: right;
+}
+
 li button {
   background-color: #28a745;
   border: none;
   color: white;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
-  margin-left: 10px;
 }
 
 li button:hover {
   background-color: #1e7e34;
+}
+
+/* Mensagem quando não há clientes */
+.empty {
+  text-align: center;
+  color: #555;
+  font-size: 15px;
+  margin-top: 20px;
+}
+
+/* 📱 Responsivo */
+@media (max-width: 600px) {
+  .header span.cpf,
+  li span.cpf {
+    display: none;
+  }
+
+  .searchForm {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .searchForm button {
+    width: 100%;
+  }
 }
