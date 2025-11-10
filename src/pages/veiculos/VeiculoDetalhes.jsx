@@ -263,13 +263,6 @@ export default function VeiculoDetalhes() {
             onChange={(e) => setEndDate(e.target.value)}
             required
           />
-          <label>Preço Total:</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-          />
           <button type="submit" className={styles.enviarBtn}>
             Enviar Locação
           </button>

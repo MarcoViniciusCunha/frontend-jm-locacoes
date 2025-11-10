@@ -75,3 +75,17 @@ button:hover {
 .cancelBtn {
   background-color: #6c757d;
 }
+
+.backBtn {
+  background-color: #aaa;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.backBtn:hover {
+  background-color: #888;
+}

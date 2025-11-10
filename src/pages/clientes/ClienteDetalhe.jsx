@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
 import styles from "./ClienteDetalhe.module.css";
+import { FaArrowLeft } from "react-icons/fa";
 
 const ClienteDetalhe = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const ClienteDetalhe = () => {
     "cnh",
     "email",
     "telefone",
-    "endereco",
+    "cep",
     "data_nasc",
   ];
 
@@ -77,6 +78,9 @@ const ClienteDetalhe = () => {
     setEditing(false);
     await fetchCliente();
   };
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   if (loading) return <p>Carregando...</p>;
   if (error) return <p>{error}</p>;
@@ -102,6 +106,10 @@ const ClienteDetalhe = () => {
       <div className={styles.buttonGroup}>
         {!editing ? (
           <>
+            <button className={styles.backBtn} onClick={handleBack}>
+              <FaArrowLeft style={{ marginRight: "6px" }} />
+              Voltar
+            </button>
             <button className={styles.editBtn} onClick={handleEditClick}>
               Editar
             </button>
@@ -111,6 +119,9 @@ const ClienteDetalhe = () => {
           </>
         ) : (
           <>
+            <button className={styles.backBtn} onClick={handleBack}>
+              Voltar
+            </button>
             <button className={styles.saveBtn} onClick={handleSave}>
               Salvar
             </button>

@@ -1,0 +1,199 @@
+/* ComponentVeiculos.module.css */
+
+/* 🎨 Paleta */
+:root {
+  --primary: #0748a8;
+  --primary-hover: #0a66e3;
+  --danger: #e63946;
+  --success: #06d6a0;
+  --neutral: #f4f5f7;
+  --card-bg: #ffffff;
+  --text-dark: #2c3e50;
+  --border: #dcdfe6;
+}
+
+/* 📦 Container geral */
+.container {
+  background-color: var(--neutral);
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  color: var(--text-dark);
+}
+
+/* 🧾 Formulário de cadastro */
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+form button {
+  grid-column: 1 / -1;
+  padding: 0.8rem 1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+form button:hover {
+  background: var(--primary-hover);
+}
+
+/* 🔍 Filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  background: var(--card-bg);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  justify-content: center;
+}
+
+.filtros input,
+.filtros select {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.filtros input:focus,
+.filtros select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* 🔘 Botão de busca centralizado */
+.containerBotao {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btnBuscar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btnBuscar:hover {
+  background: var(--primary-hover);
+}
+
+.iconBuscar {
+  font-size: 1.1rem;
+}
+
+.filtros button:hover {
+  background: var(--primary-hover);
+}
+
+/* 🚗 Lista de veículos */
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.08);
+}
+
+.lista li {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.lista li:hover {
+  background: #f8f9fb;
+}
+
+.lista li span {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.lista li button {
+  padding: 0.5rem 0.8rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lista li button:hover {
+  background: var(--primary-hover);
+}
+
+.lista p {
+  text-align: center;
+  padding: 1rem;
+  font-style: italic;
+  color: #777;
+}
+
+@media (max-width: 768px) {
+  .filtros {
+    flex-direction: column;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  .lista li {
+    grid-template-columns: 1fr 1fr;
+  }
+}

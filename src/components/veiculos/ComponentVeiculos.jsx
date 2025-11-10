@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { VeiculosService } from "../../services/VeiculosService";
 import { Link } from "react-router-dom";
-import styles from "./EntidadeVeiculos.module.css";
+import { FaSearch } from "react-icons/fa";
+import styles from "./ComponentVeiculos.module.css";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [itens, setItens] = useState([]);
@@ -85,6 +86,23 @@ export default function ComponentVeiculos({ action, service, label }) {
     }
   };
 
+  const buscarModelosPorMarca = async (idMarca) => {
+    try {
+      if (!idMarca) {
+        // Se o usuário desmarcar, volta a listar todos os modelos
+        const res = await VeiculosService.modelos.lista();
+        setModelos(res.data || []);
+        return;
+      }
+
+      const res = await VeiculosService.modelos.buscarPorMarca(idMarca);
+      setModelos(res.data || []);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao carregar modelos da marca selecionada.");
+    }
+  };
+
   // Adiciona novo veículo
   const handleAdd = async () => {
     try {
@@ -112,7 +130,17 @@ export default function ComponentVeiculos({ action, service, label }) {
         <form>
           {[
             { key: "placa", label: "Placa" },
-            { key: "idMarca", label: "Marca", type: "select", options: marcas },
+            {
+              key: "idMarca",
+              label: "Marca",
+              type: "select",
+              options: marcas,
+              onChange: async (e) => {
+                const idMarca = e.target.value;
+                setNovoItem({ ...novoItem, idMarca, idModelo: "" });
+                await buscarModelosPorMarca(idMarca); // 🔥 busca modelos da marca escolhida
+              },
+            },
             {
               key: "idModelo",
               label: "Modelo",
@@ -146,8 +174,14 @@ export default function ComponentVeiculos({ action, service, label }) {
               <select
                 key={field.key}
                 value={novoItem[field.key] || ""}
-                onChange={(e) =>
-                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
+                onChange={
+                  field.onChange
+                    ? field.onChange // 👈 usa a função personalizada se existir (como no caso da marca)
+                    : (e) =>
+                        setNovoItem({
+                          ...novoItem,
+                          [field.key]: e.target.value,
+                        })
                 }
               >
                 <option value="">Selecione {field.label}</option>
@@ -205,9 +239,11 @@ export default function ComponentVeiculos({ action, service, label }) {
 
             <select
               value={filtros.idMarca || ""}
-              onChange={(e) =>
-                setFiltros({ ...filtros, idMarca: e.target.value })
-              }
+              onChange={async (e) => {
+                const idMarca = e.target.value;
+                setFiltros({ ...filtros, idMarca, idModelo: "" });
+                await buscarModelosPorMarca(idMarca);
+              }}
             >
               <option value="">Marca</option>
               {marcas.map((m) => (
@@ -267,7 +303,9 @@ export default function ComponentVeiculos({ action, service, label }) {
               ))}
             </select>
 
-            <button onClick={buscarVeiculos}>Buscar</button>
+            <button className={styles.btnBuscar} onClick={buscarVeiculos}>
+              <FaSearch className={styles.iconBuscar} /> Buscar
+            </button>
           </div>
 
           <ul className={styles.lista}>
