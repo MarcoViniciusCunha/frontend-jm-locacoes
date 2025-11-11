@@ -184,6 +184,25 @@ button:hover,
   font-weight: 600;
 }
 
+.campoCpf {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.listaClientesWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 /* 📱 Responsivo */
 @media (max-width: 600px) {
   .veiculoDetalhes {

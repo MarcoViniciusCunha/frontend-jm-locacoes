@@ -3,10 +3,12 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { VeiculosService } from "../../services/VeiculosService";
 import { LocacoesService } from "../../services/LocacoesService";
 import styles from "./VeiculoDetalhes.module.css";
+import ClientesList from "../../components/clientes/ClientesList";
 
 export default function VeiculoDetalhes() {
   const { placa } = useParams();
   const navigate = useNavigate();
+  const [showCustomerList, setShowCustomerList] = useState(false);
 
   const [veiculo, setVeiculo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -216,9 +218,20 @@ export default function VeiculoDetalhes() {
           ← Voltar
         </Link>
 
+        {/* Botão de cadastrar locação */}
         <button
-          onClick={() => setMostrarFormulario(!mostrarFormulario)}
-          className={styles.locarBtn}
+          onClick={() => {
+            if (!mostrarEdicao) {
+              setMostrarFormulario(!mostrarFormulario);
+            } else {
+              setMostrarEdicao(false); // fecha edição se estiver aberta
+              setMostrarFormulario(true); // abre locação
+            }
+          }}
+          className={`${styles.locarBtn} ${
+            mostrarEdicao ? styles.btnDesabilitado : ""
+          }`}
+          disabled={mostrarEdicao}
         >
           {mostrarFormulario ? "Cancelar Locação" : "Cadastrar Locação"}
         </button>
@@ -227,8 +240,16 @@ export default function VeiculoDetalhes() {
           {veiculo.status === "MANUTENCAO" ? "Retornar" : "Manutenção"}
         </button>
 
+        {/* Botão de editar */}
         <button
-          onClick={() => setMostrarEdicao(!mostrarEdicao)}
+          onClick={() => {
+            if (!mostrarFormulario) {
+              setMostrarEdicao(!mostrarEdicao);
+            } else {
+              setMostrarFormulario(false); // fecha locação se estiver aberta
+              setMostrarEdicao(true); // abre edição
+            }
+          }}
           className={styles.editarBtn}
         >
           {mostrarEdicao ? "Cancelar Edição" : "Editar"}
@@ -243,12 +264,29 @@ export default function VeiculoDetalhes() {
         <form className={styles.formulario} onSubmit={handleSubmit}>
           <h3>Nova Locação</h3>
           <label>CPF do Cliente:</label>
-          <input
-            type="text"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            required
-          />
+          <div className={styles.campoCpf}>
+            <input
+              type="text"
+              value={cpf ? `${cpf}` : "Selecione o cliente..."}
+              readOnly
+              onFocus={() => setShowCustomerList(true)}
+              onBlur={() => setTimeout(() => setShowCustomerList(false), 200)}
+              className={cpf ? styles.inputSelecionado : ""}
+              required
+            />
+
+            {showCustomerList && (
+              <div className={styles.listaClientesWrapper}>
+                <ClientesList
+                  onSelect={(cliente) => {
+                    setCpf(cliente.cpf);
+                    setShowCustomerList(false);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
           <label>Data de Início:</label>
           <input
             type="date"

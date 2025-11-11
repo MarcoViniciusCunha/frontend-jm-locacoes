@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
-import { IoMdAdd } from "react-icons/io";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoMdAdd, IoMdArrowRoundBack } from "react-icons/io";
+import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./Clientes.module.css";
 
 const Clientes = () => {
@@ -11,16 +11,6 @@ const Clientes = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [newCustomer, setNewCustomer] = useState({
-    nome: "",
-    cpf: "",
-    cnh: "",
-    email: "",
-    telefone: "",
-    cep: "",
-    numero: "",
-    data_nasc: "",
-  });
 
   useEffect(() => {
     listaItens();
@@ -49,11 +39,7 @@ const Clientes = () => {
       setCustomers(res.data);
     } catch (err) {
       console.error(err);
-      if (err.response?.status === 404) {
-        alert(err.response.data.message || "Nenhum cliente encontrado.");
-      } else {
-        alert("Erro ao buscar cliente.");
-      }
+      alert("Erro ao buscar cliente.");
       listaItens();
     } finally {
       setName("");
@@ -61,22 +47,11 @@ const Clientes = () => {
     }
   };
 
-  const handleAddCustomer = async (e) => {
-    e.preventDefault();
+  const handleAddCustomer = async (data) => {
     try {
-      await ClientesService.add(newCustomer);
+      await ClientesService.add(data);
       alert("Cliente cadastrado com sucesso!");
       setShowForm(false);
-      setNewCustomer({
-        nome: "",
-        cpf: "",
-        cnh: "",
-        email: "",
-        telefone: "",
-        cep: "",
-        numero: "",
-        data_nasc: "",
-      });
       listaItens();
     } catch (err) {
       console.error(err);
@@ -147,88 +122,14 @@ const Clientes = () => {
         </ul>
       )}
 
-      {/* 🔹 Formulário */}
+      {/* 🔹 Formulário Novo Cliente */}
       {showForm && (
         <div className={styles.formWrapper}>
           <h2>Novo Cliente</h2>
-          <form onSubmit={handleAddCustomer} className={styles.formAdd}>
-            <input
-              type="text"
-              placeholder="Nome"
-              value={newCustomer.nome}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, nome: e.target.value })
-              }
-              required
-            />
-            <input
-              type="text"
-              placeholder="CPF"
-              value={newCustomer.cpf}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, cpf: e.target.value })
-              }
-              required
-            />
-            <input
-              type="text"
-              placeholder="CNH"
-              value={newCustomer.cnh}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, cnh: e.target.value })
-              }
-            />
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={newCustomer.email}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, email: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Telefone"
-              value={newCustomer.telefone}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, telefone: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="CEP"
-              value={newCustomer.cep}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, cep: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Número"
-              value={newCustomer.numero}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, numero: e.target.value })
-              }
-            />
-            <input
-              type="date"
-              value={newCustomer.data_nasc}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, data_nasc: e.target.value })
-              }
-            />
-
-            <div className={styles.modalActions}>
-              <button type="submit">Salvar</button>
-              <button
-                type="button"
-                className={styles.cancelBtn}
-                onClick={() => setShowForm(false)}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
+          <ClienteForm
+            onSubmit={handleAddCustomer}
+            onCancel={() => setShowForm(false)}
+          />
         </div>
       )}
     </div>

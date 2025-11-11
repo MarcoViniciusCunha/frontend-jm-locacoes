@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
+import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./ClienteDetalhe.module.css";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -11,16 +12,6 @@ const ClienteDetalhe = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
-
-  const camposEditaveis = [
-    "nome",
-    "cpf",
-    "cnh",
-    "email",
-    "telefone",
-    "cep",
-    "data_nasc",
-  ];
 
   const fetchCliente = async () => {
     try {
@@ -38,25 +29,14 @@ const ClienteDetalhe = () => {
     fetchCliente();
   }, [id]);
 
-  const handleChange = (e) => {
-    setCustomer({
-      ...customer,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleEditClick = () => {
-    setEditing(true);
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (data) => {
     try {
-      await ClientesService.editar(id, customer);
+      await ClientesService.editar(id, data);
       await fetchCliente();
       setEditing(false);
       alert("Cliente atualizado com sucesso!");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert(err.message);
     }
   };
@@ -74,43 +54,28 @@ const ClienteDetalhe = () => {
     }
   };
 
-  const clickCancel = async () => {
-    setEditing(false);
-    await fetchCliente();
-  };
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   if (loading) return <p>Carregando...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.container}>
       <h1>{customer.nome}</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
-        {camposEditaveis.map((key) => (
-          <div className={styles.formGroup} key={key}>
-            <label>{key}</label>
-            <input
-              type={key === "data_nasc" ? "date" : "text"}
-              name={key}
-              value={customer[key]}
-              disabled={!editing}
-              onChange={handleChange}
-            />
-          </div>
-        ))}
-      </form>
+
+      <ClienteForm
+        initialData={customer}
+        onSubmit={handleSave}
+        onCancel={() => setEditing(false)}
+        disabled={!editing}
+      />
 
       <div className={styles.buttonGroup}>
         {!editing ? (
           <>
-            <button className={styles.backBtn} onClick={handleBack}>
+            <button className={styles.backBtn} onClick={() => navigate(-1)}>
               <FaArrowLeft style={{ marginRight: "6px" }} />
               Voltar
             </button>
-            <button className={styles.editBtn} onClick={handleEditClick}>
+            <button className={styles.editBtn} onClick={() => setEditing(true)}>
               Editar
             </button>
             <button className={styles.deleteBtn} onClick={handleDelete}>
@@ -119,13 +84,10 @@ const ClienteDetalhe = () => {
           </>
         ) : (
           <>
-            <button className={styles.backBtn} onClick={handleBack}>
-              Voltar
-            </button>
-            <button className={styles.saveBtn} onClick={handleSave}>
-              Salvar
-            </button>
-            <button className={styles.cancelBtn} onClick={clickCancel}>
+            <button
+              className={styles.cancelBtn}
+              onClick={() => setEditing(false)}
+            >
               Cancelar
             </button>
           </>
