@@ -1,13 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { VeiculosService } from "../../services/VeiculosService";
 import { LocacoesService } from "../../services/LocacoesService";
 import styles from "./VeiculoDetalhes.module.css";
 import ClientesList from "../../components/clientes/ClientesList";
+import {
+  FiArrowLeft,
+  FiEdit,
+  FiTrash2,
+  FiTool,
+  FiClipboard,
+  FiSend,
+} from "react-icons/fi";
 
 export default function VeiculoDetalhes() {
   const { placa } = useParams();
   const navigate = useNavigate();
+  const customerRef = useRef(null);
   const [showCustomerList, setShowCustomerList] = useState(false);
 
   const [veiculo, setVeiculo] = useState(null);
@@ -44,6 +53,19 @@ export default function VeiculoDetalhes() {
     carregarVeiculo();
     carregarListas();
   }, [placa]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (customerRef.current && !customerRef.current.contains(event.target)) {
+        setShowCustomerList(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const carregarListas = async () => {
     try {
@@ -214,63 +236,74 @@ export default function VeiculoDetalhes() {
       </p>
 
       <div className={styles.botoes}>
-        <Link to="/veiculos" className={styles.voltarBtn}>
-          ← Voltar
+        <Link
+          to="/veiculos"
+          className={`${styles.btnAcao} ${styles.voltarBtn}`}
+        >
+          <FiArrowLeft /> Voltar
         </Link>
 
-        {/* Botão de cadastrar locação */}
         <button
           onClick={() => {
             if (!mostrarEdicao) {
               setMostrarFormulario(!mostrarFormulario);
             } else {
-              setMostrarEdicao(false); // fecha edição se estiver aberta
-              setMostrarFormulario(true); // abre locação
+              setMostrarEdicao(false);
+              setMostrarFormulario(true);
             }
           }}
-          className={`${styles.locarBtn} ${
+          className={`${styles.btnAcao} ${styles.locarBtn} ${
             mostrarEdicao ? styles.btnDesabilitado : ""
           }`}
           disabled={mostrarEdicao}
         >
+          <FiClipboard />
           {mostrarFormulario ? "Cancelar Locação" : "Cadastrar Locação"}
         </button>
 
-        <button onClick={handleManutencao} className={styles.manutencaoBtn}>
+        <button
+          onClick={handleManutencao}
+          className={`${styles.btnAcao} ${styles.manutencaoBtn}`}
+        >
+          <FiTool />
           {veiculo.status === "MANUTENCAO" ? "Retornar" : "Manutenção"}
         </button>
 
-        {/* Botão de editar */}
         <button
           onClick={() => {
             if (!mostrarFormulario) {
               setMostrarEdicao(!mostrarEdicao);
             } else {
-              setMostrarFormulario(false); // fecha locação se estiver aberta
-              setMostrarEdicao(true); // abre edição
+              setMostrarFormulario(false);
+              setMostrarEdicao(true);
             }
           }}
-          className={styles.editarBtn}
+          className={`${styles.btnAcao} ${styles.editarBtn}`}
         >
-          {mostrarEdicao ? "Cancelar Edição" : "Editar"}
+          <FiEdit />
+          {mostrarEdicao ? "Cancelar" : "Editar"}
         </button>
 
-        <button onClick={handleExcluir} className={styles.excluirBtn}>
-          Excluir
+        <button
+          onClick={handleExcluir}
+          className={`${styles.btnAcao} ${styles.excluirBtn}`}
+        >
+          <FiTrash2 /> Excluir
         </button>
       </div>
 
       {mostrarFormulario && (
         <form className={styles.formulario} onSubmit={handleSubmit}>
-          <h3>Nova Locação</h3>
+          <h3>
+            <FiClipboard /> Nova Locação
+          </h3>
           <label>CPF do Cliente:</label>
-          <div className={styles.campoCpf}>
+          <div ref={customerRef} className={styles.campoCpf}>
             <input
               type="text"
               value={cpf ? `${cpf}` : "Selecione o cliente..."}
               readOnly
               onFocus={() => setShowCustomerList(true)}
-              onBlur={() => setTimeout(() => setShowCustomerList(false), 200)}
               className={cpf ? styles.inputSelecionado : ""}
               required
             />
@@ -292,6 +325,7 @@ export default function VeiculoDetalhes() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            onFocus={(e) => e.target.showPicker?.()}
             required
           />
           <label>Data de Término:</label>
@@ -299,17 +333,20 @@ export default function VeiculoDetalhes() {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            onFocus={(e) => e.target.showPicker?.()}
             required
           />
           <button type="submit" className={styles.enviarBtn}>
-            Enviar Locação
+            <FiSend /> Enviar Locação
           </button>
         </form>
       )}
 
       {mostrarEdicao && (
         <form className={styles.formulario} onSubmit={handleEditar}>
-          <h3>Editar Veículo</h3>
+          <h3>
+            <FiEdit /> Editar Veículo
+          </h3>
 
           <label>Marca:</label>
           <select
@@ -408,7 +445,7 @@ export default function VeiculoDetalhes() {
           />
 
           <button type="submit" className={styles.enviarBtn}>
-            Salvar Alterações
+            <FiSend /> Salvar Alterações
           </button>
         </form>
       )}

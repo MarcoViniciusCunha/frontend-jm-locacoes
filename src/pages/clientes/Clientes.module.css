@@ -11,6 +11,33 @@
   --border: #dcdfe6;
 }
 
+/* 🧭 Título da Página */
+.titleBar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.titleBar h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.titleBar h2 svg {
+  color: var(--primary);
+}
+
+/* Ícones dentro das linhas */
+.inlineIcon {
+  margin-right: 6px;
+  color: var(--primary);
+  vertical-align: middle;
+}
+
 .container {
   max-width: 850px;
   margin: 60px auto;

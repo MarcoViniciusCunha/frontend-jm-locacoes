@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import { Link } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiUsers, FiUserPlus, FiFileText } from "react-icons/fi";
 import { IoMdAdd, IoMdArrowRoundBack } from "react-icons/io";
 import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./Clientes.module.css";
@@ -61,6 +61,13 @@ const Clientes = () => {
 
   return (
     <div className={styles.container}>
+      {/* 🔹 Título */}
+      <div className={styles.titleBar}>
+        <h2>
+          <FiUsers /> Gestão de Clientes
+        </h2>
+      </div>
+
       {/* 🔹 Topo */}
       <div className={styles.topBar}>
         {!showForm ? (
@@ -114,7 +121,9 @@ const Clientes = () => {
                 <span className={styles.nome}>{item.nome}</span>
                 <span className={styles.cpf}>{item.cpf}</span>
                 <Link to={`/clientes/${item.id}`}>
-                  <button className={styles.profileBtn}>Perfil</button>
+                  <button className={styles.profileBtn}>
+                    <FiFileText size={15} /> Perfil
+                  </button>
                 </Link>
               </li>
             ))
@@ -125,7 +134,9 @@ const Clientes = () => {
       {/* 🔹 Formulário Novo Cliente */}
       {showForm && (
         <div className={styles.formWrapper}>
-          <h2>Novo Cliente</h2>
+          <h2>
+            <FiUserPlus /> Novo Cliente
+          </h2>
           <ClienteForm
             onSubmit={handleAddCustomer}
             onCancel={() => setShowForm(false)}

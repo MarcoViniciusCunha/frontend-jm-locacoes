@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { LocacoesService } from "../../services/LocacoesService";
 import ClientesList from "../../components/clientes/ClientesList";
 import styles from "./locacoes.module.css";
+import {
+  FiSearch,
+  FiX,
+  FiEye,
+  FiCornerDownLeft,
+  FiTrash2,
+} from "react-icons/fi";
+import { FaClock, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
 const Locacoes = () => {
   const [locacoes, setLocacoes] = useState([]);
@@ -16,7 +24,7 @@ const Locacoes = () => {
 
   const navigate = useNavigate();
 
-  const carregarLocacoes = async (params = {}, page = 0, size = 10) => {
+  const carregarLocacoes = async (params = {}, page = 0, size = 12) => {
     try {
       setLoading(true);
 
@@ -134,7 +142,7 @@ const Locacoes = () => {
         </div>
 
         <button type="submit" className={styles.filterButton}>
-          Filtrar
+          <FiSearch /> Buscar
         </button>
       </form>
 
@@ -148,7 +156,7 @@ const Locacoes = () => {
               className={styles.closeBtn}
               onClick={() => setShowClientes(false)}
             >
-              Fechar
+              <FiX /> Fechar
             </button>
           </div>
         </div>
@@ -171,14 +179,27 @@ const Locacoes = () => {
                 <p>
                   <strong>Período:</strong> {loc.startDate} → {loc.endDate}
                 </p>
-                <p>
+                <p className={`${styles.status}`}>
                   <strong>Status:</strong>{" "}
-                  {loc.status === "DEVOLVIDA"
-                    ? "Devolvida ✅"
-                    : loc.status === "ATRASADA"
-                    ? "Atrasada ⏰"
-                    : "Ativa 🚗"}
+                  {loc.status === "DEVOLVIDA" ? (
+                    <span
+                      className={`${styles.statusValue} ${styles.devolvida}`}
+                    >
+                      <FaCheckCircle /> Devolvida
+                    </span>
+                  ) : loc.status === "ATRASADA" ? (
+                    <span
+                      className={`${styles.statusValue} ${styles.atrasada}`}
+                    >
+                      <FaExclamationCircle /> Atrasada
+                    </span>
+                  ) : (
+                    <span className={`${styles.statusValue} ${styles.ativa}`}>
+                      <FaClock /> Ativa
+                    </span>
+                  )}
                 </p>
+
                 <p className={styles.price}>
                   <strong>Preço:</strong> R$ {loc.price?.toFixed(2)}
                 </p>
@@ -188,21 +209,21 @@ const Locacoes = () => {
                     className={`${styles.button} ${styles.details}`}
                     onClick={() => navigate(`/locacoes/${loc.id}`)}
                   >
-                    Ver detalhes
+                    <FiEye /> Ver detalhes
                   </button>
                   {!loc.returned && (
                     <button
                       className={`${styles.button} ${styles.devolver}`}
                       onClick={() => handleDevolver(loc.id)}
                     >
-                      Devolver
+                      <FiCornerDownLeft /> Devolver
                     </button>
                   )}
                   <button
                     className={`${styles.button} ${styles.excluir}`}
                     onClick={() => handleExcluir(loc.id)}
                   >
-                    Excluir
+                    <FiTrash2 /> Excluir
                   </button>
                 </div>
               </div>
@@ -210,22 +231,80 @@ const Locacoes = () => {
           </div>
 
           {/* 🔹 Paginação */}
-          {totalPaginas >= 1 && (
+          {totalPaginas > 1 && (
             <div className={styles.pagination}>
               <button
                 onClick={handlePaginaAnterior}
                 disabled={paginaAtual === 0}
+                className={styles.pageBtn}
               >
                 ← Anterior
               </button>
 
-              <span>
-                Página {paginaAtual + 1} de {totalPaginas}
-              </span>
+              {/* Paginação com limite de botões */}
+              {(() => {
+                const maxButtons = 5;
+                const pages = [];
+
+                let startPage = Math.max(
+                  0,
+                  paginaAtual - Math.floor(maxButtons / 2)
+                );
+                let endPage = startPage + maxButtons - 1;
+
+                if (endPage >= totalPaginas) {
+                  endPage = totalPaginas - 1;
+                  startPage = Math.max(0, endPage - maxButtons + 1);
+                }
+
+                if (startPage > 0) {
+                  pages.push(
+                    <button
+                      key="first"
+                      className={styles.pageBtn}
+                      onClick={() => carregarLocacoes(filtro, 0)}
+                    >
+                      1
+                    </button>
+                  );
+                  if (startPage > 1) pages.push(<span key="dots1">...</span>);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      className={`${styles.pageBtn} ${
+                        i === paginaAtual ? styles.activePage : ""
+                      }`}
+                      onClick={() => carregarLocacoes(filtro, i)}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                }
+
+                if (endPage < totalPaginas - 1) {
+                  if (endPage < totalPaginas - 2)
+                    pages.push(<span key="dots2">...</span>);
+                  pages.push(
+                    <button
+                      key="last"
+                      className={styles.pageBtn}
+                      onClick={() => carregarLocacoes(filtro, totalPaginas - 1)}
+                    >
+                      {totalPaginas}
+                    </button>
+                  );
+                }
+
+                return pages;
+              })()}
 
               <button
                 onClick={handleProximaPagina}
                 disabled={paginaAtual + 1 === totalPaginas}
+                className={styles.pageBtn}
               >
                 Próxima →
               </button>

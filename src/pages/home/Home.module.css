@@ -1,0 +1,157 @@
+:root {
+  --primary: #12add6;
+  --primary-hover: #35c2e9;
+  --danger: #e63946;
+  --success: #06d6a0;
+  --neutral: #f5f6f7;
+  --card-bg: #ffffff;
+  --text-dark: #2c3e50;
+  --border: #e1e4e8;
+}
+
+/* ======================== */
+/* Layout principal */
+/* ======================== */
+
+.homeMain {
+  min-height: calc(100vh - 60px); /* respeita o espaço do navbar */
+  background-color: var(--neutral);
+  display: flex;
+  justify-content: center;
+  padding: 3rem 2rem 2rem;
+}
+
+.dashboardContainer {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.dashboardContainer h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+/* ======================== */
+/* Grid dos cards */
+/* ======================== */
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ======================== */
+/* Cards */
+/* ======================== */
+
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.card p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  word-wrap: break-word;
+}
+
+.card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card h3 svg {
+  color: black;
+  flex-shrink: 0;
+}
+
+/* ======================== */
+/* Cores específicas (sutil) */
+/* ======================== */
+
+.totalVeiculos p {
+  color: var(--primary);
+}
+
+.totalClientes p {
+  color: var(--success);
+}
+
+.reservas p {
+  color: var(--primary-hover);
+}
+
+.manutencao p {
+  color: var(--danger);
+}
+
+.faturamento p {
+  color: var(--text-dark);
+}
+
+.pendencias p {
+  color: var(--danger);
+}
+
+.proximaDevolucao p,
+.proximaLocacao p {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* ======================== */
+/* Responsividade */
+/* ======================== */
+
+@media (max-width: 768px) {
+  .dashboardContainer h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .card p {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .homeMain {
+    padding: 1.2rem;
+  }
+
+  .card h3 {
+    font-size: 0.95rem;
+  }
+
+  .card p {
+    font-size: 1rem;
+  }
+}

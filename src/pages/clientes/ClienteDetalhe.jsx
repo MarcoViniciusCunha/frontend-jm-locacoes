@@ -3,7 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
 import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./ClienteDetalhe.module.css";
-import { FaArrowLeft } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaEdit,
+  FaTrashAlt,
+  FaSave,
+  FaTimesCircle,
+  FaUserCircle,
+} from "react-icons/fa";
 
 const ClienteDetalhe = () => {
   const { id } = useParams();
@@ -59,7 +66,11 @@ const ClienteDetalhe = () => {
 
   return (
     <div className={styles.container}>
-      <h1>{customer.nome}</h1>
+      <div className={styles.titleBar}>
+        <h1>
+          <FaUserCircle /> {customer.nome}
+        </h1>
+      </div>
 
       <ClienteForm
         initialData={customer}
@@ -72,23 +83,28 @@ const ClienteDetalhe = () => {
         {!editing ? (
           <>
             <button className={styles.backBtn} onClick={() => navigate(-1)}>
-              <FaArrowLeft style={{ marginRight: "6px" }} />
-              Voltar
+              <FaArrowLeft /> Voltar
             </button>
             <button className={styles.editBtn} onClick={() => setEditing(true)}>
-              Editar
+              <FaEdit /> Editar
             </button>
             <button className={styles.deleteBtn} onClick={handleDelete}>
-              Excluir
+              <FaTrashAlt /> Excluir
             </button>
           </>
         ) : (
           <>
             <button
+              className={styles.saveBtn}
+              onClick={() => handleSave(customer)}
+            >
+              <FaSave /> Salvar
+            </button>
+            <button
               className={styles.cancelBtn}
               onClick={() => setEditing(false)}
             >
-              Cancelar
+              <FaTimesCircle /> Cancelar
             </button>
           </>
         )}
