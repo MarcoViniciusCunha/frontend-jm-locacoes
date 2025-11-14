@@ -84,7 +84,7 @@ const Home = () => {
   return (
     <main className={styles.homeMain}>
       <div className={styles.dashboardContainer}>
-        <h1>Dashboard Locação de Veículos</h1>
+        <h1>Dashboard JM Locações</h1>
 
         <div className={styles.cardsGrid}>
           <div className={`${styles.card} ${styles.totalVeiculos}`}>

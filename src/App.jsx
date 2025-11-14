@@ -18,7 +18,11 @@ import Clientes from "./pages/clientes/Clientes";
 import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
 import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
 import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
-import { useEffect } from "react";
+
+const token = localStorage.getItem("token");
+if (token) {
+  setAuthToken(token);
+}
 
 function Layout({ children }) {
   const location = useLocation();
@@ -34,14 +38,6 @@ function Layout({ children }) {
 }
 
 function App() {
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (token) {
-      setAuthToken(token);
-    }
-  }, [token]);
-
   return (
     <AuthProvider>
       <BrowserRouter>

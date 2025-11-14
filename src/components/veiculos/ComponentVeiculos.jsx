@@ -121,6 +121,32 @@ export default function ComponentVeiculos({ action, service, label }) {
     }
   };
 
+  const getLabel = (opt) => {
+    if (!opt) return "";
+
+    if (opt.company?.name && opt.validade) {
+      return `${opt.company.name} - válido até ${opt.validade}`;
+    }
+
+    return (
+      opt.nome ||
+      opt.company?.name ||
+      opt.descricao ||
+      opt.empresa ||
+      String(opt)
+    );
+  };
+
+  const limparFiltros = async () => {
+    setFiltros({});
+    // Resetar modelos ao padrão (todos)
+    const modelosRes = await VeiculosService.modelos.lista();
+    setModelos(modelosRes.data || []);
+
+    // Opcional: já lista tudo sem filtros
+    listarVeiculos();
+  };
+
   if (loading) return <p>Carregando...</p>;
 
   return (
@@ -176,7 +202,7 @@ export default function ComponentVeiculos({ action, service, label }) {
                 value={novoItem[field.key] || ""}
                 onChange={
                   field.onChange
-                    ? field.onChange // 👈 usa a função personalizada se existir (como no caso da marca)
+                    ? field.onChange
                     : (e) =>
                         setNovoItem({
                           ...novoItem,
@@ -188,7 +214,7 @@ export default function ComponentVeiculos({ action, service, label }) {
                 {field.options?.map((opt) =>
                   typeof opt === "object" ? (
                     <option key={opt.id} value={opt.id}>
-                      {opt.nome ?? opt.empresa}
+                      {getLabel(opt)}
                     </option>
                   ) : (
                     <option key={opt} value={opt}>
@@ -305,6 +331,13 @@ export default function ComponentVeiculos({ action, service, label }) {
 
             <button className={styles.btnBuscar} onClick={buscarVeiculos}>
               <FaSearch className={styles.iconBuscar} /> Buscar
+            </button>
+            <button
+              className={styles.btnLimpar}
+              onClick={limparFiltros}
+              type="button"
+            >
+              Limpar
             </button>
           </div>
 

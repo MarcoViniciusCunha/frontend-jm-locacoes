@@ -6,170 +6,197 @@ export default function CrudEntidade({ action, service, label, fields }) {
   const [novoItem, setNovoItem] = useState({});
   const [editItemId, setEditItemId] = useState(null);
   const [editItemData, setEditItemData] = useState({});
+  const [selectOptions, setSelectOptions] = useState({});
 
-  useEffect(() => {
-    if (action !== "Cadastrar") listaItens();
-  }, [action, service]);
-
-  const listaItens = async () => {
+  // Carrega lista
+  const lista = async () => {
     try {
       const res = await service.lista();
       setItens(res.data);
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao listar ${label}`);
+    } catch {
+      alert("Erro ao listar " + label);
     }
   };
 
-  const handleAdd = async () => {
-    try {
-      await service.add(novoItem);
-      alert("Cadastro realizado com sucesso!");
-      setNovoItem({});
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao adicionar ${label}.`);
-    }
-  };
+  useEffect(() => {
+    if (action === "Lista") lista();
+  }, [action, service]);
 
-  const handleEdit = async (id) => {
-    try {
-      await service.editar(id, editItemData);
-      alert("Edição concluída com sucesso!");
-      setEditItemId(null);
-      setEditItemData({});
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao editar ${label}.`);
-    }
-  };
+  // Carrega selects dinâmicos
+  useEffect(() => {
+    const load = async () => {
+      const opts = {};
 
-  const handleExcluir = async (id) => {
-    if (!window.confirm(`Confirmar exclusão de ${label}?`)) return;
-    try {
-      await service.excluir(id);
-      alert("Exclusão bem-sucedida!");
-      listaItens();
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao excluir ${label}.`);
+      for (const f of fields) {
+        if (f.type === "select" && f.fetch) {
+          const res = await f.fetch();
+          opts[f.key] = res.data;
+        }
+      }
+
+      setSelectOptions(opts);
+    };
+
+    load();
+  }, [fields]);
+
+  const renderField = (data, setData, field) => {
+    // select
+    if (field.type === "select") {
+      const options = field.options || selectOptions[field.key] || [];
+      return (
+        <select
+          value={data[field.key] || ""}
+          onChange={(e) =>
+            setData({ ...data, [field.key]: Number(e.target.value) })
+          }
+        >
+          <option value="">Selecione...</option>
+          {options.map((opt) => (
+            <option key={opt.id} value={opt.id}>
+              {opt[field.optionLabel || "name"]}
+            </option>
+          ))}
+        </select>
+      );
     }
+
+    // date
+    if (field.key === "validade") {
+      return (
+        <input
+          type="date"
+          value={data[field.key] || ""}
+          onChange={(e) => setData({ ...data, [field.key]: e.target.value })}
+        />
+      );
+    }
+
+    // default text
+    return (
+      <input
+        type="text"
+        placeholder={field.label}
+        value={data[field.key] || ""}
+        onChange={(e) => setData({ ...data, [field.key]: e.target.value })}
+      />
+    );
   };
 
   return (
     <div className={styles.container}>
+      {/* CADASTRAR */}
       {action === "Cadastrar" && (
-        <form>
-          {fields.map((field) =>
-            field.key === "validade" ? (
-              <input
-                key={field.key}
-                type="date"
-                placeholder={field.label}
-                value={novoItem[field.key] || ""}
-                onChange={(e) =>
-                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
-                }
-              />
-            ) : (
-              <input
-                key={field.key}
-                type="text"
-                placeholder={field.label}
-                value={novoItem[field.key] || ""}
-                onChange={(e) =>
-                  setNovoItem({ ...novoItem, [field.key]: e.target.value })
-                }
-              />
-            )
-          )}
-          <button type="button" onClick={handleAdd}>
+        <form className={styles.form}>
+          {fields.map((f) => renderField(novoItem, setNovoItem, f))}
+
+          <button
+            type="button"
+            onClick={async () => {
+              await service.add(novoItem);
+              alert("Criado!");
+              setNovoItem({});
+              lista();
+            }}
+          >
             Salvar
           </button>
         </form>
       )}
 
+      {/* LISTA */}
       {action === "Lista" && (
-        <ul>
-          {itens.map((item) => (
-            <li key={item.id}>
-              {fields.map((f) => (
-                <span key={f.key}>{item[f.key]} </span>
-              ))}
-            </li>
-          ))}
-        </ul>
-      )}
+        <ul className={styles.lista}>
+          {itens.map((item) => {
+            const isEdit = editItemId === item.id;
 
-      {action === "Editar" && (
-        <ul>
-          {itens.map((item) => (
-            <li key={item.id}>
-              {editItemId === item.id ? (
-                <>
-                  {fields.map((f) => (
-                    <input
-                      key={f.key}
-                      type="text"
-                      value={editItemData[f.key] || ""}
-                      onChange={(e) =>
-                        setEditItemData({
-                          ...editItemData,
-                          [f.key]: e.target.value,
-                        })
-                      }
-                    />
-                  ))}
-                  <button onClick={() => handleEdit(item.id)}>Salvar</button>
-                  <button
-                    className={styles.cancelar}
-                    onClick={() => setEditItemId(null)}
-                  >
-                    Cancelar
-                  </button>
-                </>
-              ) : (
-                <>
-                  {fields.map((f) => (
-                    <span key={f.key}>{item[f.key]} </span>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setEditItemId(item.id);
-                      setEditItemData(
-                        fields.reduce((acc, f) => {
-                          acc[f.key] = item[f.key];
-                          return acc;
-                        }, {})
-                      );
-                    }}
-                  >
-                    Editar
-                  </button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+            return (
+              <li key={item.id} className={isEdit ? styles.editando : ""}>
+                {isEdit ? (
+                  <>
+                    <div className={styles.itemInfo}>
+                      {fields.map((f) =>
+                        renderField(editItemData, setEditItemData, f)
+                      )}
+                    </div>
 
-      {action === "Excluir" && (
-        <ul>
-          {itens.map((item) => (
-            <li key={item.id}>
-              {fields.map((f) => (
-                <span key={f.key}>{item[f.key]} </span>
-              ))}
-              <button
-                className={styles.excluir}
-                onClick={() => handleExcluir(item.id)}
-              >
-                Excluir
-              </button>
-            </li>
-          ))}
+                    <div className={styles.itemActions}>
+                      <button
+                        onClick={async () => {
+                          await service.editar(item.id, editItemData);
+                          alert("Atualizado!");
+                          setEditItemId(null);
+                          lista();
+                        }}
+                      >
+                        Salvar
+                      </button>
+
+                      <button
+                        className={styles.cancelar}
+                        onClick={() => setEditItemId(null)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.itemInfo}>
+                      {label === "seguro" ? (
+                        <>
+                          <span>{item.company?.name}</span>
+                          <span>
+                            <strong>Validade:</strong>{" "}
+                            {item.validade
+                              ? new Date(item.validade).toLocaleDateString(
+                                  "pt-BR"
+                                )
+                              : "—"}
+                          </span>
+                          <span>
+                            <strong>Valor:</strong> {item.valor ?? "—"}
+                          </span>
+                        </>
+                      ) : (
+                        fields.map((f) => (
+                          <span key={f.key}>
+                            {f.key === "companyId"
+                              ? item.company?.name
+                              : item[f.key]}
+                          </span>
+                        ))
+                      )}
+                    </div>
+
+                    <div className={styles.itemActions}>
+                      <button
+                        onClick={() => {
+                          setEditItemId(item.id);
+                          setEditItemData({
+                            ...item,
+                            companyId: item.company?.id,
+                          });
+                        }}
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={async () => {
+                          await service.excluir(item.id);
+                          lista();
+                        }}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

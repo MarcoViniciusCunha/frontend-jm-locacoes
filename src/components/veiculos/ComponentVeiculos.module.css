@@ -127,7 +127,22 @@ form button:hover {
   font-size: 1.1rem;
 }
 
-.filtros button:hover {
+.btnLimpar {
+  background: #ccc;
+  color: #333;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btnLimpar:hover {
+  background: #b3b3b3;
+}
+
+.filtros button:not(.btnLimpar):hover {
   background: var(--primary-hover);
 }
 
@@ -161,7 +176,7 @@ form button:hover {
   font-weight: 500;
 }
 
-.lista li button {
+.lista li > button {
   padding: 0.5rem 0.8rem;
   background: var(--primary);
   color: white;

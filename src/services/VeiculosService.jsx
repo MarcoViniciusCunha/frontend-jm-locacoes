@@ -18,7 +18,7 @@ export const VeiculosService = {
   modelos: {
     lista: async () => api.get("/model"),
     add: async (data) => api.post("/model", data),
-    editar: async (id, data) => api.put(`/model/${id}`, data),
+    editar: async (id, data) => api.patch(`/model/${id}`, data),
     excluir: async (id) => api.delete(`/model/${id}`),
     buscarPorMarca: async (id) => api.get(`/brand/${id}/models`),
   },
@@ -28,6 +28,14 @@ export const VeiculosService = {
     add: async (data) => api.post("/insurance", data),
     editar: async (id, data) => api.patch(`/insurance/${id}`, data),
     excluir: async (id) => api.delete(`/insurance/${id}`),
+  },
+
+  seguradoras: {
+    lista: async () => api.get("/companies"),
+    add: async (data) => api.post("/companies", data),
+    editar: async (id, data) => api.put(`/companies/${id}`, data),
+    excluir: async (id) => api.delete(`/companies/${id}`),
+    buscarPorNome: async (nome) => api.get(`/companies/${nome}`),
   },
 
   categorias: {

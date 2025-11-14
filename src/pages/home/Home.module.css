@@ -54,13 +54,15 @@
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
   cursor: default;
 }
 
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  background-color: #ebebebd3;
 }
 
 .card h3 {

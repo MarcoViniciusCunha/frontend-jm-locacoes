@@ -1,12 +1,13 @@
+import { useState, useEffect } from "react";
 import ComponentVeiculos from "../../components/veiculos/ComponentVeiculos";
 import CrudEntidade from "../../components/veiculos/EntidadeVeiculos";
 import { VeiculosService } from "../../services/VeiculosService";
 import styles from "./Veiculos.module.css";
-import { useState } from "react";
 
 const Veiculos = () => {
   const [activeTab, setActiveTab] = useState("Veiculos");
   const [activeAction, setActiveAction] = useState("Lista");
+  const [seguradoras, setSeguradoras] = useState([]);
 
   const tabs = [
     "Veiculos",
@@ -17,110 +18,117 @@ const Veiculos = () => {
     "Seguros",
   ];
 
-  const actions = ["Lista", "Cadastrar", "Editar", "Excluir"];
+  const getComponentConfig = () => {
+    const map = {
+      Cores: {
+        service: VeiculosService.cores,
+        fields: [{ key: "nome", label: "Nome" }],
+      },
+      Marcas: {
+        service: VeiculosService.marcas,
+        fields: [{ key: "nome", label: "Nome" }],
+      },
 
-  // 🔹 Define quais ações mostrar dependendo da aba
-  const availableActions =
-    activeTab === "Veiculos"
-      ? ["Lista", "Cadastrar"] // sem Editar e Excluir
-      : actions;
+      Modelos: {
+        service: VeiculosService.modelos,
+        fields: [
+          { key: "nome", label: "Nome" },
+          {
+            key: "brandId",
+            label: "Marca",
+            type: "select",
+            fetch: VeiculosService.marcas.lista,
+            optionLabel: "nome",
+          },
+        ],
+      },
 
-  const getComponent = (tab) => {
-    switch (tab) {
-      case "Cores":
-        return { service: VeiculosService.cores, label: "cor" };
-      case "Marcas":
-        return { service: VeiculosService.marcas, label: "marca" };
-      case "Modelos":
-        return { service: VeiculosService.modelos, label: "modelo" };
-      case "Seguros":
-        return { service: VeiculosService.seguros, label: "seguro" };
-      case "Categorias":
-        return { service: VeiculosService.categorias, label: "categoria" };
-      case "Veiculos":
-        return { service: VeiculosService.veiculos, label: "veiculo" };
-      default:
-        return null;
-    }
+      Seguros: {
+        service: VeiculosService.seguros,
+        fields: [
+          {
+            key: "companyId",
+            label: "Seguradora",
+            type: "select",
+            options: seguradoras,
+          },
+          { key: "validade", label: "Validade" },
+          { key: "valor", label: "Valor" },
+        ],
+      },
+
+      Categorias: {
+        service: VeiculosService.categorias,
+        fields: [
+          { key: "nome", label: "Nome" },
+          { key: "descricao", label: "Descrição" },
+        ],
+      },
+
+      Veiculos: { component: ComponentVeiculos },
+    };
+
+    return map[activeTab];
   };
 
-  const { service, label } = getComponent(activeTab) || {};
+  // Carrega todas seguradoras (usado só nos seguros)
+  useEffect(() => {
+    VeiculosService.seguradoras.lista().then((res) => {
+      setSeguradoras(res.data);
+    });
+  }, []);
+
+  const config = getComponentConfig();
+  const isCrud = activeTab !== "Veiculos";
 
   return (
     <div className={styles.container}>
+      {/* Abas */}
       <header className={styles.header}>
         {tabs.map((tab) => (
           <button
             key={tab}
+            className={activeTab === tab ? styles.active : ""}
             onClick={() => {
               setActiveTab(tab);
-              setActiveAction("Lista"); // reseta ação ao trocar aba
+              setActiveAction("Lista");
             }}
-            className={activeTab === tab ? styles.active : ""}
           >
             {tab}
           </button>
         ))}
       </header>
 
+      {/* Botões Lista / Cadastrar */}
       <header className={styles.crudHeader}>
-        {availableActions.map((action) => (
+        {["Lista", "Cadastrar"].map((action) => (
           <button
             key={action}
-            onClick={() => setActiveAction(action)}
             className={activeAction === action ? styles.active : ""}
+            onClick={() => setActiveAction(action)}
           >
             {action}
           </button>
         ))}
       </header>
 
+      {/* Conteúdo */}
       <main className={styles.main}>
         <h2>
           {activeTab} - {activeAction}
         </h2>
 
-        {(activeTab === "Cores" ||
-          activeTab === "Marcas" ||
-          activeTab === "Modelos") && (
+        {isCrud ? (
           <CrudEntidade
             action={activeAction}
-            service={service}
-            label={label}
-            fields={[{ key: "nome", label: "Nome" }]}
+            service={config.service}
+            label={activeTab.toLowerCase()}
+            fields={config.fields}
           />
-        )}
-
-        {activeTab === "Seguros" && (
-          <CrudEntidade
-            action={activeAction}
-            service={VeiculosService.seguros}
-            label="seguro"
-            fields={[
-              { key: "empresa", label: "Empresa" },
-              { key: "validade", label: "Validade" },
-              { key: "valor", label: "Valor" },
-            ]}
-          />
-        )}
-
-        {activeTab === "Categorias" && (
-          <CrudEntidade
-            action={activeAction}
-            service={VeiculosService.categorias}
-            label="categoria"
-            fields={[
-              { key: "nome", label: "Nome" },
-              { key: "descricao", label: "Descrição" },
-            ]}
-          />
-        )}
-
-        {activeTab === "Veiculos" && (
+        ) : (
           <ComponentVeiculos
             action={activeAction}
             service={VeiculosService.veiculos}
-            label="veiculos"
           />
         )}
       </main>
