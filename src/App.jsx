@@ -18,6 +18,8 @@ import Clientes from "./pages/clientes/Clientes";
 import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
 import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
 import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
+import Pagamentos from "./pages/pagamentos/Pagamentos";
+import PagamentosDetalhes from "./pages/pagamentos/PagamentosDetalhes";
 
 const token = localStorage.getItem("token");
 if (token) {
@@ -29,11 +31,13 @@ function Layout({ children }) {
   const hideNavFooter = location.pathname === "/login"; // esconder em login
 
   return (
-    <>
+    <div className="layout">
       {!hideNavFooter && <NavBar />}
-      {children}
+
+      <main className="conteudo">{children}</main>
+
       {!hideNavFooter && <Footer />}
-    </>
+    </div>
   );
 }
 
@@ -104,6 +108,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <ClienteDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pagamentos"
+              element={
+                <PrivateRoute>
+                  <Pagamentos />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pagamentos/:id"
+              element={
+                <PrivateRoute>
+                  <PagamentosDetalhes />
                 </PrivateRoute>
               }
             />

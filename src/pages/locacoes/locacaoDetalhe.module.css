@@ -1,0 +1,353 @@
+:root {
+  --primary: #12add6;
+  --primary-hover: #1fbfe8;
+
+  --neutral-50: #f7f8fa;
+  --neutral-100: #f1f3f5;
+  --neutral-200: #e9ecef;
+  --neutral-300: #dee2e6;
+  --neutral-600: #5c6770;
+  --neutral-800: #2c3e50;
+
+  --success: #2ecc71;
+  --danger: #e63946;
+  --warning: #f4a261;
+
+  --radius: 12px;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* PÁGINA */
+.pagina {
+  padding: 80px 20px 40px;
+  min-height: 100vh;
+  background-color: var(--neutral-50);
+}
+
+/* CONTEÚDO */
+.conteudo {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+/* VOLTAR */
+.botaoVoltar {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  margin-bottom: 26px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.botaoVoltar:hover {
+  opacity: 0.7;
+}
+
+/* CABEÇALHO */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.cabecalho h1 {
+  margin: 0;
+  color: var(--neutral-800);
+  font-weight: 600;
+}
+
+/* STATUS */
+.status {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.ativa {
+  background: #e8f7ef;
+  color: #1f7b47;
+}
+
+.devolvido {
+  background: #e8f0fa;
+  color: #1a4f9b;
+}
+
+.atrasada {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 26px;
+  margin-bottom: 40px;
+}
+
+/* CARD */
+.card {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.card h2 {
+  color: var(--neutral-800);
+  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--neutral-100);
+}
+
+.iconeTitulo {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+/* CARDS SEÇÃO EXTRA */
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.subCard {
+  background: #fff;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--neutral-200);
+}
+
+/* LINHAS */
+.linha {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--neutral-600);
+}
+
+.valor {
+  color: var(--neutral-800);
+}
+
+.valorDestaque {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.valorTotal {
+  color: var(--success);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* GRUPOS */
+.linhaGrupo {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+/* BOTÕES */
+.acoes {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 35px;
+}
+
+.botaoImprimir,
+.botaoDevolver {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.botaoImprimir {
+  background: var(--neutral-800);
+  color: white;
+}
+
+.botaoImprimir:hover {
+  background: #1e2a38;
+}
+
+.botaoDevolver {
+  background: var(--success);
+  color: #fff;
+}
+
+.botaoDevolver:hover {
+  background: #27ae60;
+}
+
+.botaoExcluir {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+
+  background: #e63946;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoExcluir:hover {
+  background: #c5303d;
+}
+
+.cardTituloLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* NOVO — Botão Registrar Pagamento */
+.botaoRegistrarPgto {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botaoRegistrarPgto:hover {
+  background: var(--primary-hover);
+}
+
+/* NOVO — Modal (fundo) */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* NOVO — Conteúdo do modal */
+.modalContent {
+  background: white;
+  padding: 28px;
+  border-radius: var(--radius);
+  width: 420px;
+  box-shadow: var(--shadow-md);
+  animation: fadeIn 0.2s ease;
+}
+
+/* NOVO — Título modal */
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin-bottom: 16px;
+}
+
+/* NOVO — Fechar */
+.modalClose {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--neutral-600);
+  transition: 0.2s;
+}
+
+.modalClose:hover {
+  opacity: 0.6;
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .pagina {
+    padding: 60px 10px 20px;
+  }
+
+  .conteudo {
+    padding: 22px;
+  }
+
+  .cabecalho {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .acoes {
+    flex-direction: column;
+  }
+
+  .botaoImprimir,
+  .botaoDevolver {
+    width: 100%;
+  }
+
+  .modalContent {
+    width: 90%;
+  }
+}

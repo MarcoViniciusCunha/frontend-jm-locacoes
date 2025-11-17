@@ -1,0 +1,195 @@
+.container {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card,
+.formContainer {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+.formContainer {
+  margin-top: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.titulo {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.subtitulo {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 25px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-right: 6px;
+}
+
+.linha,
+.grupo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.linha {
+  margin-bottom: 14px;
+}
+.grupo {
+  margin: 10px 0;
+}
+
+.valor {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.separador {
+  margin: 20px 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.pago {
+  background: #06d6a033;
+  color: var(--success);
+}
+.pendente {
+  background: #e6394633;
+  color: var(--danger);
+}
+
+.btnVoltar,
+.btnEditar,
+.btnExcluir,
+.btnSalvar {
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+}
+
+.btnVoltar {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+.btnVoltar:hover {
+  color: var(--primary-hover);
+}
+
+.btnEditar {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 10px;
+}
+.btnEditar:hover {
+  background: var(--primary-hover);
+}
+
+.btnExcluir {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+}
+.btnExcluir:hover {
+  background: #cc2f3b;
+}
+
+.btnSalvarContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.btnSalvar {
+  padding: 6px 14px;
+  background: var(--success);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+}
+.btnSalvar:hover {
+  background: #05c18f;
+}
+
+.formContainer label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+}
+
+.formContainer input,
+.formContainer select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.formContainer input:focus,
+.formContainer select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px #12add632;
+}
+
+.loading,
+.erro {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 20px;
+}
+
+.acoes {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}

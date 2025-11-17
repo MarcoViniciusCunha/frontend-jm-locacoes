@@ -66,26 +66,6 @@ const Locacoes = () => {
     carregarLocacoes(filtro, 0);
   };
 
-  const handleDevolver = async (id) => {
-    if (!window.confirm("Confirmar devolução do veículo?")) return;
-    try {
-      await LocacoesService.devolver(id);
-      await carregarLocacoes(filtro, paginaAtual);
-    } catch {
-      alert("Erro ao registrar devolução.");
-    }
-  };
-
-  const handleExcluir = async (id) => {
-    if (!window.confirm("Deseja realmente excluir esta locação?")) return;
-    try {
-      await LocacoesService.excluir(id);
-      await carregarLocacoes(filtro, paginaAtual);
-    } catch {
-      alert("Erro ao excluir locação.");
-    }
-  };
-
   useEffect(() => {
     carregarLocacoes();
   }, []);
@@ -210,20 +190,6 @@ const Locacoes = () => {
                     onClick={() => navigate(`/locacoes/${loc.id}`)}
                   >
                     <FiEye /> Ver detalhes
-                  </button>
-                  {!loc.returned && (
-                    <button
-                      className={`${styles.button} ${styles.devolver}`}
-                      onClick={() => handleDevolver(loc.id)}
-                    >
-                      <FiCornerDownLeft /> Devolver
-                    </button>
-                  )}
-                  <button
-                    className={`${styles.button} ${styles.excluir}`}
-                    onClick={() => handleExcluir(loc.id)}
-                  >
-                    <FiTrash2 /> Excluir
                   </button>
                 </div>
               </div>

@@ -3,55 +3,52 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding: 80px 0;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
-  color: #222;
-  background-color: #f9f9f9;
+  color: var(--text-dark);
+  background-color: var(--neutral);
 }
 
-/* Botões de navegação (abas) */
 .header,
 .crudHeader {
   display: flex;
-  gap: 1em;
   flex-wrap: wrap;
+  gap: 1em;
   justify-content: center;
   margin-bottom: 1.5em;
 }
 
 .header button,
 .crudHeader button {
-  color: rgb(33, 35, 36);
+  color: var(--text-dark);
   padding: 0.6em 1.2em;
   border: none;
-  background-color: transparent;
+  background: transparent;
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s;
   font-weight: 400;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 .header button:hover,
 .crudHeader button:hover {
-  color: #12add6;
+  color: var(--primary);
 }
 
 .header button.active,
 .crudHeader button.active {
-  background-color: #12add6;
-  color: white;
+  background-color: var(--primary);
+  color: #fff;
   font-weight: bold;
 }
 
-/* Conteúdo principal */
 .main {
   width: 90%;
   max-width: 1200px;
-  background: white;
+  background: var(--card-bg);
   padding: 2em;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -61,7 +58,7 @@
 .main h2 {
   margin-bottom: 1em;
   text-align: center;
-  color: #333;
+  color: var(--text-dark);
 }
 
 .main form {
@@ -76,15 +73,15 @@
   padding: 0.5em;
   font-size: 16px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
 }
 
 .main button[type="submit"],
 .main button[type="button"] {
   padding: 0.5em 1em;
   font-size: 16px;
-  background-color: #12add6;
-  color: white;
+  background-color: var(--primary);
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -93,5 +90,5 @@
 
 .main button[type="submit"]:hover,
 .main button[type="button"]:hover {
-  background-color: #0e8cae;
+  background-color: var(--primary-hover);
 }

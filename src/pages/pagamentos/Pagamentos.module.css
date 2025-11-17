@@ -1,0 +1,112 @@
+.pagina {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.titulo {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: var(--text-dark);
+}
+
+.lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.topoCard {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.valor {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pago {
+  background: #06d6a033;
+  color: var(--success);
+}
+.pendente {
+  background: #e6394633;
+  color: var(--danger);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.linha {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.semDados,
+.loading,
+.erro {
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 20px;
+  color: #666;
+}
+
+.loading,
+.erro {
+  font-size: 1.2rem;
+  padding: 25px;
+}
+
+.botoes {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnDetalhes {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s ease;
+}
+
+.btnDetalhes:hover {
+  background: var(--primary-hover);
+}

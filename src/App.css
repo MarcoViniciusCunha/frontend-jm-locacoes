@@ -3,3 +3,28 @@
 *::after {
   box-sizing: border-box;
 }
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.conteudo {
+  flex: 1; /* empurra o footer para o final */
+}
+
+/* Se quiser um estilo bonito pro footer */
+footer {
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+  padding: 14px;
+  text-align: center;
+  color: #2c3e50;
+  font-size: 14px;
+}
