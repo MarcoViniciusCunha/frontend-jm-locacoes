@@ -251,9 +251,12 @@ export default function LocacaoDetalhe() {
 
               <RegistrarPagamento
                 locacaoId={id}
-                onConcluido={() => {
+                onConcluido={(novoPagamento) => {
                   setAbrirModalPagamento(false);
-                  window.location.reload(); // atualiza a lista de pagamentos
+                  setDadosLocacao((prev) => ({
+                    ...prev,
+                    payments: [...(prev.payments || []), novoPagamento],
+                  }));
                 }}
               />
             </div>

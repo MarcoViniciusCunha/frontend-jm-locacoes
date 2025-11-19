@@ -8,6 +8,7 @@ export const LocacoesService = {
   editar: async (id, data) => api.patch(`/rental/${id}`, data),
   devolver: async (id) => api.patch(`/rental/return/${id}`),
   excluir: async (id) => api.delete(`/rental/${id}`),
+  deshboard: async () => api.get("/rental/dashboard/info"),
 };
 
 export const PaymentsService = {
@@ -16,4 +17,5 @@ export const PaymentsService = {
   add: async (data) => api.post("/payment", data),
   editar: async (id, data) => api.patch(`/payment/${id}`, data),
   excluir: async (id) => api.delete(`/payment/${id}`),
+  filtrar: async (params) => api.get("/payment/filter", { params }),
 };

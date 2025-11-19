@@ -2,53 +2,60 @@ import { useEffect, useState } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import styles from "./ClientesList.module.css";
 
-const ClientesList = ({ onSelect }) => {
+export default function ListaClientes({ aoSelecionar }) {
   const [clientes, setClientes] = useState([]);
-  const [busca, setBusca] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const carregar = async () => {
-      try {
-        const res = await ClientesService.lista();
-        setClientes(res.data || []);
-      } catch (err) {
-        console.error("Erro ao carregar clientes:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    carregar();
+    carregarClientes();
   }, []);
 
-  const filtrados = clientes.filter(
-    (c) =>
-      c.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-      c.cpf?.includes(busca)
-  );
+  const carregarClientes = async () => {
+    try {
+      const resposta = await ClientesService.lista();
+      setClientes(resposta.data || []);
+    } catch (erro) {
+      console.error("Erro ao carregar clientes:", erro);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const filtrarClientes = () => {
+    const textoBusca = termoBusca.toLowerCase();
+
+    return clientes.filter(
+      (cliente) =>
+        cliente.nome?.toLowerCase().includes(textoBusca) ||
+        cliente.cpf?.includes(termoBusca)
+    );
+  };
+
+  const clientesFiltrados = filtrarClientes();
 
   return (
     <div className={styles.container}>
       <input
         type="text"
         placeholder="Buscar cliente por nome ou CPF..."
-        value={busca}
-        onChange={(e) => setBusca(e.target.value)}
+        value={termoBusca}
+        onChange={(e) => setTermoBusca(e.target.value)}
         className={styles.search}
       />
 
-      {loading ? (
+      {carregando ? (
         <p>Carregando...</p>
-      ) : filtrados.length > 0 ? (
+      ) : clientesFiltrados.length > 0 ? (
         <ul className={styles.list}>
-          {filtrados.map((c) => (
+          {clientesFiltrados.map((cliente) => (
             <li
-              key={c.id}
+              key={cliente.id}
               className={styles.item}
-              onClick={() => onSelect && onSelect(c)}
+              onClick={() => aoSelecionar && aoSelecionar(cliente)}
             >
-              <span>{c.nome}</span>
-              <span className={styles.cpf}>{c.cpf}</span>
+              <span>{cliente.nome}</span>
+              <span className={styles.cpf}>{cliente.cpf}</span>
             </li>
           ))}
         </ul>
@@ -57,6 +64,4 @@ const ClientesList = ({ onSelect }) => {
       )}
     </div>
   );
-};
-
-export default ClientesList;
+}

@@ -1,7 +1,4 @@
 :root {
-  --primary: #12add6;
-  --primary-hover: #1fbfe8;
-
   --neutral-50: #f7f8fa;
   --neutral-100: #f1f3f5;
   --neutral-200: #e9ecef;
@@ -9,7 +6,6 @@
   --neutral-600: #5c6770;
   --neutral-800: #2c3e50;
 
-  --success: #2ecc71;
   --danger: #e63946;
   --warning: #f4a261;
 
@@ -18,7 +14,6 @@
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
-/* PÁGINA */
 .pagina {
   padding: 80px 20px 40px;
   min-height: 100vh;

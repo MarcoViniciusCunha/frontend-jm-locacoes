@@ -1,6 +1,6 @@
 .footer {
   background-color: #212324;
-  color: #ffffff;
+  color: var(--white);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,13 +20,13 @@
 }
 
 .brand {
-  color: #12add6;
+  color: var(--primary);
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .brand:hover {
-  color: #0e8cae;
+  color: var(--primary-hover);
 }
 
 @media (max-width: 600px) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
 import ClienteForm from "../../components/clientes/ClienteForm";
@@ -15,80 +15,91 @@ import {
 const ClienteDetalhe = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [customer, setCustomer] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [editing, setEditing] = useState(false);
 
-  const fetchCliente = async () => {
+  const [cliente, setCliente] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+  const [editando, setEditando] = useState(false);
+
+  const carregarCliente = useCallback(async () => {
     try {
-      const res = await ClientesService.getById(id);
-      setCustomer(res.data);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
+      const { data } = await ClientesService.getById(id);
+      setCliente(data);
+    } catch (e) {
+      console.error(e);
+      setErro("Erro ao carregar cliente.");
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCliente();
   }, [id]);
 
-  const handleSave = async (data) => {
+  useEffect(() => {
+    carregarCliente();
+  }, [carregarCliente]);
+
+  const salvarAlteracoes = async (dadosForm) => {
     try {
-      await ClientesService.editar(id, data);
-      await fetchCliente();
-      setEditing(false);
+      await ClientesService.editar(id, dadosForm);
+      await carregarCliente();
+      setEditando(false);
       alert("Cliente atualizado com sucesso!");
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao salvar: " + e.message);
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("Tem certeza que deseja excluir este cliente?")) {
-      try {
-        await ClientesService.excluir(id);
-        alert("Cliente excluído com sucesso!");
-        navigate("/clientes");
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao excluir cliente: " + err.message);
-      }
+  const excluirCliente = async () => {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir este cliente?"
+    );
+    if (!confirmar) return;
+
+    try {
+      await ClientesService.excluir(id);
+      alert("Cliente excluído com sucesso!");
+      navigate("/clientes");
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao excluir cliente: " + e.message);
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>{error}</p>;
+  const voltar = () => navigate(-1);
+
+  if (carregando) return <p>Carregando...</p>;
+  if (erro) return <p>{erro}</p>;
 
   return (
     <div className={styles.container}>
       <div className={styles.titleBar}>
         <h1>
-          <FaUserCircle /> {customer.nome}
+          <FaUserCircle /> {cliente?.nome}
         </h1>
       </div>
 
       <ClienteForm
-        initialData={customer}
-        onSubmit={handleSave}
-        onCancel={() => setEditing(false)}
-        disabled={!editing}
+        initialData={cliente}
+        onSubmit={salvarAlteracoes}
+        onCancel={() => setEditando(false)}
+        disabled={!editando}
       />
 
       <div className={styles.buttonGroup}>
-        {!editing ? (
+        {!editando ? (
           <>
-            <button className={styles.backBtn} onClick={() => navigate(-1)}>
+            <button className={styles.backBtn} onClick={voltar}>
               <FaArrowLeft /> Voltar
             </button>
-            <button className={styles.editBtn} onClick={() => setEditing(true)}>
+
+            <button
+              className={styles.editBtn}
+              onClick={() => setEditando(true)}
+            >
               <FaEdit /> Editar
             </button>
-            <button className={styles.deleteBtn} onClick={handleDelete}>
+
+            <button className={styles.deleteBtn} onClick={excluirCliente}>
               <FaTrashAlt /> Excluir
             </button>
           </>
@@ -96,13 +107,20 @@ const ClienteDetalhe = () => {
           <>
             <button
               className={styles.saveBtn}
-              onClick={() => handleSave(customer)}
+              onClick={() =>
+                document
+                  .querySelector("form")
+                  .dispatchEvent(
+                    new Event("submit", { cancelable: true, bubbles: true })
+                  )
+              }
             >
               <FaSave /> Salvar
             </button>
+
             <button
               className={styles.cancelBtn}
-              onClick={() => setEditing(false)}
+              onClick={() => setEditando(false)}
             >
               <FaTimesCircle /> Cancelar
             </button>

@@ -3,6 +3,7 @@ import { VeiculosService } from "../../services/VeiculosService";
 import { ClientesService } from "../../services/ClientesService";
 import { LocacoesService } from "../../services/LocacoesService";
 import styles from "./Home.module.css";
+
 import {
   FiTruck,
   FiUsers,
@@ -17,10 +18,13 @@ import {
 const Home = () => {
   const [totalVeiculos, setTotalVeiculos] = useState(0);
   const [totalClientes, setTotalClientes] = useState(0);
+
   const [reservasAndamento, setReservasAndamento] = useState(0);
   const [veiculosManutencao, setVeiculosManutencao] = useState(0);
+
   const [faturamentoMes, setFaturamentoMes] = useState(0);
   const [pendencias, setPendencias] = useState(0);
+
   const [proximaDevolucao, setProximaDevolucao] = useState(null);
   const [proximaLocacao, setProximaLocacao] = useState(null);
 
@@ -33,6 +37,7 @@ const Home = () => {
       // Veículos
       const veiculosRes = await VeiculosService.veiculos.lista();
       const veiculosData = veiculosRes.data.content || veiculosRes.data;
+
       setTotalVeiculos(veiculosData.length);
       setVeiculosManutencao(
         veiculosData.filter((v) => v.status?.toUpperCase() === "MANUTENCAO")
@@ -44,38 +49,15 @@ const Home = () => {
       const clientesData = clientesRes.data.content || clientesRes.data;
       setTotalClientes(clientesData.length);
 
-      // Locações
-      const locacoesRes = await LocacoesService.lista();
-      const locacoesData = locacoesRes.data.content || locacoesRes.data;
-      const locAtivas = locacoesData.filter((l) => l.status === "ATIVA");
-      setReservasAndamento(locAtivas.length);
+      // ❗ AGORA PEGAMOS OS DADOS DIRETO DO BACKEND
+      const dashboardRes = await LocacoesService.deshboard();
+      const d = dashboardRes.data;
 
-      const hoje = new Date();
-      const faturamento = locacoesData
-        .filter((l) => {
-          const start = new Date(l.startDate);
-          return (
-            start.getMonth() === hoje.getMonth() &&
-            start.getFullYear() === hoje.getFullYear()
-          );
-        })
-        .reduce((acc, l) => acc + (l.price || 0), 0);
-      setFaturamentoMes(faturamento);
-
-      const pendenciasCount = locacoesData.filter(
-        (l) => l.status === "ATRASADA"
-      ).length;
-      setPendencias(pendenciasCount);
-
-      const devolucoes = locacoesData
-        .filter((l) => l.status === "ATIVA")
-        .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-      setProximaDevolucao(devolucoes[0] || null);
-
-      const locacoesFuturas = locacoesData
-        .filter((l) => new Date(l.startDate) >= hoje)
-        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-      setProximaLocacao(locacoesFuturas[0] || null);
+      setFaturamentoMes(d.faturamentoMes);
+      setReservasAndamento(d.reservasAndamento);
+      setPendencias(d.pendencias);
+      setProximaDevolucao(d.proximaDevolucao);
+      setProximaLocacao(d.proximaLocacao);
     } catch (error) {
       console.error("Erro ao carregar dashboard:", error);
     }
@@ -135,7 +117,7 @@ const Home = () => {
             </h3>
             {proximaDevolucao ? (
               <p>
-                {proximaDevolucao.customerName} - {proximaDevolucao.modelo}{" "}
+                {proximaDevolucao.customerName} - {proximaDevolucao.modelo}
                 <br />
                 {new Date(proximaDevolucao.endDate).toLocaleDateString()}
               </p>
@@ -150,7 +132,8 @@ const Home = () => {
             </h3>
             {proximaLocacao ? (
               <p>
-                {proximaLocacao.customerName} - {proximaLocacao.modelo} <br />
+                {proximaLocacao.customerName} - {proximaLocacao.modelo}
+                <br />
                 {new Date(proximaLocacao.startDate).toLocaleDateString()}
               </p>
             ) : (

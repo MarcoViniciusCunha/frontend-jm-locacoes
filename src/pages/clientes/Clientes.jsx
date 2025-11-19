@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import { Link } from "react-router-dom";
 import { FiSearch, FiUsers, FiUserPlus, FiFileText } from "react-icons/fi";
@@ -7,105 +7,105 @@ import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./Clientes.module.css";
 
 const Clientes = () => {
-  const [customers, setCustomers] = useState([]);
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [clientes, setClientes] = useState([]);
+  const [busca, setBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-  useEffect(() => {
-    listaItens();
+  const carregarClientes = useCallback(async () => {
+    try {
+      setCarregando(true);
+      const { data } = await ClientesService.lista();
+      setClientes(data);
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao carregar clientes.");
+    } finally {
+      setCarregando(false);
+    }
   }, []);
 
-  const listaItens = async () => {
-    try {
-      setLoading(true);
-      const res = await ClientesService.lista();
-      setCustomers(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao listar clientes");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    carregarClientes();
+  }, [carregarClientes]);
 
-  const handleSearch = async (e) => {
+  const buscarClientes = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return listaItens();
+
+    const termo = busca.trim();
+    if (!termo) return carregarClientes();
 
     try {
-      setLoading(true);
-      const res = await ClientesService.getByName(name.trim());
-      setCustomers(res.data);
-    } catch (err) {
-      console.error(err);
+      setCarregando(true);
+      const { data } = await ClientesService.getByName(termo);
+      setClientes(data);
+    } catch (e) {
+      console.error(e);
       alert("Erro ao buscar cliente.");
-      listaItens();
+      carregarClientes();
     } finally {
-      setName("");
-      setLoading(false);
+      setBusca("");
+      setCarregando(false);
     }
   };
 
-  const handleAddCustomer = async (data) => {
+  const adicionarCliente = async (novoCliente) => {
     try {
-      await ClientesService.add(data);
+      await ClientesService.add(novoCliente);
       alert("Cliente cadastrado com sucesso!");
-      setShowForm(false);
-      listaItens();
-    } catch (err) {
-      console.error(err);
+      setMostrarFormulario(false);
+      carregarClientes();
+    } catch (e) {
+      console.error(e);
       alert("Erro ao cadastrar cliente.");
     }
   };
 
+  const abrirFormulario = () => setMostrarFormulario(true);
+  const fecharFormulario = () => setMostrarFormulario(false);
+
   return (
     <div className={styles.container}>
-      {/* 🔹 Título */}
       <div className={styles.titleBar}>
         <h2>
           <FiUsers /> Gestão de Clientes
         </h2>
       </div>
 
-      {/* 🔹 Topo */}
+      {/* Barra superior */}
       <div className={styles.topBar}>
-        {!showForm ? (
+        {!mostrarFormulario ? (
           <>
-            <form className={styles.searchForm} onSubmit={handleSearch}>
+            <form className={styles.searchForm} onSubmit={buscarClientes}>
               <div className={styles.searchBox}>
                 <FiSearch className={styles.icon} size={18} />
+
                 <input
                   type="text"
                   placeholder="Digite o nome do cliente..."
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
                 />
               </div>
-              <button type="submit" disabled={loading}>
-                {loading ? "Buscando..." : "Buscar"}
+
+              <button type="submit" disabled={carregando}>
+                {carregando ? "Buscando..." : "Buscar"}
               </button>
             </form>
 
-            <button
-              className={styles.addButton}
-              onClick={() => setShowForm(true)}
-            >
+            <button className={styles.addButton} onClick={abrirFormulario}>
               <IoMdAdd size={20} /> Novo Cliente
             </button>
           </>
         ) : (
-          <button
-            className={styles.backButton}
-            onClick={() => setShowForm(false)}
-          >
+          <button className={styles.backButton} onClick={fecharFormulario}>
             <IoMdArrowRoundBack size={20} /> Voltar
           </button>
         )}
       </div>
 
-      {/* 🔹 Lista */}
-      {!showForm && (
+      {/* Lista */}
+      {!mostrarFormulario && (
         <ul>
           <li className={styles.header}>
             <span className={styles.nome}>Nome</span>
@@ -113,14 +113,15 @@ const Clientes = () => {
             <span className={styles.acoes}>Ações</span>
           </li>
 
-          {customers.length === 0 ? (
+          {clientes.length === 0 ? (
             <p className={styles.empty}>Nenhum cliente encontrado.</p>
           ) : (
-            customers.map((item) => (
-              <li key={item.id}>
-                <span className={styles.nome}>{item.nome}</span>
-                <span className={styles.cpf}>{item.cpf}</span>
-                <Link to={`/clientes/${item.id}`}>
+            clientes.map((cliente) => (
+              <li key={cliente.id}>
+                <span className={styles.nome}>{cliente.nome}</span>
+                <span className={styles.cpf}>{cliente.cpf}</span>
+
+                <Link to={`/clientes/${cliente.id}`}>
                   <button className={styles.profileBtn}>
                     <FiFileText size={15} /> Perfil
                   </button>
@@ -131,15 +132,16 @@ const Clientes = () => {
         </ul>
       )}
 
-      {/* 🔹 Formulário Novo Cliente */}
-      {showForm && (
+      {/* Formulário Novo Cliente */}
+      {mostrarFormulario && (
         <div className={styles.formWrapper}>
           <h2>
             <FiUserPlus /> Novo Cliente
           </h2>
+
           <ClienteForm
-            onSubmit={handleAddCustomer}
-            onCancel={() => setShowForm(false)}
+            onSubmit={adicionarCliente}
+            onCancel={fecharFormulario}
           />
         </div>
       )}

@@ -1,3 +1,16 @@
+:root {
+  --primary: #12add6;
+  --primary-hover: #35c2e9;
+  --danger: #e63946;
+  --success: #2ecc71;
+  --neutral: #f4f5f7;
+  --card-bg: #ffffff;
+  --text-dark: #2c3e50;
+  --text-dark-hover: #394653;
+  --border: #dcdfe6;
+  --white: #ffffff;
+  --black: #000000;
+}
 *,
 *::before,
 *::after {

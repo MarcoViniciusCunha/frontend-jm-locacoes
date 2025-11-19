@@ -1,15 +1,3 @@
-:root {
-  --primary: #0748a8;
-  --primary-hover: #0a66e3;
-  --danger: #e63946;
-  --success: #06d6a0;
-  --neutral: #f4f5f7;
-  --card-bg: #ffffff;
-  --text-dark: #2c3e50;
-  --border: #dcdfe6;
-}
-
-/* CONTÊINER */
 .container {
   display: flex;
   flex-direction: column;

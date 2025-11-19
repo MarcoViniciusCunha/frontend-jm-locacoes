@@ -1,5 +1,5 @@
 .modalContent {
-  background: white;
+  background: var(--white);
   padding: 28px;
   border-radius: 12px;
   width: 420px;
@@ -45,7 +45,7 @@
   width: 100%;
   padding: 10px;
   background: var(--success);
-  color: #fff;
+  color: var(--white);
   border: none;
   border-radius: 10px;
   font-size: 1rem;

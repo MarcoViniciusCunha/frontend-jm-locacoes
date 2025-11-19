@@ -2,54 +2,59 @@ import { useEffect, useState } from "react";
 import styles from "./EntidadeVeiculos.module.css";
 
 export default function CrudEntidade({ action, service, label, fields }) {
-  const [itens, setItens] = useState([]);
-  const [novoItem, setNovoItem] = useState({});
-  const [editItemId, setEditItemId] = useState(null);
-  const [editItemData, setEditItemData] = useState({});
+  const [items, setItems] = useState([]);
+  const [newItem, setNewItem] = useState({});
+  const [editingId, setEditingId] = useState(null);
+  const [editingData, setEditingData] = useState({});
   const [selectOptions, setSelectOptions] = useState({});
 
-  // Carrega lista
-  const lista = async () => {
+  // 📌 Carrega lista inicial
+  const loadItems = async () => {
     try {
-      const res = await service.lista();
-      setItens(res.data);
+      const response = await service.lista();
+      setItems(response.data);
     } catch {
       alert("Erro ao listar " + label);
     }
   };
 
+  // 🔄 Executa listagem ao abrir tela de Lista
   useEffect(() => {
-    if (action === "Lista") lista();
+    if (action === "Lista") loadItems();
   }, [action, service]);
 
-  // Carrega selects dinâmicos
+  // 📌 Carrega selects dinâmicos
   useEffect(() => {
-    const load = async () => {
-      const opts = {};
+    const loadSelects = async () => {
+      const optionsMap = {};
 
-      for (const f of fields) {
-        if (f.type === "select" && f.fetch) {
-          const res = await f.fetch();
-          opts[f.key] = res.data;
+      for (const field of fields) {
+        if (field.type === "select" && field.fetch) {
+          const response = await field.fetch();
+          optionsMap[field.key] = response.data;
         }
       }
 
-      setSelectOptions(opts);
+      setSelectOptions(optionsMap);
     };
 
-    load();
+    loadSelects();
   }, [fields]);
 
-  const renderField = (data, setData, field) => {
-    // select
+  // --------------------------------------------
+  // 🧩 Renderização dos campos dinâmicos
+  // --------------------------------------------
+  const renderField = (state, setState, field) => {
+    const updateField = (value) => setState({ ...state, [field.key]: value });
+
+    // SELECT
     if (field.type === "select") {
       const options = field.options || selectOptions[field.key] || [];
+
       return (
         <select
-          value={data[field.key] || ""}
-          onChange={(e) =>
-            setData({ ...data, [field.key]: Number(e.target.value) })
-          }
+          value={state[field.key] || ""}
+          onChange={(e) => updateField(Number(e.target.value))}
         >
           <option value="">Selecione...</option>
           {options.map((opt) => (
@@ -61,80 +66,103 @@ export default function CrudEntidade({ action, service, label, fields }) {
       );
     }
 
-    // date
+    // DATA
     if (field.key === "validade") {
       return (
         <input
           type="date"
-          value={data[field.key] || ""}
-          onChange={(e) => setData({ ...data, [field.key]: e.target.value })}
+          value={state[field.key] || ""}
+          onChange={(e) => updateField(e.target.value)}
         />
       );
     }
 
-    // default text
+    // TEXTO PADRÃO
     return (
       <input
         type="text"
         placeholder={field.label}
-        value={data[field.key] || ""}
-        onChange={(e) => setData({ ...data, [field.key]: e.target.value })}
+        value={state[field.key] || ""}
+        onChange={(e) => updateField(e.target.value)}
       />
     );
   };
 
+  // --------------------------------------------
+  // 🎯 AÇÕES CRUD
+  // --------------------------------------------
+
+  const handleCreate = async () => {
+    await service.add(newItem);
+    alert("Criado!");
+    setNewItem({});
+    loadItems();
+  };
+
+  const handleUpdate = async (id) => {
+    await service.editar(id, editingData);
+    alert("Atualizado!");
+    setEditingId(null);
+    loadItems();
+  };
+
+  const handleDelete = async (id) => {
+    await service.excluir(id);
+    loadItems();
+  };
+
+  const startEditing = (item) => {
+    setEditingId(item.id);
+    setEditingData({
+      ...item,
+      companyId: item.company?.id, // ajuste para select de seguro
+    });
+  };
+
+  // --------------------------------------------
+  // 📌 RENDER COMPONENT
+  // --------------------------------------------
   return (
     <div className={styles.container}>
-      {/* CADASTRAR */}
+      {/* =====================================
+          CADASTRAR
+      ====================================== */}
       {action === "Cadastrar" && (
         <form className={styles.form}>
-          {fields.map((f) => renderField(novoItem, setNovoItem, f))}
+          {fields.map((field) => renderField(newItem, setNewItem, field))}
 
-          <button
-            type="button"
-            onClick={async () => {
-              await service.add(novoItem);
-              alert("Criado!");
-              setNovoItem({});
-              lista();
-            }}
-          >
+          <button type="button" onClick={handleCreate}>
             Salvar
           </button>
         </form>
       )}
 
-      {/* LISTA */}
+      {/* =====================================
+          LISTAR / EDITAR / EXCLUIR
+      ====================================== */}
       {action === "Lista" && (
         <ul className={styles.lista}>
-          {itens.map((item) => {
-            const isEdit = editItemId === item.id;
+          {items.map((item) => {
+            const isEditing = editingId === item.id;
 
             return (
-              <li key={item.id} className={isEdit ? styles.editando : ""}>
-                {isEdit ? (
+              <li key={item.id} className={isEditing ? styles.editando : ""}>
+                {/* EDITANDO */}
+                {isEditing ? (
                   <>
                     <div className={styles.itemInfo}>
-                      {fields.map((f) =>
-                        renderField(editItemData, setEditItemData, f)
+                      {fields.map((field) =>
+                        renderField(editingData, setEditingData, field)
                       )}
                     </div>
 
                     <div className={styles.itemActions}>
-                      <button
-                        onClick={async () => {
-                          await service.editar(item.id, editItemData);
-                          alert("Atualizado!");
-                          setEditItemId(null);
-                          lista();
-                        }}
-                      >
+                      <button onClick={() => handleUpdate(item.id)}>
                         Salvar
                       </button>
-
                       <button
                         className={styles.cancelar}
-                        onClick={() => setEditItemId(null)}
+                        onClick={() => setEditingId(null)}
                       >
                         Cancelar
                       </button>
@@ -142,6 +170,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
                   </>
                 ) : (
                   <>
+                    {/* VISUALIZAÇÃO */}
                     <div className={styles.itemInfo}>
                       {label === "seguro" ? (
                         <>
@@ -159,35 +188,23 @@ export default function CrudEntidade({ action, service, label, fields }) {
                           </span>
                         </>
                       ) : (
-                        fields.map((f) => (
-                          <span key={f.key}>
-                            {f.key === "companyId"
+                        fields.map((field) => (
+                          <span key={field.key}>
+                            {field.key === "companyId"
                               ? item.company?.name
-                              : item[f.key]}
+                              : item[field.key]}
                           </span>
                         ))
                       )}
                     </div>
 
+                    {/* BOTÕES */}
                     <div className={styles.itemActions}>
-                      <button
-                        onClick={() => {
-                          setEditItemId(item.id);
-                          setEditItemData({
-                            ...item,
-                            companyId: item.company?.id,
-                          });
-                        }}
-                      >
-                        Editar
-                      </button>
+                      <button onClick={() => startEditing(item)}>Editar</button>
 
                       <button
                         className={styles.deleteBtn}
-                        onClick={async () => {
-                          await service.excluir(item.id);
-                          lista();
-                        }}
+                        onClick={() => handleDelete(item.id)}
                       >
                         Excluir
                       </button>

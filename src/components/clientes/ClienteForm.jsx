@@ -25,46 +25,52 @@ const ClienteForm = ({
     setFormData((prev) => ({ ...prev, ...initialData }));
   }, [initialData]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const numericCep = value.replace(/\D/g, "");
+  const atualizarCampo = (campo, valor) => {
+    setFormData((prev) => ({ ...prev, [campo]: valor }));
+  };
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const limparEndereco = () => {
+    setFormData((prev) => ({
+      ...prev,
+      logradouro: "",
+      localidade: "",
+    }));
+  };
 
-    if (name === "cep") {
-      if (numericCep.length === 8) {
-        buscarEndereco(numericCep);
-      } else if (numericCep.length < 8) {
-        // Limpa logradouro e localidade quando o CEP é apagado ou incompleto
-        setFormData((prev) => ({
-          ...prev,
-          logradouro: "",
-          localidade: "",
-        }));
+  const buscarEndereco = async (cepLimpo) => {
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+      const data = await response.json();
+
+      if (data.erro) {
+        limparEndereco();
+        return;
       }
+
+      setFormData((prev) => ({
+        ...prev,
+        logradouro: data.logradouro,
+        localidade: data.localidade,
+      }));
+    } catch (err) {
+      console.error("Erro ao buscar CEP:", err);
     }
   };
 
-  const buscarEndereco = async (cep) => {
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await response.json();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    atualizarCampo(name, value);
 
-      if (!data.erro) {
-        setFormData((prev) => ({
-          ...prev,
-          logradouro: data.logradouro,
-          localidade: data.localidade,
-        }));
+    if (name === "cep") {
+      const cepNumero = value.replace(/\D/g, "");
+
+      if (cepNumero.length === 8) {
+        buscarEndereco(cepNumero);
       } else {
-        setFormData((prev) => ({
-          ...prev,
-          logradouro: "",
-          localidade: "",
-        }));
+        limparEndereco();
       }
-    } catch (err) {
-      console.error("Erro ao buscar CEP:", err);
     }
   };
 
@@ -75,80 +81,44 @@ const ClienteForm = ({
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <input
-        type="text"
-        name="nome"
-        placeholder="Nome"
-        value={formData.nome}
-        onChange={handleChange}
-        disabled={disabled}
-        required
-      />
-      <input
-        type="text"
-        name="cpf"
-        placeholder="CPF"
-        value={formData.cpf}
-        onChange={handleChange}
-        disabled={disabled}
-        required
-      />
-      <input
-        type="text"
-        name="cnh"
-        placeholder="CNH"
-        value={formData.cnh}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="E-mail"
-        value={formData.email}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-      <input
-        type="text"
-        name="telefone"
-        placeholder="Telefone"
-        value={formData.telefone}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-      <input
-        type="text"
-        name="cep"
-        placeholder="CEP"
-        value={formData.cep}
-        onChange={handleChange}
-        disabled={disabled}
-      />
-      <input
-        type="text"
-        name="numero"
-        placeholder="Número"
-        value={formData.numero}
-        onChange={handleChange}
-        disabled={disabled}
-      />
+      {[
+        { name: "nome", placeholder: "Nome", required: true },
+        { name: "cpf", placeholder: "CPF", required: true },
+        { name: "cnh", placeholder: "CNH" },
+        { name: "email", placeholder: "E-mail", type: "email" },
+        { name: "telefone", placeholder: "Telefone" },
+        { name: "cep", placeholder: "CEP" },
+        { name: "numero", placeholder: "Número" },
+      ].map((campo) => (
+        <input
+          key={campo.name}
+          type={campo.type || "text"}
+          name={campo.name}
+          placeholder={campo.placeholder}
+          required={campo.required}
+          value={formData[campo.name]}
+          onChange={handleChange}
+          disabled={disabled}
+        />
+      ))}
 
+      {/* Campos de endereço retornados do CEP */}
       <div className={styles.addressFields}>
         <input
           type="text"
           placeholder="Rua"
-          value={formData.logradouro || ""}
+          value={formData.logradouro}
           disabled
         />
         <input
           type="text"
           placeholder="Cidade"
-          value={formData.localidade || ""}
+          value={formData.localidade}
           disabled
         />
       </div>
 
+      {/* Data */}
       <input
         type="date"
         name="data_nasc"
@@ -157,11 +127,13 @@ const ClienteForm = ({
         disabled={disabled}
       />
 
+      {/* Botões */}
       {!disabled && (
         <div className={styles.actions}>
           <button type="submit" className={styles.saveBtn}>
             Salvar
           </button>
+
           {onCancel && (
             <button
               type="button"

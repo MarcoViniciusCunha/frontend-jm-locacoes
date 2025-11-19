@@ -14,78 +14,87 @@ import {
 
 export default function PagamentosDetalhes() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const navegar = useNavigate();
 
-  const [pg, setPg] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState(null);
-
+  const [pagamento, setPagamento] = useState(null);
+  const [estaCarregando, setEstaCarregando] = useState(true);
+  const [mensagemErro, setMensagemErro] = useState(null);
   const [editando, setEditando] = useState(false);
 
-  const [status, setStatus] = useState("");
-  const [dataPagamento, setDataPagamento] = useState("");
-  const [formaPagto, setFormaPagto] = useState("");
-  const [parcelas, setParcelas] = useState("");
+  const [dadosEdicao, setDadosEdicao] = useState({
+    status: "",
+    dataPagamento: "",
+    formaPagto: "",
+    parcelas: "",
+  });
 
   useEffect(() => {
-    const carregar = async () => {
-      try {
-        const resp = await PaymentsService.buscarPorId(id);
-        setPg(resp.data);
-
-        setStatus(resp.data.status);
-        setDataPagamento(resp.data.dataPagamento);
-        setFormaPagto(resp.data.formaPagto);
-        setParcelas(resp.data.parcelas);
-      } catch (e) {
-        console.error(e);
-        setErro("Erro ao carregar pagamento.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    carregar();
+    carregarPagamento();
   }, [id]);
 
-  const handleExcluir = async () => {
-    if (!window.confirm("Deseja realmente excluir este pagamento?")) return;
+  const carregarPagamento = async () => {
+    try {
+      const resposta = await PaymentsService.buscarPorId(id);
+
+      const p = resposta.data;
+      setPagamento(p);
+
+      setDadosEdicao({
+        status: p.status,
+        dataPagamento: p.dataPagamento,
+        formaPagto: p.formaPagto,
+        parcelas: p.parcelas,
+      });
+    } catch (erro) {
+      console.error(erro);
+      setMensagemErro("Erro ao carregar pagamento.");
+    } finally {
+      setEstaCarregando(false);
+    }
+  };
+
+  const atualizarCampo = (campo, valor) => {
+    setDadosEdicao((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const excluirPagamento = async () => {
+    const confirmado = window.confirm(
+      "Deseja realmente excluir este pagamento?"
+    );
+    if (!confirmado) return;
+
     try {
       await PaymentsService.excluir(id);
-      navigate("/pagamentos");
-    } catch (e) {
-      console.error(e);
+      navegar("/pagamentos");
+    } catch (erro) {
+      console.error(erro);
       alert("Erro ao excluir pagamento.");
     }
   };
 
-  const handleSalvar = async () => {
-    const payload = {
-      status,
-      dataPagamento,
-      formaPagto,
-      parcelas,
-    };
-
+  const salvarAlteracoes = async () => {
     try {
-      await PaymentsService.editar(id, payload);
+      await PaymentsService.editar(id, dadosEdicao);
       alert("Pagamento atualizado!");
 
-      setPg((p) => ({ ...p, ...payload }));
+      setPagamento((p) => ({ ...p, ...dadosEdicao }));
       setEditando(false);
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao salvar.");
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao salvar alterações.");
     }
   };
 
-  if (loading) return <div className={styles.loading}>Carregando...</div>;
-  if (erro) return <div className={styles.erro}>{erro}</div>;
-  if (!pg) return <div className={styles.erro}>Pagamento não encontrado.</div>;
+  if (estaCarregando)
+    return <div className={styles.loading}>Carregando...</div>;
+  if (mensagemErro) return <div className={styles.erro}>{mensagemErro}</div>;
+  if (!pagamento)
+    return <div className={styles.erro}>Pagamento não encontrado.</div>;
 
   return (
     <div className={styles.container}>
-      <button className={styles.btnVoltar} onClick={() => navigate(-1)}>
+      {/* BOTÃO VOLTAR */}
+      <button className={styles.btnVoltar} onClick={() => navegar(-1)}>
         <FiArrowLeft size={20} />
         Voltar
       </button>
@@ -96,7 +105,7 @@ export default function PagamentosDetalhes() {
         {/* Valor */}
         <div className={styles.linha}>
           <FiDollarSign size={20} />
-          <span className={styles.valor}>R$ {pg.valor.toFixed(2)}</span>
+          <span className={styles.valor}>R$ {pagamento.valor.toFixed(2)}</span>
         </div>
 
         {/* Status */}
@@ -104,10 +113,10 @@ export default function PagamentosDetalhes() {
           <span className={styles.label}>Status:</span>
           <span
             className={`${styles.status} ${
-              pg.status === "Pago" ? styles.pago : styles.pendente
+              pagamento.status === "Pago" ? styles.pago : styles.pendente
             }`}
           >
-            {pg.status}
+            {pagamento.status}
           </span>
         </div>
 
@@ -115,42 +124,42 @@ export default function PagamentosDetalhes() {
         <div className={styles.grupo}>
           <FiCalendar />
           <span className={styles.label}>Data do pagamento:</span>
-          <span>{pg.dataPagamento}</span>
+          <span>{pagamento.dataPagamento}</span>
         </div>
 
         {/* Forma pgto */}
         <div className={styles.grupo}>
           <FiCreditCard />
           <span className={styles.label}>Forma de pagamento:</span>
-          <span>{pg.formaPagto}</span>
+          <span>{pagamento.formaPagto}</span>
         </div>
 
         {/* Parcelas */}
         <div className={styles.grupo}>
           <FiHash />
           <span className={styles.label}>Parcelas:</span>
-          <span>{pg.parcelas}</span>
+          <span>{pagamento.parcelas}</span>
         </div>
 
         <div className={styles.separador}></div>
 
-        {/* Informações da locação */}
+        {/* Info locação */}
         <h2 className={styles.subtitulo}>
           <FiUser /> Informações da Locação
         </h2>
 
         <div className={styles.grupo}>
           <span className={styles.label}>Cliente:</span>
-          <span>{pg.rental.customerNome}</span>
+          <span>{pagamento.rental.customerNome}</span>
         </div>
 
         <div className={styles.grupo}>
           <span className={styles.label}>Placa:</span>
-          <span>{pg.rental.vehiclePlaca}</span>
+          <span>{pagamento.rental.vehiclePlaca}</span>
         </div>
       </div>
 
-      {/* BOTÕES */}
+      {/* BOTÕES AÇÕES */}
       <div className={styles.acoes}>
         <button
           className={styles.btnEditar}
@@ -159,7 +168,7 @@ export default function PagamentosDetalhes() {
           {editando ? "Cancelar" : "Editar"}
         </button>
 
-        <button className={styles.btnExcluir} onClick={handleExcluir}>
+        <button className={styles.btnExcluir} onClick={excluirPagamento}>
           <FiTrash2 size={18} />
           Excluir
         </button>
@@ -170,39 +179,38 @@ export default function PagamentosDetalhes() {
         <div className={styles.formContainer}>
           <h2 className={styles.subtitulo}>Editar Pagamento</h2>
 
-          {/* Status */}
           <label>Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select
+            value={dadosEdicao.status}
+            onChange={(e) => atualizarCampo("status", e.target.value)}
+          >
             <option value="Pago">Pago</option>
             <option value="Pendente">Pendente</option>
           </select>
 
-          {/* Data */}
           <label>Data de pagamento</label>
           <input
             type="date"
-            value={dataPagamento}
-            onChange={(e) => setDataPagamento(e.target.value)}
+            value={dadosEdicao.dataPagamento}
+            onChange={(e) => atualizarCampo("dataPagamento", e.target.value)}
           />
 
-          {/* Forma pagamento */}
           <label>Forma de pagamento</label>
           <input
             type="text"
-            value={formaPagto}
-            onChange={(e) => setFormaPagto(e.target.value)}
+            value={dadosEdicao.formaPagto}
+            onChange={(e) => atualizarCampo("formaPagto", e.target.value)}
           />
 
-          {/* Parcelas */}
           <label>Parcelas</label>
           <input
             type="number"
-            value={parcelas}
-            onChange={(e) => setParcelas(e.target.value)}
+            value={dadosEdicao.parcelas}
+            onChange={(e) => atualizarCampo("parcelas", e.target.value)}
           />
 
           <div className={styles.btnSalvarContainer}>
-            <button className={styles.btnSalvar} onClick={handleSalvar}>
+            <button className={styles.btnSalvar} onClick={salvarAlteracoes}>
               Salvar
             </button>
           </div>
