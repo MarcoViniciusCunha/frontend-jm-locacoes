@@ -22,7 +22,9 @@ const ClienteForm = ({
   });
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, ...initialData }));
+    if (initialData && Object.keys(initialData).length > 0) {
+      setFormData((prev) => ({ ...prev, ...initialData }));
+    }
   }, [initialData]);
 
   const atualizarCampo = (campo, valor) => {
@@ -59,12 +61,26 @@ const ClienteForm = ({
     }
   };
 
+  const formatarCPF = (valor) => {
+    valor = valor.replace(/\D/g, ""); // só números
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return valor;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    atualizarCampo(name, value);
+
+    let novoValor = value;
+
+    if (name === "cpf") {
+      novoValor = formatarCPF(value);
+    }
 
     if (name === "cep") {
       const cepNumero = value.replace(/\D/g, "");
+      novoValor = cepNumero;
 
       if (cepNumero.length === 8) {
         buscarEndereco(cepNumero);
@@ -72,6 +88,8 @@ const ClienteForm = ({
         limparEndereco();
       }
     }
+
+    atualizarCampo(name, novoValor);
   };
 
   const handleSubmit = (e) => {

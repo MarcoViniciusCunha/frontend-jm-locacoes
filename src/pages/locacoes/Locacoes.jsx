@@ -4,7 +4,12 @@ import { LocacoesService } from "../../services/LocacoesService";
 import ClientesList from "../../components/clientes/ClientesList";
 import styles from "./locacoes.module.css";
 import { FiSearch, FiX, FiEye } from "react-icons/fi";
-import { FaClock, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import {
+  FaClock,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaHourglassStart,
+} from "react-icons/fa";
 
 const Locacoes = () => {
   const [locacoes, setLocacoes] = useState([]);
@@ -110,6 +115,7 @@ const Locacoes = () => {
             <option value="ativa">Ativa</option>
             <option value="devolvida">Devolvida</option>
             <option value="atrasada">Atrasada</option>
+            <option value="nao_iniciada">Não iniciada</option>
           </select>
         </div>
 
@@ -122,7 +128,7 @@ const Locacoes = () => {
         <div className={styles.overlay}>
           <div className={styles.modal}>
             <h3>Selecione o Cliente</h3>
-            <ClientesList onSelect={selecionarCliente} />
+            <ClientesList aoSelecionar={selecionarCliente} />
             <button
               className={styles.closeBtn}
               onClick={() => setMostrarClientes(false)}
@@ -138,55 +144,64 @@ const Locacoes = () => {
       ) : (
         <>
           <div className={styles.grid}>
-            {locacoes.map((loc) => (
-              <div key={loc.id} className={styles.card}>
-                <h2 className={styles.cardTitle}>
-                  {loc.customerName} — {loc.placa}
-                </h2>
+            {locacoes.map((loc) => {
+              const statusNormalized = loc.status.trim().toLowerCase();
+              return (
+                <div key={loc.id} className={styles.card}>
+                  <h2 className={styles.cardTitle}>
+                    {loc.customerName} — {loc.placa}
+                  </h2>
 
-                <p>
-                  <strong>Modelo:</strong> {loc.modelo}
-                </p>
+                  <p>
+                    <strong>Modelo:</strong> {loc.modelo}
+                  </p>
 
-                <p>
-                  <strong>Período:</strong> {loc.startDate} → {loc.endDate}
-                </p>
+                  <p>
+                    <strong>Período:</strong> {loc.startDate} → {loc.endDate}
+                  </p>
 
-                <p className={styles.status}>
-                  <strong>Status:</strong>{" "}
-                  {loc.status === "DEVOLVIDA" ? (
-                    <span
-                      className={`${styles.statusValue} ${styles.devolvida}`}
+                  <p className={styles.status}>
+                    <strong>Status:</strong>{" "}
+                    {statusNormalized === "devolvida" ? (
+                      <span
+                        className={`${styles.statusValue} ${styles.devolvida}`}
+                      >
+                        <FaCheckCircle /> Devolvida
+                      </span>
+                    ) : statusNormalized === "atrasada" ? (
+                      <span
+                        className={`${styles.statusValue} ${styles.atrasada}`}
+                      >
+                        <FaExclamationCircle /> Atrasada
+                      </span>
+                    ) : statusNormalized === "não iniciada" ? (
+                      <span
+                        className={`${styles.statusValue} ${styles.naoIniciada}`}
+                      >
+                        <FaHourglassStart /> Não Iniciada
+                      </span>
+                    ) : (
+                      <span className={`${styles.statusValue} ${styles.ativa}`}>
+                        <FaClock /> Ativa
+                      </span>
+                    )}
+                  </p>
+
+                  <p className={styles.price}>
+                    <strong>Preço:</strong> R$ {loc.price?.toFixed(2)}
+                  </p>
+
+                  <div className={styles.buttons}>
+                    <button
+                      className={`${styles.button} ${styles.details}`}
+                      onClick={() => navigate(`/locacoes/${loc.id}`)}
                     >
-                      <FaCheckCircle /> Devolvida
-                    </span>
-                  ) : loc.status === "ATRASADA" ? (
-                    <span
-                      className={`${styles.statusValue} ${styles.atrasada}`}
-                    >
-                      <FaExclamationCircle /> Atrasada
-                    </span>
-                  ) : (
-                    <span className={`${styles.statusValue} ${styles.ativa}`}>
-                      <FaClock /> Ativa
-                    </span>
-                  )}
-                </p>
-
-                <p className={styles.price}>
-                  <strong>Preço:</strong> R$ {loc.price?.toFixed(2)}
-                </p>
-
-                <div className={styles.buttons}>
-                  <button
-                    className={`${styles.button} ${styles.details}`}
-                    onClick={() => navigate(`/locacoes/${loc.id}`)}
-                  >
-                    <FiEye /> Ver detalhes
-                  </button>
+                      <FiEye /> Ver detalhes
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {qtdPaginas > 1 && (

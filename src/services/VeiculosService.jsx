@@ -52,5 +52,7 @@ export const VeiculosService = {
     excluir: async (placa) => api.delete(`/vehicles/${placa}`),
     buscarPorPlaca: async (placa) => api.get(`/vehicles/${placa}`),
     search: async (params) => api.get("/vehicles/search", { params }),
+    buscarPorStatus: async (status) =>
+      api.get("/vehicles/status", { params: { status } }),
   },
 };

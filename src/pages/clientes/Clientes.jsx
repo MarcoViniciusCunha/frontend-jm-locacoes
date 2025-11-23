@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiSearch, FiUsers, FiUserPlus, FiFileText } from "react-icons/fi";
 import { IoMdAdd, IoMdArrowRoundBack } from "react-icons/io";
 import ClienteForm from "../../components/clientes/ClienteForm";
+import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./Clientes.module.css";
 
 const Clientes = () => {
@@ -11,6 +12,13 @@ const Clientes = () => {
   const [busca, setBusca] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+
+  const exibirMensagem = (tipo, texto) => {
+    setTipoMensagem(tipo);
+    setMensagem(texto);
+  };
 
   const carregarClientes = useCallback(async () => {
     try {
@@ -19,7 +27,8 @@ const Clientes = () => {
       setClientes(data);
     } catch (e) {
       console.error(e);
-      alert("Erro ao carregar clientes.");
+      const msg = e.response?.data?.error || "Erro ao carregar clientes.";
+      exibirMensagem("error", msg);
     } finally {
       setCarregando(false);
     }
@@ -41,7 +50,8 @@ const Clientes = () => {
       setClientes(data);
     } catch (e) {
       console.error(e);
-      alert("Erro ao buscar cliente.");
+      const msg = e.response?.data?.error || "Erro ao buscar clientes.";
+      exibirMensagem("error", msg);
       carregarClientes();
     } finally {
       setBusca("");
@@ -52,12 +62,13 @@ const Clientes = () => {
   const adicionarCliente = async (novoCliente) => {
     try {
       await ClientesService.add(novoCliente);
-      alert("Cliente cadastrado com sucesso!");
+      exibirMensagem("success", "Cliente cadastrado com sucesso!");
       setMostrarFormulario(false);
       carregarClientes();
     } catch (e) {
       console.error(e);
-      alert("Erro ao cadastrar cliente.");
+      const msg = e.response?.data?.message || "Erro ao cadastrar cliente.";
+      exibirMensagem("error", msg);
     }
   };
 
@@ -71,6 +82,8 @@ const Clientes = () => {
           <FiUsers /> Gestão de Clientes
         </h2>
       </div>
+
+      <MessageBox type={tipoMensagem} message={mensagem} />
 
       {/* Barra superior */}
       <div className={styles.topBar}>

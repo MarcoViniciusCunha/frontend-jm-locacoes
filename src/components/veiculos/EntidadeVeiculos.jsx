@@ -8,7 +8,6 @@ export default function CrudEntidade({ action, service, label, fields }) {
   const [editingData, setEditingData] = useState({});
   const [selectOptions, setSelectOptions] = useState({});
 
-  // 📌 Carrega lista inicial
   const loadItems = async () => {
     try {
       const response = await service.lista();
@@ -18,12 +17,10 @@ export default function CrudEntidade({ action, service, label, fields }) {
     }
   };
 
-  // 🔄 Executa listagem ao abrir tela de Lista
   useEffect(() => {
     if (action === "Lista") loadItems();
   }, [action, service]);
 
-  // 📌 Carrega selects dinâmicos
   useEffect(() => {
     const loadSelects = async () => {
       const optionsMap = {};
@@ -41,13 +38,9 @@ export default function CrudEntidade({ action, service, label, fields }) {
     loadSelects();
   }, [fields]);
 
-  // --------------------------------------------
-  // 🧩 Renderização dos campos dinâmicos
-  // --------------------------------------------
   const renderField = (state, setState, field) => {
     const updateField = (value) => setState({ ...state, [field.key]: value });
 
-    // SELECT
     if (field.type === "select") {
       const options = field.options || selectOptions[field.key] || [];
 
@@ -66,7 +59,6 @@ export default function CrudEntidade({ action, service, label, fields }) {
       );
     }
 
-    // DATA
     if (field.key === "validade") {
       return (
         <input
@@ -77,7 +69,6 @@ export default function CrudEntidade({ action, service, label, fields }) {
       );
     }
 
-    // TEXTO PADRÃO
     return (
       <input
         type="text"
@@ -87,10 +78,6 @@ export default function CrudEntidade({ action, service, label, fields }) {
       />
     );
   };
-
-  // --------------------------------------------
-  // 🎯 AÇÕES CRUD
-  // --------------------------------------------
 
   const handleCreate = async () => {
     await service.add(newItem);
@@ -115,18 +102,13 @@ export default function CrudEntidade({ action, service, label, fields }) {
     setEditingId(item.id);
     setEditingData({
       ...item,
-      companyId: item.company?.id, // ajuste para select de seguro
+      companyId: item.company?.id,
     });
   };
 
-  // --------------------------------------------
-  // 📌 RENDER COMPONENT
-  // --------------------------------------------
   return (
     <div className={styles.container}>
-      {/* =====================================
-          CADASTRAR
-      ====================================== */}
+      {/*CADASTRAR*/}
       {action === "Cadastrar" && (
         <form className={styles.form}>
           {fields.map((field) => renderField(newItem, setNewItem, field))}
@@ -137,9 +119,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
         </form>
       )}
 
-      {/* =====================================
-          LISTAR / EDITAR / EXCLUIR
-      ====================================== */}
+      {/*LISTAR / EDITAR / EXCLUIR*/}
       {action === "Lista" && (
         <ul className={styles.lista}>
           {items.map((item) => {
@@ -170,7 +150,6 @@ export default function CrudEntidade({ action, service, label, fields }) {
                   </>
                 ) : (
                   <>
-                    {/* VISUALIZAÇÃO */}
                     <div className={styles.itemInfo}>
                       {label === "seguro" ? (
                         <>

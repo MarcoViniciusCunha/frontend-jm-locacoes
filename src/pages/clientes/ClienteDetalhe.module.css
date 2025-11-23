@@ -1,4 +1,3 @@
-/* ---- CONTAINER PRINCIPAL ---- */
 .container {
   max-width: 600px;
   margin: 60px auto;
@@ -9,7 +8,6 @@
   font-family: "Inter", sans-serif;
 }
 
-/* ---- TÍTULO ---- */
 .titleBar {
   display: flex;
   justify-content: center;
@@ -30,7 +28,7 @@
   color: var(--primary);
 }
 
-/* ---- GRUPO DE BOTÕES ---- */
+/* 🔘 Botões */
 .buttonGroup {
   display: flex;
   justify-content: center;
@@ -39,32 +37,23 @@
   margin-top: 25px;
 }
 
-/* ---- ESTILO BASE DOS BOTÕES ---- */
 button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 6px;
-
   padding: 10px 16px;
   border: none;
   border-radius: 10px;
-
   font-size: 15px;
-  font-weight: 600;
-
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.2s ease-in-out;
-
+  transition: background-color 0.2s ease-in-out;
   color: #fff;
 }
 
 button:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
+  opacity: 0.9;
 }
 
-/* ---- VARIANTES ---- */
+/* 🟦 Estilos individuais */
 .backBtn {
   background-color: var(--text-dark);
 }
@@ -89,18 +78,11 @@ button:hover {
 .deleteBtn {
   background-color: var(--danger);
 }
-.deleteBtn:hover {
-  background-color: var(--danger-hover);
-}
-
 .cancelBtn {
-  background-color: #6c757d;
-}
-.cancelBtn:hover {
-  background-color: #5a6268;
+  background-color: #505050;
 }
 
-/* ---- RESPONSIVIDADE ---- */
+/* 🧱 Responsivo */
 @media (max-width: 600px) {
   .container {
     padding: 20px;
@@ -108,7 +90,7 @@ button:hover {
 
   .buttonGroup {
     flex-direction: column;
-    gap: 10px;
+    align-items: stretch;
   }
 
   button {

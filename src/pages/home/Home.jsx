@@ -3,6 +3,7 @@ import { VeiculosService } from "../../services/VeiculosService";
 import { ClientesService } from "../../services/ClientesService";
 import { LocacoesService } from "../../services/LocacoesService";
 import styles from "./Home.module.css";
+import MessageBox from "../../components/erro/MensagemErro";
 
 import {
   FiTruck,
@@ -28,6 +29,9 @@ const Home = () => {
   const [proximaDevolucao, setProximaDevolucao] = useState(null);
   const [proximaLocacao, setProximaLocacao] = useState(null);
 
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+
   useEffect(() => {
     carregarDados();
   }, []);
@@ -39,17 +43,17 @@ const Home = () => {
       const veiculosData = veiculosRes.data.content || veiculosRes.data;
 
       setTotalVeiculos(veiculosData.length);
-      setVeiculosManutencao(
-        veiculosData.filter((v) => v.status?.toUpperCase() === "MANUTENCAO")
-          .length
+
+      const manutencaoRes = await VeiculosService.veiculos.buscarPorStatus(
+        "MANUTENCAO"
       );
+      setVeiculosManutencao(manutencaoRes.data.length);
 
       // Clientes
       const clientesRes = await ClientesService.lista();
       const clientesData = clientesRes.data.content || clientesRes.data;
       setTotalClientes(clientesData.length);
 
-      // ❗ AGORA PEGAMOS OS DADOS DIRETO DO BACKEND
       const dashboardRes = await LocacoesService.deshboard();
       const d = dashboardRes.data;
 
@@ -60,6 +64,13 @@ const Home = () => {
       setProximaLocacao(d.proximaLocacao);
     } catch (error) {
       console.error("Erro ao carregar dashboard:", error);
+
+      const msg =
+        error.response?.data?.error ||
+        "Erro ao carregar informações do dashboard.";
+
+      setTipoMensagem("error");
+      setMensagem(msg);
     }
   };
 
@@ -67,6 +78,8 @@ const Home = () => {
     <main className={styles.homeMain}>
       <div className={styles.dashboardContainer}>
         <h1>Dashboard JM Locações</h1>
+
+        <MessageBox type={tipoMensagem} message={mensagem} />
 
         <div className={styles.cardsGrid}>
           <div className={`${styles.card} ${styles.totalVeiculos}`}>
@@ -106,7 +119,7 @@ const Home = () => {
 
           <div className={`${styles.card} ${styles.pendencias}`}>
             <h3>
-              <FiAlertTriangle /> Pendências
+              <FiAlertTriangle /> Locações em Atraso
             </h3>
             <p>{pendencias}</p>
           </div>

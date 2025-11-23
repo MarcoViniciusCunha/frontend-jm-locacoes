@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { LocacoesService } from "../../services/LocacoesService";
 import RegistrarPagamento from "../../components/pagamento/RegistrarPagamento";
 import styles from "./locacaoDetalhe.module.css";
+import MessageBox from "../../components/erro/MensagemErro";
 
 import {
   FiUser,
@@ -20,7 +21,9 @@ export default function LocacaoDetalhe() {
   const [dadosLocacao, setDadosLocacao] = useState(null);
   const [carregando, setCarregando] = useState(true);
 
-  // NOVO: controla exibição da janela/modal
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+
   const [abrirModalPagamento, setAbrirModalPagamento] = useState(false);
 
   useEffect(() => {
@@ -29,8 +32,11 @@ export default function LocacaoDetalhe() {
         setCarregando(true);
         const resposta = await LocacoesService.buscarPorId(id);
         setDadosLocacao(resposta.data);
-      } catch (erro) {
-        console.error("Erro ao carregar locação:", erro);
+      } catch (e) {
+        setTipoMensagem("error");
+        setMensagem(
+          e.response?.data?.error || "Erro ao carregar dados da locação."
+        );
       } finally {
         setCarregando(false);
       }
@@ -42,10 +48,11 @@ export default function LocacaoDetalhe() {
   const lidarDevolucao = async () => {
     try {
       await LocacoesService.devolver(id);
-      alert("Veículo devolvido com sucesso!");
-      navigate("/locacoes");
-    } catch {
-      alert("Erro ao devolver veículo");
+      setTipoMensagem("success");
+      setMensagem("Veículo devolvido com sucesso!");
+    } catch (error) {
+      setTipoMensagem("error");
+      setMensagem(error.response?.data?.error || "Erro ao devolver o veículo.");
     }
   };
 
@@ -59,28 +66,25 @@ export default function LocacaoDetalhe() {
       </div>
     );
 
-  let status = "Ativa";
+  const status = dadosLocacao.status;
 
-  if (dadosLocacao.returned) {
-    status = "Devolvido";
-  } else {
-    const hoje = new Date();
-    const fim = new Date(dadosLocacao.endDate);
-
-    if (hoje > fim) {
-      status = "Atrasada";
-    }
-  }
+  const statusClass = status
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "_");
 
   const lidarExclusao = async () => {
     if (!window.confirm("Deseja realmente excluir esta locação?")) return;
 
     try {
       await LocacoesService.excluir(id);
-      alert("Locação excluída com sucesso!");
+      setTipoMensagem("success");
+      setMensagem("Locação excluída com sucesso!");
       navigate("/locacoes");
-    } catch {
-      alert("Erro ao excluir locação.");
+    } catch (error) {
+      setTipoMensagem("error");
+      setMensagem(error.response?.data?.error || "Erro ao excluir a locação.");
     }
   };
 
@@ -96,10 +100,12 @@ export default function LocacaoDetalhe() {
 
         <div className={styles.cabecalho}>
           <h1>Detalhes da Locação</h1>
-          <span className={`${styles.status} ${styles[status.toLowerCase()]}`}>
+          <span className={`${styles.status} ${styles[statusClass]}`}>
             {status}
           </span>
         </div>
+
+        <MessageBox type={tipoMensagem} message={mensagem} />
 
         <div className={styles.grid}>
           {/* CLIENTE */}

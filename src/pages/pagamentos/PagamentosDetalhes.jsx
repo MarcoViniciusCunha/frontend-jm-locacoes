@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PaymentsService } from "../../services/LocacoesService";
+import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./PagamentosDetalhes.module.css";
 import {
   FiDollarSign,
@@ -18,7 +19,7 @@ export default function PagamentosDetalhes() {
 
   const [pagamento, setPagamento] = useState(null);
   const [estaCarregando, setEstaCarregando] = useState(true);
-  const [mensagemErro, setMensagemErro] = useState(null);
+  const [mensagem, setMensagem] = useState(null);
   const [editando, setEditando] = useState(false);
 
   const [dadosEdicao, setDadosEdicao] = useState({
@@ -34,11 +35,13 @@ export default function PagamentosDetalhes() {
 
   const carregarPagamento = async () => {
     try {
+      setEstaCarregando(true);
+      setMensagem(null);
+
       const resposta = await PaymentsService.buscarPorId(id);
-
       const p = resposta.data;
-      setPagamento(p);
 
+      setPagamento(p);
       setDadosEdicao({
         status: p.status,
         dataPagamento: p.dataPagamento,
@@ -47,7 +50,7 @@ export default function PagamentosDetalhes() {
       });
     } catch (erro) {
       console.error(erro);
-      setMensagemErro("Erro ao carregar pagamento.");
+      setMensagem({ type: "error", message: "Erro ao carregar pagamento." });
     } finally {
       setEstaCarregando(false);
     }
@@ -65,41 +68,49 @@ export default function PagamentosDetalhes() {
 
     try {
       await PaymentsService.excluir(id);
-      navegar("/pagamentos");
+      setMensagem({
+        type: "success",
+        message: "Pagamento excluído com sucesso!",
+      });
+      setTimeout(() => navegar("/pagamentos"), 1500);
     } catch (erro) {
       console.error(erro);
-      alert("Erro ao excluir pagamento.");
+      setMensagem({ type: "error", message: "Erro ao excluir pagamento." });
     }
   };
 
   const salvarAlteracoes = async () => {
     try {
       await PaymentsService.editar(id, dadosEdicao);
-      alert("Pagamento atualizado!");
-
       setPagamento((p) => ({ ...p, ...dadosEdicao }));
       setEditando(false);
+      setMensagem({
+        type: "success",
+        message: "Pagamento atualizado com sucesso!",
+      });
     } catch (erro) {
       console.error(erro);
-      alert("Erro ao salvar alterações.");
+      setMensagem({ type: "error", message: "Erro ao salvar alterações." });
     }
   };
 
   if (estaCarregando)
     return <div className={styles.loading}>Carregando...</div>;
-  if (mensagemErro) return <div className={styles.erro}>{mensagemErro}</div>;
   if (!pagamento)
-    return <div className={styles.erro}>Pagamento não encontrado.</div>;
+    return <MessageBox type="error" message="Pagamento não encontrado." />;
 
   return (
     <div className={styles.container}>
       {/* BOTÃO VOLTAR */}
       <button className={styles.btnVoltar} onClick={() => navegar(-1)}>
-        <FiArrowLeft size={20} />
-        Voltar
+        <FiArrowLeft size={20} /> Voltar
       </button>
 
       <h1 className={styles.titulo}>Detalhes do Pagamento</h1>
+
+      {mensagem && (
+        <MessageBox type={mensagem.type} message={mensagem.message} />
+      )}
 
       <div className={styles.card}>
         {/* Valor */}
@@ -113,7 +124,9 @@ export default function PagamentosDetalhes() {
           <span className={styles.label}>Status:</span>
           <span
             className={`${styles.status} ${
-              pagamento.status === "Pago" ? styles.pago : styles.pendente
+              pagamento.status === "Pago" || pagamento.status === "PAGO"
+                ? styles.pago
+                : styles.pendente
             }`}
           >
             {pagamento.status}
@@ -169,8 +182,7 @@ export default function PagamentosDetalhes() {
         </button>
 
         <button className={styles.btnExcluir} onClick={excluirPagamento}>
-          <FiTrash2 size={18} />
-          Excluir
+          <FiTrash2 size={18} /> Excluir
         </button>
       </div>
 

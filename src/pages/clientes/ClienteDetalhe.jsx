@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
 import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./ClienteDetalhe.module.css";
+
 import {
   FaArrowLeft,
   FaEdit,
@@ -12,14 +13,22 @@ import {
   FaUserCircle,
 } from "react-icons/fa";
 
+import MessageBox from "../../components/erro/MensagemErro";
+
 const ClienteDetalhe = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [cliente, setCliente] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState("");
   const [editando, setEditando] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+
+  const exibirMensagem = (tipo, texto) => {
+    setTipoMensagem(tipo);
+    setMensagem(texto);
+  };
 
   const carregarCliente = useCallback(async () => {
     try {
@@ -27,7 +36,7 @@ const ClienteDetalhe = () => {
       setCliente(data);
     } catch (e) {
       console.error(e);
-      setErro("Erro ao carregar cliente.");
+      exibirMensagem("error", "Erro ao carregar cliente: " + e.message);
     } finally {
       setCarregando(false);
     }
@@ -41,34 +50,39 @@ const ClienteDetalhe = () => {
     try {
       await ClientesService.editar(id, dadosForm);
       await carregarCliente();
+
       setEditando(false);
-      alert("Cliente atualizado com sucesso!");
+      exibirMensagem("success", "Cliente atualizado com sucesso!");
     } catch (e) {
-      console.error(e);
-      alert("Erro ao salvar: " + e.message);
+      const msg = e.response?.data.error || "Erro ao salvar cliente";
+      exibirMensagem("error", msg);
     }
   };
 
   const excluirCliente = async () => {
-    const confirmar = window.confirm(
-      "Tem certeza que deseja excluir este cliente?"
-    );
-    if (!confirmar) return;
+    if (!window.confirm("Tem certeza que deseja excluir este cliente?")) return;
 
     try {
       await ClientesService.excluir(id);
-      alert("Cliente excluído com sucesso!");
-      navigate("/clientes");
+      exibirMensagem("success", "Cliente excluído com sucesso!");
+
+      setTimeout(() => navigate("/clientes"), 1200);
     } catch (e) {
-      console.error(e);
-      alert("Erro ao excluir cliente: " + e.message);
+      const msg = e.response?.data.error || "Erro ao excluir cliente";
+      exibirMensagem("error", msg);
     }
   };
 
-  const voltar = () => navigate(-1);
+  const dispararSubmitDoForm = () => {
+    const form = document.querySelector("form");
+    if (form) {
+      form.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
+    }
+  };
 
   if (carregando) return <p>Carregando...</p>;
-  if (erro) return <p>{erro}</p>;
 
   return (
     <div className={styles.container}>
@@ -77,6 +91,8 @@ const ClienteDetalhe = () => {
           <FaUserCircle /> {cliente?.nome}
         </h1>
       </div>
+
+      <MessageBox type={tipoMensagem} message={mensagem} />
 
       <ClienteForm
         initialData={cliente}
@@ -88,7 +104,7 @@ const ClienteDetalhe = () => {
       <div className={styles.buttonGroup}>
         {!editando ? (
           <>
-            <button className={styles.backBtn} onClick={voltar}>
+            <button className={styles.backBtn} onClick={() => navigate(-1)}>
               <FaArrowLeft /> Voltar
             </button>
 
@@ -105,16 +121,7 @@ const ClienteDetalhe = () => {
           </>
         ) : (
           <>
-            <button
-              className={styles.saveBtn}
-              onClick={() =>
-                document
-                  .querySelector("form")
-                  .dispatchEvent(
-                    new Event("submit", { cancelable: true, bubbles: true })
-                  )
-              }
-            >
+            <button className={styles.saveBtn} onClick={dispararSubmitDoForm}>
               <FaSave /> Salvar
             </button>
 

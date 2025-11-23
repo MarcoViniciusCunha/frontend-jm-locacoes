@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PaymentsService } from "../../services/LocacoesService";
 import ClientesList from "../../components/clientes/ClientesList";
+import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./pagamentos.module.css";
 import { FiEye, FiSearch, FiX } from "react-icons/fi";
 
 export default function Pagamentos() {
   const [listaPagamentos, setListaPagamentos] = useState([]);
   const [estaCarregando, setEstaCarregando] = useState(false);
-  const [mensagemErro, setMensagemErro] = useState(null);
+  const [mensagemErro, setMensagemErro] = useState("");
 
   const [filtros, setFiltros] = useState({
     cpf: "",
@@ -28,7 +29,7 @@ export default function Pagamentos() {
   const carregarPagamentos = async (page = 0) => {
     try {
       setEstaCarregando(true);
-      setMensagemErro(null);
+      setMensagemErro("");
 
       const params = {};
       for (const key in filtros) {
@@ -57,18 +58,14 @@ export default function Pagamentos() {
     carregarPagamentos(0);
   }, []);
 
-  const buscarComFiltros = () => {
-    carregarPagamentos(0);
-  };
+  const buscarComFiltros = () => carregarPagamentos(0);
 
   const limparFiltros = () => {
     setFiltros({ cpf: "", placa: "", status: "", formaPagto: "", data: "" });
     carregarPagamentos(0);
   };
 
-  const abrirDetalhes = (id) => {
-    navegar(`/pagamentos/${id}`);
-  };
+  const abrirDetalhes = (id) => navegar(`/pagamentos/${id}`);
 
   const selecionarCliente = (cliente) => {
     setFiltros((prev) => ({ ...prev, cpf: cliente.cpf }));
@@ -136,6 +133,7 @@ export default function Pagamentos() {
         </div>
       </div>
 
+      {/* MODAL DE CLIENTES */}
       {mostrarClientes && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
@@ -151,7 +149,8 @@ export default function Pagamentos() {
         </div>
       )}
 
-      {mensagemErro && <div className={styles.erro}>{mensagemErro}</div>}
+      {/* MENSAGENS */}
+      {mensagemErro && <MessageBox tipo="erro" mensagem={mensagemErro} />}
       {estaCarregando && <div className={styles.loading}>Carregando...</div>}
       {nenhumEncontrado && (
         <div className={styles.semDados}>Nenhum pagamento encontrado.</div>

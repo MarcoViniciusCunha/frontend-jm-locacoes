@@ -70,14 +70,19 @@
   font-size: 14px;
 }
 
-.ativa {
-  background: #e8f7ef;
-  color: #1f7b47;
+.nao_iniciada {
+  background: #fff4d6;
+  color: rgb(207, 135, 1);
 }
 
-.devolvido {
+.ativa {
   background: #e8f0fa;
   color: #1a4f9b;
+}
+
+.devolvida {
+  background: #e8f7ef;
+  color: #1f7b47;
 }
 
 .atrasada {
