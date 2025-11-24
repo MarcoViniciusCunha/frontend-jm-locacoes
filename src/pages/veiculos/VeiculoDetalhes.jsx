@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { VeiculosService } from "../../services/VeiculosService";
 import { LocacoesService } from "../../services/LocacoesService";
+import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./VeiculoDetalhes.module.css";
 import ClientesList from "../../components/clientes/ClientesList";
 import {
@@ -48,6 +49,8 @@ export default function VeiculoDetalhes() {
   const [cores, setCores] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [seguros, setSeguros] = useState([]);
+
+  const [msg, setMsg] = useState({ type: "", text: "" });
 
   useEffect(() => {
     carregarVeiculo();
@@ -122,15 +125,15 @@ export default function VeiculoDetalhes() {
       };
 
       await LocacoesService.add(dados);
-      alert("Locação cadastrada com sucesso!");
+      showMessage("success", "Locação cadastrada com sucesso");
       setMostrarFormulario(false);
       setCpf("");
       setStartDate("");
       setEndDate("");
       setPrice("");
-    } catch (error) {
-      console.error("Erro ao cadastrar locação:", error);
-      alert("Erro ao cadastrar locação.");
+    } catch (e) {
+      const msg = e.response?.data?.message || "Erro ao cadastrar locação.";
+      showMessage("error", msg);
     }
   };
 
@@ -139,17 +142,23 @@ export default function VeiculoDetalhes() {
       const novoStatus =
         veiculo.status === "MANUTENCAO" ? "DISPONIVEL" : "MANUTENCAO";
 
-      await VeiculosService.veiculos.editar(placa, { status: novoStatus });
+      const response = await VeiculosService.veiculos.editar(placa, {
+        status: novoStatus,
+      });
+
       setVeiculo((prev) => ({ ...prev, status: novoStatus }));
 
-      alert(
-        novoStatus === "MANUTENCAO"
-          ? "Veículo enviado para manutenção!"
-          : "Veículo retornou à atividade!"
+      showMessage(
+        "info",
+        response.data.message ||
+          (novoStatus === "MANUTENCAO"
+            ? "Veículo enviado para manutenção!"
+            : "Veículo retornou à atividade!")
       );
     } catch (error) {
-      console.error("Erro ao atualizar status:", error);
-      alert("Erro ao alterar status do veículo.");
+      const backendMsg =
+        error.response?.data?.message || "Erro ao alterar status do veículo.";
+      showMessage("error", backendMsg);
     }
   };
 
@@ -170,12 +179,12 @@ export default function VeiculoDetalhes() {
 
       await VeiculosService.veiculos.editar(placa, dadosAtualizados);
 
-      alert("Veículo atualizado com sucesso!");
+      showMessage("success", "Veículo atualizado com sucesso!");
       setMostrarEdicao(false);
       carregarVeiculo();
-    } catch (error) {
-      console.error("Erro ao editar veículo:", error);
-      alert("Erro ao editar veículo.");
+    } catch (e) {
+      const backendMsg = e.response?.data?.message || "Erro ao editar veículo.";
+      showMessage("error", backendMsg);
     }
   };
 
@@ -183,13 +192,18 @@ export default function VeiculoDetalhes() {
     if (window.confirm("Tem certeza que deseja excluir este veículo?")) {
       try {
         await VeiculosService.veiculos.excluir(placa);
-        alert("Veículo excluído com sucesso!");
+        showMessage("success", "Veículo excluído com sucesso!");
         navigate("/veiculos");
-      } catch (error) {
-        console.error("Erro ao excluir veículo:", error);
-        alert("Erro ao excluir veículo.");
+      } catch (e) {
+        const msg = e.response?.data?.message || "Erro ao excluir veículo.";
+        showMessage("error", msg);
       }
     }
+  };
+
+  const showMessage = (type, text) => {
+    setMsg({ type, text });
+    setTimeout(() => setMsg({ type: "", text: "" }), 4000); // desaparece depois de 4s
   };
 
   if (loading) return <p>Carregando...</p>;
@@ -200,6 +214,8 @@ export default function VeiculoDetalhes() {
       <h1>
         {veiculo.brand?.nome} {veiculo.model?.nome} ({veiculo.ano})
       </h1>
+
+      <MessageBox type={msg.type} message={msg.text} />
 
       <p>
         <strong>Placa:</strong> {veiculo.placa}
@@ -311,7 +327,7 @@ export default function VeiculoDetalhes() {
             {showCustomerList && (
               <div className={styles.listaClientesWrapper}>
                 <ClientesList
-                  onSelect={(cliente) => {
+                  aoSelecionar={(cliente) => {
                     setCpf(cliente.cpf);
                     setShowCustomerList(false);
                   }}

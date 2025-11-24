@@ -46,6 +46,10 @@ export default function BarraNavegacao() {
         <NavLink to="/pagamentos" className={gerarClasseLink}>
           Pagamentos
         </NavLink>
+
+        <NavLink to="/multas" className={gerarClasseLink}>
+          Multas
+        </NavLink>
       </nav>
 
       <button onClick={confirmarLogout} className={styles.logoutButton}>

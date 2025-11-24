@@ -260,6 +260,23 @@
   background: var(--primary-hover);
 }
 
+.botaoDetalhesPagto {
+  padding: 8px 18px;
+  background: #6b6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 8px;
+}
+
+.botaoDetalhesPagto:hover {
+  background: #505050;
+}
+
 /* NOVO — Modal (fundo) */
 .modalOverlay {
   position: fixed;

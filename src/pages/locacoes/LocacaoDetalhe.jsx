@@ -234,11 +234,105 @@ export default function LocacaoDetalhe() {
                     <span className={styles.label}>Parcelas:</span>
                     <span className={styles.valor}>{pg.parcelas}</span>
                   </div>
+
+                  <button
+                    className={styles.botaoDetalhesPagto}
+                    onClick={() => navigate(`/pagamentos/${pg.id}`)}
+                  >
+                    Detalhes
+                  </button>
                 </div>
               ))
             ) : (
               <p className={styles.semPagamentos}>
                 Nenhum pagamento registrado.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* MULTAS */}
+        <div className={styles.cardsContainer}>
+          <div className={styles.card}>
+            <div className={styles.cardTituloLinha}>
+              <h2 className={styles.cardTitulo}>Multas</h2>
+            </div>
+
+            {dadosLocacao.fines?.length > 0 ? (
+              dadosLocacao.fines.map((multa) => (
+                <div key={multa.id} className={styles.linhaGrupo}>
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Data:</span>
+                    <span className={styles.valor}>{multa.data_multa}</span>
+                  </div>
+
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Valor:</span>
+                    <span className={styles.valor}>R$ {multa.valor}</span>
+                  </div>
+
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Descrição:</span>
+                    <span className={styles.valor}>{multa.descricao}</span>
+                  </div>
+
+                  <button
+                    className={styles.botaoDetalhesPagto}
+                    onClick={() => navigate(`/multas/${multa.id}`)}
+                  >
+                    Detalhes
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className={styles.semPagamentos}>Nenhuma multa registrada.</p>
+            )}
+          </div>
+        </div>
+
+        {/* INSPEÇÕES */}
+        <div className={styles.cardsContainer}>
+          <div className={styles.card}>
+            <div className={styles.cardTituloLinha}>
+              <h2 className={styles.cardTitulo}>Inspeções</h2>
+
+              <button
+                className={styles.botaoRegistrarPgto}
+                onClick={() => navigate(`/inspecoes/cadastrar?locacao=${id}`)}
+              >
+                Registrar Inspeção
+              </button>
+            </div>
+
+            {dadosLocacao.inspections?.length > 0 ? (
+              dadosLocacao.inspections.map((insp) => (
+                <div key={insp.id} className={styles.linhaGrupo}>
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Data:</span>
+                    <span className={styles.valor}>{insp.dataInspecao}</span>
+                  </div>
+
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Status:</span>
+                    <span className={styles.valor}>{insp.status}</span>
+                  </div>
+
+                  <div className={styles.linha}>
+                    <span className={styles.label}>Observações:</span>
+                    <span className={styles.valor}>{insp.observacoes}</span>
+                  </div>
+
+                  <button
+                    className={styles.botaoDetalhesPagto}
+                    onClick={() => navigate(`/inspecoes/${insp.id}`)}
+                  >
+                    Detalhes
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className={styles.semPagamentos}>
+                Nenhuma inspeção registrada.
               </p>
             )}
           </div>

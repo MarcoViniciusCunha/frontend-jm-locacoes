@@ -1,0 +1,54 @@
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 15px;
+  background: #ddd;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+input,
+textarea {
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.saveBtn {
+  background: #008cff;
+  padding: 10px 16px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  background: #e50914;
+  padding: 10px 16px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}

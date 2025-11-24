@@ -65,7 +65,9 @@ export default function Pagamentos() {
     carregarPagamentos(0);
   };
 
-  const abrirDetalhes = (id) => navegar(`/pagamentos/${id}`);
+  const abrirLocacao = (item) => {
+    navegar(`/locacoes/${item.rental.id}`);
+  };
 
   const selecionarCliente = (cliente) => {
     setFiltros((prev) => ({ ...prev, cpf: cliente.cpf }));
@@ -197,9 +199,9 @@ export default function Pagamentos() {
               <div className={styles.botoes}>
                 <button
                   className={styles.btnDetalhes}
-                  onClick={() => abrirDetalhes(item.id)}
+                  onClick={() => abrirLocacao(item)}
                 >
-                  <FiEye size={18} /> Detalhes
+                  <FiEye size={18} /> Ver Locação
                 </button>
               </div>
             </div>

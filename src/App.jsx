@@ -20,6 +20,8 @@ import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
 import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
 import Pagamentos from "./pages/pagamentos/Pagamentos";
 import PagamentosDetalhes from "./pages/pagamentos/PagamentosDetalhes";
+import MultasList from "./pages/multas/MultasList";
+import MultaDetalhe from "./pages/multas/MultaDetalhe";
 
 const token = localStorage.getItem("token");
 if (token) {
@@ -124,6 +126,30 @@ function App() {
               element={
                 <PrivateRoute>
                   <PagamentosDetalhes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/multas"
+              element={
+                <PrivateRoute>
+                  <MultasList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/multas/:id"
+              element={
+                <PrivateRoute>
+                  <MultaDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <PrivateRoute>
+                  <h1>404 - Página não encontrada</h1>
                 </PrivateRoute>
               }
             />
