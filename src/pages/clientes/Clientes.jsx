@@ -132,7 +132,7 @@ const Clientes = () => {
             clientes.map((cliente) => (
               <li key={cliente.id}>
                 <span className={styles.nome}>{cliente.nome}</span>
-                <span className={styles.cpf}>{cliente.cpf}</span>
+                <span className={styles.cpf}>{cliente.cpfMasked}</span>
 
                 <Link to={`/clientes/${cliente.id}`}>
                   <button className={styles.profileBtn}>

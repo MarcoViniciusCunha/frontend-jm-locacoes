@@ -153,19 +153,33 @@ button:hover,
   transform: translateY(-1px);
 }
 
-.statusManutencao,
-.statusNormal {
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  font-weight: 600;
+.statusBadge {
+  padding: 3px 7px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+.statusDisponivel {
+  background-color: #d4f8df;
+  color: #1b8f3e;
+  border: 2px solid #1b8f3e;
+}
+
+.statusAlugado {
+  background-color: #d9e9ff;
+  color: #0b5ed7;
+  border: 2px solid #0b5ed7;
 }
 
 .statusManutencao {
-  color: var(--danger);
-}
-
-.statusNormal {
-  color: var(--success);
+  background-color: #ffe2d6;
+  color: #d9534f;
+  border: 2px solid #d9534f;
 }
 
 .campoCpf {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./ClienteForm.module.css";
+import { CepService } from "../../services/ClientesService";
 
 const ClienteForm = ({
   initialData = {},
@@ -18,8 +19,11 @@ const ClienteForm = ({
     data_nasc: "",
     logradouro: "",
     localidade: "",
+    estado: "",
     ...initialData,
   });
+
+  const [enderecoManual, setEnderecoManual] = useState(false);
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
@@ -36,28 +40,31 @@ const ClienteForm = ({
       ...prev,
       logradouro: "",
       localidade: "",
+      estado: "",
     }));
   };
 
   const buscarEndereco = async (cepLimpo) => {
     try {
-      const response = await fetch(
-        `https://viacep.com.br/ws/${cepLimpo}/json/`
-      );
-      const data = await response.json();
+      const { data } = await CepService.buscar(cepLimpo);
 
       if (data.erro) {
         limparEndereco();
+        setEnderecoManual(true);
         return;
       }
 
+      setEnderecoManual(false);
       setFormData((prev) => ({
         ...prev,
         logradouro: data.logradouro,
         localidade: data.localidade,
+        estado: data.uf,
       }));
     } catch (err) {
       console.error("Erro ao buscar CEP:", err);
+      limparEndereco();
+      setEnderecoManual(true);
     }
   };
 
@@ -120,30 +127,52 @@ const ClienteForm = ({
         />
       ))}
 
+      {enderecoManual && (
+        <p className={styles.alertManual}>
+          CEP não encontrado. Preencha o endereço manualmente.
+        </p>
+      )}
+
       {/* Campos de endereço retornados do CEP */}
       <div className={styles.addressFields}>
         <input
           type="text"
           placeholder="Rua"
+          name="logradouro"
           value={formData.logradouro}
-          disabled
+          onChange={handleChange}
+          disabled={!enderecoManual || disabled}
         />
         <input
           type="text"
           placeholder="Cidade"
+          name="localidade"
           value={formData.localidade}
-          disabled
+          onChange={handleChange}
+          disabled={!enderecoManual || disabled}
+        />
+        <input
+          type="text"
+          placeholder="Estado"
+          name="estado"
+          value={formData.estado}
+          onChange={handleChange}
+          disabled={!enderecoManual || disabled}
         />
       </div>
 
       {/* Data */}
-      <input
-        type="date"
-        name="data_nasc"
-        value={formData.data_nasc}
-        onChange={handleChange}
-        disabled={disabled}
-      />
+      <div className={styles.dateWrapper}>
+        <label className={styles.dateLabel}>Data de nascimento</label>
+        <input
+          type="date"
+          name="data_nasc"
+          value={formData.data_nasc}
+          onChange={handleChange}
+          disabled={disabled}
+          className={styles.dateInput}
+        />
+      </div>
 
       {/* Botões */}
       {!disabled && (

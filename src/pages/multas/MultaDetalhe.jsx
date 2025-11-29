@@ -29,7 +29,7 @@ const MultaDetalhe = () => {
       setForm({
         placa: data.placa || "",
         cliente: data.cliente?.nome || "",
-        dataMulta: data.dataMulta || "",
+        dataMulta: data.data_multa || "",
         valor: data.valor || "",
         descricao: data.descricao || "",
       });

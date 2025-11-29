@@ -27,7 +27,8 @@ const MultasList = () => {
 
   const [filtros, setFiltros] = useState({
     placa: "",
-    cpf: "",
+    customerId: "",
+    customerNome: "",
     dataInicial: "",
     dataFinal: "",
   });
@@ -92,7 +93,7 @@ const MultasList = () => {
     const params = {};
 
     if (filtros.placa) params.placa = filtros.placa;
-    if (filtros.cpf) params.cpf = filtros.cpf;
+    if (filtros.customerId) params.customerId = filtros.customerId;
     if (filtros.dataInicial) params.dataInicial = filtros.dataInicial;
     if (filtros.dataFinal) params.dataFinal = filtros.dataFinal;
 
@@ -100,12 +101,22 @@ const MultasList = () => {
   };
 
   const limparFiltros = () => {
-    setFiltros({ placa: "", cpf: "", dataInicial: "", dataFinal: "" });
+    setFiltros({
+      placa: "",
+      customerNome: "",
+      customerId: "",
+      dataInicial: "",
+      dataFinal: "",
+    });
     carregarMultas();
   };
 
   const selecionarCliente = (cliente) => {
-    setFiltros((prev) => ({ ...prev, cpf: cliente.cpf }));
+    setFiltros((prev) => ({
+      ...prev,
+      customerId: cliente.id,
+      customerNome: cliente.nome,
+    }));
     setAbrirModalClientes(false);
   };
 
@@ -124,7 +135,6 @@ const MultasList = () => {
 
       {/* FILTROS */}
       <div className={styles.filtros}>
-        {/* PLACA */}
         <input
           type="text"
           placeholder="Placa"
@@ -132,11 +142,10 @@ const MultasList = () => {
           onChange={(e) => setFiltros((f) => ({ ...f, placa: e.target.value }))}
         />
 
-        {/* CLIENTE (CPF) */}
         <input
           type="text"
-          placeholder="CPF do Cliente"
-          value={filtros.cpf}
+          placeholder="Cliente"
+          value={filtros.customerNome}
           readOnly
           onClick={() => setAbrirModalClientes(true)}
         />
@@ -181,13 +190,13 @@ const MultasList = () => {
           {multas.map((m) => (
             <div key={m.id} className={styles.card}>
               <div className={styles.linha}>
-                <span className={styles.label}>Placa:</span>
-                <span className={styles.valor}>{m.rental?.vehiclePlaca}</span>
+                <span className={styles.label}>Cliente:</span>
+                <span className={styles.valor}>{m.rental?.customerNome}</span>
               </div>
 
               <div className={styles.linha}>
-                <span className={styles.label}>Cliente:</span>
-                <span className={styles.valor}>{m.rental?.customerNome}</span>
+                <span className={styles.label}>Placa:</span>
+                <span className={styles.valor}>{m.rental?.vehiclePlaca}</span>
               </div>
 
               <div className={styles.linha}>

@@ -38,7 +38,7 @@ export default function ListaClientes({ aoSelecionar }) {
     <div className={styles.container}>
       <input
         type="text"
-        placeholder="Buscar cliente por nome ou CPF..."
+        placeholder="Buscar cliente pelo nome"
         value={termoBusca}
         onChange={(e) => setTermoBusca(e.target.value)}
         className={styles.search}
@@ -55,7 +55,7 @@ export default function ListaClientes({ aoSelecionar }) {
               onClick={() => aoSelecionar && aoSelecionar(cliente)}
             >
               <span>{cliente.nome}</span>
-              <span className={styles.cpf}>{cliente.cpf}</span>
+              <span className={styles.cpf}>{cliente.cpfMasked}</span>
             </li>
           ))}
         </ul>

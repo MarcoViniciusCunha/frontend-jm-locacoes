@@ -26,6 +26,7 @@ export default function VeiculoDetalhes() {
   const [mostrarEdicao, setMostrarEdicao] = useState(false);
 
   // Campos de locação
+  const [clienteId, setClienteId] = useState("");
   const [cpf, setCpf] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -97,7 +98,7 @@ export default function VeiculoDetalhes() {
       const v = response.data;
       setVeiculo(v);
       setDescricao(v.descricao || "");
-      setStatus(v.status || "DISPONIVEL");
+      setStatus(v.status.toUpperCase());
       setAno(v.ano || "");
       setValorDiario(v.valorDiario || "");
       setMarca(v.brand?.id || "");
@@ -118,7 +119,7 @@ export default function VeiculoDetalhes() {
     try {
       const dados = {
         placa,
-        cpf,
+        customerId: clienteId,
         startDate,
         endDate,
         price: parseFloat(price),
@@ -226,15 +227,18 @@ export default function VeiculoDetalhes() {
       <p>
         <strong>Status:</strong>{" "}
         <span
-          className={
-            veiculo.status === "MANUTENCAO"
+          className={`${styles.statusBadge} ${
+            veiculo.status.toUpperCase() === "MANUTENÇÃO"
               ? styles.statusManutencao
-              : styles.statusNormal
-          }
+              : veiculo.status.toUpperCase() === "ALUGADO"
+              ? styles.statusAlugado
+              : styles.statusDisponivel
+          }`}
         >
-          {veiculo.status}
+          {veiculo.status.toUpperCase()}
         </span>
       </p>
+
       <p>
         <strong>Categoria:</strong> {veiculo.category?.nome}
       </p>
@@ -282,7 +286,9 @@ export default function VeiculoDetalhes() {
           className={`${styles.btnAcao} ${styles.manutencaoBtn}`}
         >
           <FiTool />
-          {veiculo.status === "MANUTENCAO" ? "Retornar" : "Manutenção"}
+          {veiculo.status.toUpperCase() === "MANUTENCAO"
+            ? "Retornar"
+            : "Manutenção"}
         </button>
 
         <button
@@ -317,10 +323,10 @@ export default function VeiculoDetalhes() {
           <div ref={customerRef} className={styles.campoCpf}>
             <input
               type="text"
-              value={cpf ? `${cpf}` : "Selecione o cliente..."}
+              value={cpf}
+              placeholder="Selecione o cliente..."
               readOnly
               onFocus={() => setShowCustomerList(true)}
-              className={cpf ? styles.inputSelecionado : ""}
               required
             />
 
@@ -328,7 +334,8 @@ export default function VeiculoDetalhes() {
               <div className={styles.listaClientesWrapper}>
                 <ClientesList
                   aoSelecionar={(cliente) => {
-                    setCpf(cliente.cpf);
+                    setClienteId(cliente.id);
+                    setCpf(cliente.cpfMasked);
                     setShowCustomerList(false);
                   }}
                 />

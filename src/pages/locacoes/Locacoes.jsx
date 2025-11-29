@@ -68,7 +68,7 @@ const Locacoes = () => {
   }, []);
 
   const selecionarCliente = (cliente) => {
-    setFiltros((prev) => ({ ...prev, cpf: cliente.cpf }));
+    setFiltros((prev) => ({ ...prev, customerId: cliente.id }));
     setMostrarClientes(false);
   };
 
@@ -94,8 +94,8 @@ const Locacoes = () => {
         <div className={styles.filterRow}>
           <input
             type="text"
-            placeholder="CPF"
-            value={filtros.cpf}
+            placeholder="Cliente"
+            value={filtros.nome}
             onClick={() => setMostrarClientes(!mostrarClientes)}
             readOnly
           />

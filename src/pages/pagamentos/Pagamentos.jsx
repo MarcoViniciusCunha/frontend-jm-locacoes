@@ -12,7 +12,8 @@ export default function Pagamentos() {
   const [mensagemErro, setMensagemErro] = useState("");
 
   const [filtros, setFiltros] = useState({
-    cpf: "",
+    customerId: "",
+    customerNome: "",
     placa: "",
     status: "",
     formaPagto: "",
@@ -25,7 +26,6 @@ export default function Pagamentos() {
 
   const navegar = useNavigate();
 
-  // Carregar pagamentos com filtros e paginação
   const carregarPagamentos = async (page = 0) => {
     try {
       setEstaCarregando(true);
@@ -61,7 +61,14 @@ export default function Pagamentos() {
   const buscarComFiltros = () => carregarPagamentos(0);
 
   const limparFiltros = () => {
-    setFiltros({ cpf: "", placa: "", status: "", formaPagto: "", data: "" });
+    setFiltros({
+      customerId: "",
+      customerNome: "",
+      placa: "",
+      status: "",
+      formaPagto: "",
+      data: "",
+    });
     carregarPagamentos(0);
   };
 
@@ -70,7 +77,11 @@ export default function Pagamentos() {
   };
 
   const selecionarCliente = (cliente) => {
-    setFiltros((prev) => ({ ...prev, cpf: cliente.cpf }));
+    setFiltros((prev) => ({
+      ...prev,
+      customerId: cliente.id,
+      customerNome: cliente.nome,
+    }));
     setMostrarClientes(false);
   };
 
@@ -85,8 +96,8 @@ export default function Pagamentos() {
       <div className={styles.filtros}>
         <input
           type="text"
-          placeholder="CPF do cliente"
-          value={filtros.cpf}
+          placeholder="Cliente"
+          value={filtros.customerNome}
           onClick={() => setMostrarClientes(true)}
           readOnly
         />
