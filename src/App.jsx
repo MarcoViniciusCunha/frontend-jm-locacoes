@@ -22,7 +22,6 @@ import Pagamentos from "./pages/pagamentos/Pagamentos";
 import PagamentosDetalhes from "./pages/pagamentos/PagamentosDetalhes";
 import MultasList from "./pages/multas/MultasList";
 import MultaDetalhe from "./pages/multas/MultaDetalhe";
-
 const token = localStorage.getItem("token");
 if (token) {
   setAuthToken(token);
@@ -30,7 +29,7 @@ if (token) {
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideNavFooter = location.pathname === "/login"; // esconder em login
+  const hideNavFooter = location.pathname === "/login";
 
   return (
     <div className="layout">

@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { LocacoesService } from "../../services/LocacoesService";
+import {
+  InspecoesService,
+  LocacoesService,
+} from "../../services/LocacoesService";
 import RegistrarPagamento from "../../components/pagamento/RegistrarPagamento";
 import styles from "./locacaoDetalhe.module.css";
 import MessageBox from "../../components/erro/MensagemErro";
+import { api } from "../../utils/config";
 
 import {
   FiUser,
@@ -13,6 +17,7 @@ import {
   FiCornerDownLeft,
   FiTrash2,
 } from "react-icons/fi";
+import RegistrarInspecao from "../../components/inspecao/RegistrarInspection";
 
 export default function LocacaoDetalhe() {
   const { id } = useParams();
@@ -25,6 +30,8 @@ export default function LocacaoDetalhe() {
   const [tipoMensagem, setTipoMensagem] = useState("info");
 
   const [abrirModalPagamento, setAbrirModalPagamento] = useState(false);
+  const [abrirModalInspecao, setAbrirModalInspecao] = useState(false);
+  const [editarInspecao, setEditarInspecao] = useState(null);
 
   useEffect(() => {
     const carregar = async () => {
@@ -85,6 +92,23 @@ export default function LocacaoDetalhe() {
     } catch (error) {
       setTipoMensagem("error");
       setMensagem(error.response?.data?.error || "Erro ao excluir a locação.");
+    }
+  };
+
+  const baixarContrato = async () => {
+    try {
+      const response = await api.get(`/contrato/${id}`, {
+        responseType: "blob", // IMPORTANTE
+      });
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+
+      // Abre o PDF em nova aba
+      window.open(url, "_blank");
+    } catch (error) {
+      setTipoMensagem("error");
+      setMensagem(error.response?.data?.error || "Erro ao gerar o contrato.");
     }
   };
 
@@ -173,10 +197,7 @@ export default function LocacaoDetalhe() {
         </div>
 
         <div className={styles.acoes}>
-          <button
-            className={styles.botaoImprimir}
-            onClick={() => window.print()}
-          >
+          <button className={styles.botaoImprimir} onClick={baixarContrato}>
             <FiPrinter className={styles.iconeBotao} /> Imprimir Contrato
           </button>
 
@@ -298,7 +319,7 @@ export default function LocacaoDetalhe() {
 
               <button
                 className={styles.botaoRegistrarPgto}
-                onClick={() => navigate(`/inspecoes/cadastrar?locacao=${id}`)}
+                onClick={() => setAbrirModalInspecao(true)}
               >
                 Registrar Inspeção
               </button>
@@ -309,25 +330,56 @@ export default function LocacaoDetalhe() {
                 <div key={insp.id} className={styles.linhaGrupo}>
                   <div className={styles.linha}>
                     <span className={styles.label}>Data:</span>
-                    <span className={styles.valor}>{insp.dataInspecao}</span>
+                    <span className={styles.valor}>{insp.data_inspecao}</span>
                   </div>
 
                   <div className={styles.linha}>
                     <span className={styles.label}>Status:</span>
-                    <span className={styles.valor}>{insp.status}</span>
+                    <span className={styles.valor}>
+                      {insp.danificado ? "Danificado" : "Sem danos"}
+                    </span>
                   </div>
 
                   <div className={styles.linha}>
                     <span className={styles.label}>Observações:</span>
-                    <span className={styles.valor}>{insp.observacoes}</span>
+                    <span className={styles.valor}>{insp.descricao}</span>
                   </div>
 
-                  <button
-                    className={styles.botaoDetalhesPagto}
-                    onClick={() => navigate(`/inspecoes/${insp.id}`)}
-                  >
-                    Detalhes
-                  </button>
+                  <div className={styles.linhaBotoes}>
+                    <button
+                      className={styles.botaoEditarInspecao}
+                      onClick={() => {
+                        setEditarInspecao(insp);
+                        setAbrirModalInspecao(true);
+                      }}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className={styles.botaoExcluirInspecao}
+                      onClick={async () => {
+                        if (!window.confirm("Deseja excluir esta inspeção?"))
+                          return;
+                        try {
+                          await InspecoesService.excluir(insp.id);
+                          setDadosLocacao((prev) => ({
+                            ...prev,
+                            inspections: prev.inspections.filter(
+                              (i) => i.id !== insp.id
+                            ),
+                          }));
+                          setTipoMensagem("success");
+                          setMensagem("Inspeção excluída com sucesso!");
+                        } catch {
+                          setTipoMensagem("error");
+                          setMensagem("Erro ao excluir inspeção.");
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -340,15 +392,14 @@ export default function LocacaoDetalhe() {
 
         {/* MODAL DE PAGAMENTO */}
         {abrirModalPagamento && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.modalConteudo}>
-              <button
-                className={styles.modalFechar}
-                onClick={() => setAbrirModalPagamento(false)}
-              >
-                X
-              </button>
-
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setAbrirModalPagamento(false)}
+          >
+            <div
+              className={styles.modalConteudo}
+              onClick={(e) => e.stopPropagation()}
+            >
               <RegistrarPagamento
                 locacaoId={id}
                 onConcluido={(novoPagamento) => {
@@ -357,6 +408,44 @@ export default function LocacaoDetalhe() {
                     ...prev,
                     payments: [...(prev.payments || []), novoPagamento],
                   }));
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* MODAL DE INSPEÇÃO */}
+        {abrirModalInspecao && (
+          <div
+            className={styles.modalOverlay}
+            onClick={() => {
+              setAbrirModalInspecao(false);
+              setEditarInspecao(null);
+            }}
+          >
+            <div
+              className={styles.modalConteudo}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <RegistrarInspecao
+                locacaoId={id}
+                inspecao={editarInspecao}
+                onConcluido={(novaInspecao) => {
+                  setAbrirModalInspecao(false);
+                  setDadosLocacao((prev) => {
+                    const list = prev.inspections || [];
+                    if (editarInspecao) {
+                      return {
+                        ...prev,
+                        inspections: list.map((i) =>
+                          i.id === novaInspecao.id ? novaInspecao : i
+                        ),
+                      };
+                    } else {
+                      return { ...prev, inspections: [...list, novaInspecao] };
+                    }
+                  });
+                  setEditarInspecao(null);
                 }}
               />
             </div>
