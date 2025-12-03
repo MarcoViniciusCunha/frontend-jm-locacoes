@@ -71,7 +71,6 @@ const Veiculos = () => {
     return map[activeTab];
   };
 
-  // Carrega todas seguradoras (usado só nos seguros)
   useEffect(() => {
     VeiculosService.seguradoras.lista().then((res) => {
       setSeguradoras(res.data);

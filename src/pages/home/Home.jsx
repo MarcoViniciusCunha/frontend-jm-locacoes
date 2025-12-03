@@ -193,7 +193,13 @@ const Home = () => {
             >
               {carrosExemplo.map((carro, index) => (
                 <div key={index} className={styles.carItem}>
-                  <img src={carro.imagem} alt={carro.modelo} />
+                  <img
+                    src={carro.imagem}
+                    alt={carro.modelo}
+                    onError={(e) => {
+                      e.target.src = "/fallback-car.png";
+                    }}
+                  />
                   <p>{carro.modelo}</p>
                 </div>
               ))}

@@ -3,6 +3,7 @@ import { VeiculosService } from "../../services/VeiculosService";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import styles from "./ComponentVeiculos.module.css";
+import MessageBox from "../erro/MensagemErro";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [lista, setLista] = useState([]);
@@ -14,6 +15,8 @@ export default function ComponentVeiculos({ action, service, label }) {
   const [seguros, setSeguros] = useState([]);
   const [modelos, setModelos] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
 
   const anos = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => 2026 - i);
 
@@ -42,10 +45,13 @@ export default function ComponentVeiculos({ action, service, label }) {
         setSeguros(resSeguros.data || []);
         setModelos(resModelos.data || []);
 
-        if (action === "Lista") listarVeiculos();
+        if (action === "Lista") await listarVeiculos();
       } catch (err) {
         console.error(err);
-        alert("Erro ao carregar dados iniciais.");
+        setMensagem(
+          err.response?.data?.error || "Erro ao carregar dados iniciais."
+        );
+        setTipoMensagem("error");
       } finally {
         setCarregando(false);
       }
@@ -60,7 +66,8 @@ export default function ComponentVeiculos({ action, service, label }) {
       setLista(res.data || []);
     } catch (err) {
       console.error(err);
-      alert(`Erro ao listar ${label}`);
+      setMensagem(err.response?.data?.error || `Erro ao listar ${label}`);
+      setTipoMensagem("error");
     }
   };
 
@@ -71,7 +78,8 @@ export default function ComponentVeiculos({ action, service, label }) {
       setLista(res.data || []);
     } catch (err) {
       console.error(err);
-      alert("Erro ao buscar veículos.");
+      setMensagem(err.response?.data?.error || "Erro ao buscar veículos.");
+      setTipoMensagem("error");
     }
   };
 
@@ -101,7 +109,11 @@ export default function ComponentVeiculos({ action, service, label }) {
       setModelos(res.data || []);
     } catch (err) {
       console.error(err);
-      alert("Erro ao carregar modelos da marca escolhida.");
+      setMensagem(
+        err.response?.data?.error ||
+          "Erro ao carregar modelos da marca escolhida."
+      );
+      setTipoMensagem("error");
     }
   };
 
@@ -115,12 +127,14 @@ export default function ComponentVeiculos({ action, service, label }) {
 
       await service.add(payload);
 
-      alert("Cadastro realizado com sucesso!");
+      setMensagem("Cadastro realizado com sucesso!");
+      setTipoMensagem("success");
       setNovoVeiculo({});
       listarVeiculos();
     } catch (err) {
       console.error(err);
-      alert(`Erro ao adicionar ${label}`);
+      setMensagem(err.response?.data?.error || `Erro ao adicionar ${label}`);
+      setTipoMensagem("error");
     }
   };
 
@@ -138,186 +152,196 @@ export default function ComponentVeiculos({ action, service, label }) {
     opt?.empresa ||
     String(opt);
 
+  useEffect(() => {
+    if (mensagem) {
+      const timer = setTimeout(() => setMensagem(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mensagem]);
+
   if (carregando) return <p>Carregando...</p>;
 
   return (
-    <div className={styles.container}>
-      {/* CADASTRAR */}
-      {action === "Cadastrar" && (
-        <form>
-          {[
-            { key: "placa", label: "Placa" },
-            {
-              key: "idMarca",
-              label: "Marca",
-              type: "select",
-              options: marcas,
-              onChange: async (e) => {
-                const idMarca = e.target.value;
-                setNovoVeiculo({ ...novoVeiculo, idMarca, idModelo: "" });
-                await buscarModelosPorMarca(idMarca);
+    <>
+      <MessageBox type={tipoMensagem} message={mensagem} />
+      <div className={styles.container}>
+        {/* CADASTRAR */}
+        {action === "Cadastrar" && (
+          <form>
+            {[
+              { key: "placa", label: "Placa" },
+              {
+                key: "idMarca",
+                label: "Marca",
+                type: "select",
+                options: marcas,
+                onChange: async (e) => {
+                  const idMarca = e.target.value;
+                  setNovoVeiculo({ ...novoVeiculo, idMarca, idModelo: "" });
+                  await buscarModelosPorMarca(idMarca);
+                },
               },
-            },
-            {
-              key: "idModelo",
-              label: "Modelo",
-              type: "select",
-              options: modelos,
-            },
-            { key: "ano", label: "Ano", type: "select", options: anos },
-            { key: "idCor", label: "Cor", type: "select", options: cores },
-            {
-              key: "status",
-              label: "Status",
-              type: "select",
-              options: statusLabel,
-            },
-            { key: "descricao", label: "Descrição", type: "textarea" },
-            {
-              key: "idCategoria",
-              label: "Categoria",
-              type: "select",
-              options: categorias,
-            },
-            {
-              key: "idSeguro",
-              label: "Seguro",
-              type: "select",
-              options: seguros,
-            },
-            {
-              key: "valorDiario",
-              label: "Valor Diário (R$)",
-              type: "number",
-            },
-          ].map((campo) =>
-            campo.type === "select" ? (
-              <select
-                key={campo.key}
-                value={novoVeiculo[campo.key] || ""}
-                onChange={
-                  campo.onChange ||
-                  ((e) =>
+              {
+                key: "idModelo",
+                label: "Modelo",
+                type: "select",
+                options: modelos,
+              },
+              { key: "ano", label: "Ano", type: "select", options: anos },
+              { key: "idCor", label: "Cor", type: "select", options: cores },
+              {
+                key: "status",
+                label: "Status",
+                type: "select",
+                options: statusLabel,
+              },
+              { key: "descricao", label: "Descrição", type: "textarea" },
+              {
+                key: "idCategoria",
+                label: "Categoria",
+                type: "select",
+                options: categorias,
+              },
+              {
+                key: "idSeguro",
+                label: "Seguro",
+                type: "select",
+                options: seguros,
+              },
+              {
+                key: "valorDiario",
+                label: "Valor Diário (R$)",
+                type: "number",
+              },
+            ].map((campo) =>
+              campo.type === "select" ? (
+                <select
+                  key={campo.key}
+                  value={novoVeiculo[campo.key] || ""}
+                  onChange={
+                    campo.onChange ||
+                    ((e) =>
+                      setNovoVeiculo({
+                        ...novoVeiculo,
+                        [campo.key]: e.target.value,
+                      }))
+                  }
+                >
+                  <option value="">Selecione {campo.label}</option>
+                  {campo.options?.map((opt) => (
+                    <option key={opt.id ?? opt} value={opt.id ?? opt}>
+                      {getNomeOpcao(opt)}
+                    </option>
+                  ))}
+                </select>
+              ) : campo.type === "textarea" ? (
+                <textarea
+                  key={campo.key}
+                  placeholder={campo.label}
+                  value={novoVeiculo[campo.key] || ""}
+                  onChange={(e) =>
                     setNovoVeiculo({
                       ...novoVeiculo,
                       [campo.key]: e.target.value,
-                    }))
-                }
-              >
-                <option value="">Selecione {campo.label}</option>
-                {campo.options?.map((opt) => (
-                  <option key={opt.id ?? opt} value={opt.id ?? opt}>
-                    {getNomeOpcao(opt)}
-                  </option>
-                ))}
-              </select>
-            ) : campo.type === "textarea" ? (
-              <textarea
-                key={campo.key}
-                placeholder={campo.label}
-                value={novoVeiculo[campo.key] || ""}
-                onChange={(e) =>
-                  setNovoVeiculo({
-                    ...novoVeiculo,
-                    [campo.key]: e.target.value,
-                  })
-                }
-              />
-            ) : (
-              <input
-                key={campo.key}
-                type={campo.type || "text"}
-                placeholder={campo.label}
-                value={novoVeiculo[campo.key] || ""}
-                onChange={(e) =>
-                  setNovoVeiculo({
-                    ...novoVeiculo,
-                    [campo.key]: e.target.value,
-                  })
-                }
-              />
-            )
-          )}
-
-          <button type="button" onClick={salvarVeiculo}>
-            Salvar
-          </button>
-        </form>
-      )}
-
-      {/* LISTAR */}
-      {action === "Lista" && (
-        <>
-          <div className={styles.filtros}>
-            <input
-              type="text"
-              placeholder="Placa"
-              value={filtros.placa || ""}
-              onChange={(e) =>
-                setFiltros({ ...filtros, placa: e.target.value })
-              }
-            />
-
-            {[
-              { key: "idMarca", label: "Marca", options: marcas },
-              { key: "idModelo", label: "Modelo", options: modelos },
-              { key: "idCor", label: "Cor", options: cores },
-              { key: "status", label: "Status", options: statusLabel },
-              { key: "ano", label: "Ano", options: anos },
-            ].map((s) => (
-              <select
-                key={s.key}
-                value={filtros[s.key] || ""}
-                onChange={async (e) => {
-                  const valor = e.target.value;
-
-                  if (s.key === "idMarca") {
-                    setFiltros({ ...filtros, idMarca: valor, idModelo: "" });
-                    await buscarModelosPorMarca(valor);
-                  } else {
-                    setFiltros({ ...filtros, [s.key]: valor });
+                    })
                   }
-                }}
-              >
-                <option value="">{s.label}</option>
-                {s.options.map((opt) => (
-                  <option key={opt.id ?? opt} value={opt.id ?? opt}>
-                    {getNomeOpcao(opt)}
-                  </option>
-                ))}
-              </select>
-            ))}
-
-            <button className={styles.btnBuscar} onClick={buscarVeiculos}>
-              <FaSearch className={styles.iconBuscar} /> Buscar
-            </button>
-
-            <button className={styles.btnLimpar} onClick={limparFiltros}>
-              Limpar
-            </button>
-          </div>
-
-          <ul className={styles.lista}>
-            {lista.length === 0 ? (
-              <p>Nenhum veículo encontrado.</p>
-            ) : (
-              lista.map((v) => (
-                <li key={v.placa}>
-                  <span>{v.placa}</span>
-                  <span>{v.brand?.nome}</span>
-                  <span>{v.model?.nome}</span>
-                  <span>{v.ano}</span>
-                  <span>{v.color?.nome}</span>
-                  <span>{v.status}</span>
-                  <Link to={`/veiculos/${v.placa}`}>
-                    <button>Detalhes</button>
-                  </Link>
-                </li>
-              ))
+                />
+              ) : (
+                <input
+                  key={campo.key}
+                  type={campo.type || "text"}
+                  placeholder={campo.label}
+                  value={novoVeiculo[campo.key] || ""}
+                  onChange={(e) =>
+                    setNovoVeiculo({
+                      ...novoVeiculo,
+                      [campo.key]: e.target.value,
+                    })
+                  }
+                />
+              )
             )}
-          </ul>
-        </>
-      )}
-    </div>
+
+            <button type="button" onClick={salvarVeiculo}>
+              Salvar
+            </button>
+          </form>
+        )}
+
+        {/* LISTAR */}
+        {action === "Lista" && (
+          <>
+            <div className={styles.filtros}>
+              <input
+                type="text"
+                placeholder="Placa"
+                value={filtros.placa || ""}
+                onChange={(e) =>
+                  setFiltros({ ...filtros, placa: e.target.value })
+                }
+              />
+
+              {[
+                { key: "idMarca", label: "Marca", options: marcas },
+                { key: "idModelo", label: "Modelo", options: modelos },
+                { key: "idCor", label: "Cor", options: cores },
+                { key: "status", label: "Status", options: statusLabel },
+                { key: "ano", label: "Ano", options: anos },
+              ].map((s) => (
+                <select
+                  key={s.key}
+                  value={filtros[s.key] || ""}
+                  onChange={async (e) => {
+                    const valor = e.target.value;
+
+                    if (s.key === "idMarca") {
+                      setFiltros({ ...filtros, idMarca: valor, idModelo: "" });
+                      await buscarModelosPorMarca(valor);
+                    } else {
+                      setFiltros({ ...filtros, [s.key]: valor });
+                    }
+                  }}
+                >
+                  <option value="">{s.label}</option>
+                  {s.options.map((opt) => (
+                    <option key={opt.id ?? opt} value={opt.id ?? opt}>
+                      {getNomeOpcao(opt)}
+                    </option>
+                  ))}
+                </select>
+              ))}
+
+              <button className={styles.btnBuscar} onClick={buscarVeiculos}>
+                <FaSearch className={styles.iconBuscar} /> Buscar
+              </button>
+
+              <button className={styles.btnLimpar} onClick={limparFiltros}>
+                Limpar
+              </button>
+            </div>
+
+            <ul className={styles.lista}>
+              {lista.length === 0 ? (
+                <p>Nenhum veículo encontrado.</p>
+              ) : (
+                lista.map((v) => (
+                  <li key={v.placa}>
+                    <span>{v.placa}</span>
+                    <span>{v.brand?.nome}</span>
+                    <span>{v.model?.nome}</span>
+                    <span>{v.ano}</span>
+                    <span>{v.color?.nome}</span>
+                    <span>{v.status}</span>
+                    <Link to={`/veiculos/${v.placa}`}>
+                      <button>Detalhes</button>
+                    </Link>
+                  </li>
+                ))
+              )}
+            </ul>
+          </>
+        )}
+      </div>
+    </>
   );
 }

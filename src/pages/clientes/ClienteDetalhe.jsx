@@ -43,6 +43,7 @@ const ClienteDetalhe = () => {
   }, [id]);
 
   useEffect(() => {
+    setMensagem("");
     carregarCliente();
   }, [carregarCliente]);
 
@@ -70,15 +71,6 @@ const ClienteDetalhe = () => {
     } catch (e) {
       const msg = e.response?.data.error || "Erro ao excluir cliente";
       exibirMensagem("error", msg);
-    }
-  };
-
-  const dispararSubmitDoForm = () => {
-    const form = document.querySelector("form");
-    if (form) {
-      form.dispatchEvent(
-        new Event("submit", { cancelable: true, bubbles: true })
-      );
     }
   };
 
@@ -120,18 +112,7 @@ const ClienteDetalhe = () => {
             </button>
           </>
         ) : (
-          <>
-            <button className={styles.saveBtn} onClick={dispararSubmitDoForm}>
-              <FaSave /> Salvar
-            </button>
-
-            <button
-              className={styles.cancelBtn}
-              onClick={() => setEditando(false)}
-            >
-              <FaTimesCircle /> Cancelar
-            </button>
-          </>
+          <></>
         )}
       </div>
     </div>

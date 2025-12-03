@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { ClientesService } from "../../services/ClientesService";
 import styles from "./ClientesList.module.css";
+import MessageBox from "../erro/MensagemErro";
 
 export default function ListaClientes({ aoSelecionar }) {
   const [clientes, setClientes] = useState([]);
   const [termoBusca, setTermoBusca] = useState("");
   const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
     carregarClientes();
@@ -15,8 +17,12 @@ export default function ListaClientes({ aoSelecionar }) {
     try {
       const resposta = await ClientesService.lista();
       setClientes(resposta.data || []);
-    } catch (erro) {
-      console.error("Erro ao carregar clientes:", erro);
+    } catch (err) {
+      console.error("Erro ao carregar clientes:", err);
+      setErro(
+        err.response?.data?.error ||
+          "Não foi possível carregar a lista de clientes. Tente novamente."
+      );
     } finally {
       setCarregando(false);
     }
@@ -36,6 +42,13 @@ export default function ListaClientes({ aoSelecionar }) {
 
   return (
     <div className={styles.container}>
+      <MessageBox
+        type="error"
+        message={erro}
+        duration={4000}
+        onClose={() => setErro("")}
+      />
+
       <input
         type="text"
         placeholder="Buscar cliente pelo nome"

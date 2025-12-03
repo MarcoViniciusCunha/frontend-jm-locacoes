@@ -72,7 +72,7 @@ export default function PagamentosDetalhes() {
         type: "success",
         message: "Pagamento excluído com sucesso!",
       });
-      setTimeout(() => navegar("/pagamentos"), 1500);
+      setTimeout(() => navegar(-1), 1500);
     } catch (erro) {
       console.error(erro);
       setMensagem({ type: "error", message: "Erro ao excluir pagamento." });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { InspecoesService } from "../../services/LocacoesService";
 import styles from "./registrarInspecao.module.css";
+import MessageBox from "../erro/MensagemErro";
 
 export default function RegistrarInspecao({
   locacaoId,
@@ -37,17 +38,19 @@ export default function RegistrarInspecao({
       };
 
       if (inspecao) {
-        // Editando
         resposta = await InspecoesService.editar(inspecao.id, dadosParaEnviar);
       } else {
-        // Criando
         resposta = await InspecoesService.add(dadosParaEnviar);
       }
 
       onConcluido(resposta.data);
     } catch (erro) {
       console.error("Erro ao salvar inspeção:", erro);
-      setErro("Erro ao salvar inspeção.");
+      const msg =
+        erro.response?.data?.error ||
+        "Erro ao salvar inspeção. Tente novamente.";
+
+      setErro(msg);
     } finally {
       setCarregando(false);
     }
@@ -58,6 +61,13 @@ export default function RegistrarInspecao({
       <h2 className={styles.modalTitle}>
         {inspecao ? "Editar Inspeção" : "Registrar Inspeção"}
       </h2>
+
+      <MessageBox
+        type="error"
+        message={erro}
+        duration={4000}
+        onClose={() => setErro("")}
+      />
 
       {erro && <div className={styles.erro}>{erro}</div>}
 

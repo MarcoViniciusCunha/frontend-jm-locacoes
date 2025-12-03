@@ -2,12 +2,11 @@ import { useState } from "react";
 import { api, setAuthToken } from "../../utils/config";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./Login.module.css";
 
 export default function Login() {
   const [credenciais, setCredenciais] = useState({ usuario: "", senha: "" });
-  const [mensagemErro, setMensagemErro] = useState("");
+  const [mensagemErro, setMensagemErro] = useState(null);
 
   const { login } = useAuthContext();
   const navegar = useNavigate();
@@ -27,17 +26,16 @@ export default function Login() {
 
   const enviarFormulario = async (evento) => {
     evento.preventDefault();
-    setMensagemErro("");
+    setMensagemErro(null);
 
     try {
       const token = await autenticarUsuario();
 
       setAuthToken(token);
       login(token);
-
       navegar("/");
     } catch (erro) {
-      const mensagemApi = erro.response?.data?.message;
+      const mensagemApi = erro.response?.data?.error;
       setMensagemErro(
         mensagemApi || "Erro ao realizar login. Tente novamente."
       );

@@ -57,3 +57,50 @@
 .btnSalvar:hover {
   background: #05c18f;
 }
+
+/* Campo com checkbox */
+.campo.checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.campo.checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--neutral-300);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.campo.checkbox input[type="checkbox"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+}
+
+.campo.checkbox input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.campo.checkbox input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 12px;
+  border-right: 2px solid var(--white);
+  border-bottom: 2px solid var(--white);
+  transform: rotate(45deg);
+  opacity: 0;
+  top: 3px;
+  left: 6px;
+  transition: 0.2s ease;
+}
+
+.campo.checkbox input[type="checkbox"]:checked::after {
+  opacity: 1;
+}

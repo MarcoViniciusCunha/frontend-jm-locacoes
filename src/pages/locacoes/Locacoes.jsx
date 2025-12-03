@@ -10,6 +10,7 @@ import {
   FaExclamationCircle,
   FaHourglassStart,
 } from "react-icons/fa";
+import MessageBox from "../../components/erro/MensagemErro";
 
 const Locacoes = () => {
   const [locacoes, setLocacoes] = useState([]);
@@ -86,205 +87,220 @@ const Locacoes = () => {
 
   if (isLoading)
     return <p className={styles.loading}>Carregando locações...</p>;
-  if (mensagemErro) return <p className={styles.error}>{mensagemErro}</p>;
 
   return (
-    <div className={styles.container}>
-      <form className={styles.filterForm} onSubmit={aplicarFiltros}>
-        <div className={styles.filterRow}>
-          <input
-            type="text"
-            placeholder="Cliente"
-            value={filtros.nome}
-            onClick={() => setMostrarClientes(!mostrarClientes)}
-            readOnly
-          />
-
-          <input
-            type="text"
-            placeholder="Placa"
-            value={filtros.placa}
-            onChange={(e) => setFiltros({ ...filtros, placa: e.target.value })}
-          />
-
-          <select
-            value={filtros.status}
-            onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
-          >
-            <option value="">Todos</option>
-            <option value="ativa">Ativa</option>
-            <option value="devolvida">Devolvida</option>
-            <option value="atrasada">Atrasada</option>
-            <option value="nao_iniciada">Não iniciada</option>
-          </select>
-        </div>
-
-        <button type="submit" className={styles.filterButton}>
-          <FiSearch /> Buscar
-        </button>
-      </form>
-
-      {mostrarClientes && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
-            <h3>Selecione o Cliente</h3>
-            <ClientesList aoSelecionar={selecionarCliente} />
-            <button
-              className={styles.closeBtn}
-              onClick={() => setMostrarClientes(false)}
-            >
-              <FiX /> Fechar
-            </button>
-          </div>
-        </div>
+    <>
+      {mensagemErro && (
+        <MessageBox
+          type="error"
+          message={mensagemErro}
+          duration={4000}
+          onClose={() => setMensagemErro(null)}
+        />
       )}
+      <div className={styles.container}>
+        <form className={styles.filterForm} onSubmit={aplicarFiltros}>
+          <div className={styles.filterRow}>
+            <input
+              type="text"
+              placeholder="Cliente"
+              value={filtros.nome}
+              onClick={() => setMostrarClientes(!mostrarClientes)}
+              readOnly
+            />
 
-      {locacoes.length === 0 ? (
-        <p className={styles.empty}>Nenhuma locação encontrada.</p>
-      ) : (
-        <>
-          <div className={styles.grid}>
-            {locacoes.map((loc) => {
-              const statusNormalized = loc.status.trim().toLowerCase();
-              return (
-                <div key={loc.id} className={styles.card}>
-                  <h2 className={styles.cardTitle}>
-                    {loc.customerName} — {loc.placa}
-                  </h2>
+            <input
+              type="text"
+              placeholder="Placa"
+              value={filtros.placa}
+              onChange={(e) =>
+                setFiltros({ ...filtros, placa: e.target.value })
+              }
+            />
 
-                  <p>
-                    <strong>Modelo:</strong> {loc.modelo}
-                  </p>
-
-                  <p>
-                    <strong>Período:</strong> {loc.startDate} → {loc.endDate}
-                  </p>
-
-                  <p className={styles.status}>
-                    <strong>Status:</strong>{" "}
-                    {statusNormalized === "devolvida" ? (
-                      <span
-                        className={`${styles.statusValue} ${styles.devolvida}`}
-                      >
-                        <FaCheckCircle /> Devolvida
-                      </span>
-                    ) : statusNormalized === "atrasada" ? (
-                      <span
-                        className={`${styles.statusValue} ${styles.atrasada}`}
-                      >
-                        <FaExclamationCircle /> Atrasada
-                      </span>
-                    ) : statusNormalized === "não iniciada" ? (
-                      <span
-                        className={`${styles.statusValue} ${styles.naoIniciada}`}
-                      >
-                        <FaHourglassStart /> Não Iniciada
-                      </span>
-                    ) : (
-                      <span className={`${styles.statusValue} ${styles.ativa}`}>
-                        <FaClock /> Ativa
-                      </span>
-                    )}
-                  </p>
-
-                  <p className={styles.price}>
-                    <strong>Preço:</strong> R$ {loc.price?.toFixed(2)}
-                  </p>
-
-                  <div className={styles.buttons}>
-                    <button
-                      className={`${styles.button} ${styles.details}`}
-                      onClick={() => navigate(`/locacoes/${loc.id}`)}
-                    >
-                      <FiEye /> Ver detalhes
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            <select
+              value={filtros.status}
+              onChange={(e) =>
+                setFiltros({ ...filtros, status: e.target.value })
+              }
+            >
+              <option value="">Todos</option>
+              <option value="ativa">Ativa</option>
+              <option value="devolvida">Devolvida</option>
+              <option value="atrasada">Atrasada</option>
+              <option value="nao_iniciada">Não iniciada</option>
+            </select>
           </div>
 
-          {qtdPaginas > 1 && (
-            <div className={styles.pagination}>
+          <button type="submit" className={styles.filterButton}>
+            <FiSearch /> Buscar
+          </button>
+        </form>
+
+        {mostrarClientes && (
+          <div className={styles.overlay}>
+            <div className={styles.modal}>
+              <h3>Selecione o Cliente</h3>
+              <ClientesList aoSelecionar={selecionarCliente} />
               <button
-                onClick={paginaAnterior}
-                disabled={paginaAtual === 0}
-                className={styles.pageBtn}
+                className={styles.closeBtn}
+                onClick={() => setMostrarClientes(false)}
               >
-                ← Anterior
-              </button>
-
-              {(() => {
-                const maxButtons = 5;
-                const paginas = [];
-
-                let inicio = Math.max(
-                  0,
-                  paginaAtual - Math.floor(maxButtons / 2)
-                );
-                let fim = inicio + maxButtons - 1;
-
-                if (fim >= qtdPaginas) {
-                  fim = qtdPaginas - 1;
-                  inicio = Math.max(0, fim - maxButtons + 1);
-                }
-
-                if (inicio > 0) {
-                  paginas.push(
-                    <button
-                      key="first"
-                      className={styles.pageBtn}
-                      onClick={() => buscarLocacoes(filtros, 0)}
-                    >
-                      1
-                    </button>
-                  );
-                  if (inicio > 1) paginas.push(<span key="dots1">...</span>);
-                }
-
-                for (let i = inicio; i <= fim; i++) {
-                  paginas.push(
-                    <button
-                      key={i}
-                      className={`${styles.pageBtn} ${
-                        i === paginaAtual ? styles.activePage : ""
-                      }`}
-                      onClick={() => buscarLocacoes(filtros, i)}
-                    >
-                      {i + 1}
-                    </button>
-                  );
-                }
-
-                if (fim < qtdPaginas - 1) {
-                  if (fim < qtdPaginas - 2)
-                    paginas.push(<span key="dots2">...</span>);
-                  paginas.push(
-                    <button
-                      key="last"
-                      className={styles.pageBtn}
-                      onClick={() => buscarLocacoes(filtros, qtdPaginas - 1)}
-                    >
-                      {qtdPaginas}
-                    </button>
-                  );
-                }
-
-                return paginas;
-              })()}
-
-              <button
-                onClick={proximaPagina}
-                disabled={paginaAtual + 1 === qtdPaginas}
-                className={styles.pageBtn}
-              >
-                Próxima →
+                <FiX /> Fechar
               </button>
             </div>
-          )}
-        </>
-      )}
-    </div>
+          </div>
+        )}
+
+        {locacoes.length === 0 ? (
+          <p className={styles.empty}>Nenhuma locação encontrada.</p>
+        ) : (
+          <>
+            <div className={styles.grid}>
+              {locacoes.map((loc) => {
+                const statusNormalized = loc.status.trim().toLowerCase();
+                return (
+                  <div key={loc.id} className={styles.card}>
+                    <h2 className={styles.cardTitle}>
+                      {loc.customerName} — {loc.placa}
+                    </h2>
+
+                    <p>
+                      <strong>Modelo:</strong> {loc.modelo}
+                    </p>
+
+                    <p>
+                      <strong>Período:</strong> {loc.startDate} → {loc.endDate}
+                    </p>
+
+                    <p className={styles.status}>
+                      <strong>Status:</strong>{" "}
+                      {statusNormalized === "devolvida" ? (
+                        <span
+                          className={`${styles.statusValue} ${styles.devolvida}`}
+                        >
+                          <FaCheckCircle /> Devolvida
+                        </span>
+                      ) : statusNormalized === "atrasada" ? (
+                        <span
+                          className={`${styles.statusValue} ${styles.atrasada}`}
+                        >
+                          <FaExclamationCircle /> Atrasada
+                        </span>
+                      ) : statusNormalized === "não iniciada" ? (
+                        <span
+                          className={`${styles.statusValue} ${styles.naoIniciada}`}
+                        >
+                          <FaHourglassStart /> Não Iniciada
+                        </span>
+                      ) : (
+                        <span
+                          className={`${styles.statusValue} ${styles.ativa}`}
+                        >
+                          <FaClock /> Ativa
+                        </span>
+                      )}
+                    </p>
+
+                    <p className={styles.price}>
+                      <strong>Preço:</strong> R$ {loc.price?.toFixed(2)}
+                    </p>
+
+                    <div className={styles.buttons}>
+                      <button
+                        className={`${styles.button} ${styles.details}`}
+                        onClick={() => navigate(`/locacoes/${loc.id}`)}
+                      >
+                        <FiEye /> Ver detalhes
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {qtdPaginas > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  onClick={paginaAnterior}
+                  disabled={paginaAtual === 0}
+                  className={styles.pageBtn}
+                >
+                  ← Anterior
+                </button>
+
+                {(() => {
+                  const maxButtons = 5;
+                  const paginas = [];
+
+                  let inicio = Math.max(
+                    0,
+                    paginaAtual - Math.floor(maxButtons / 2)
+                  );
+                  let fim = inicio + maxButtons - 1;
+
+                  if (fim >= qtdPaginas) {
+                    fim = qtdPaginas - 1;
+                    inicio = Math.max(0, fim - maxButtons + 1);
+                  }
+
+                  if (inicio > 0) {
+                    paginas.push(
+                      <button
+                        key="first"
+                        className={styles.pageBtn}
+                        onClick={() => buscarLocacoes(filtros, 0)}
+                      >
+                        1
+                      </button>
+                    );
+                    if (inicio > 1) paginas.push(<span key="dots1">...</span>);
+                  }
+
+                  for (let i = inicio; i <= fim; i++) {
+                    paginas.push(
+                      <button
+                        key={i}
+                        className={`${styles.pageBtn} ${
+                          i === paginaAtual ? styles.activePage : ""
+                        }`}
+                        onClick={() => buscarLocacoes(filtros, i)}
+                      >
+                        {i + 1}
+                      </button>
+                    );
+                  }
+
+                  if (fim < qtdPaginas - 1) {
+                    if (fim < qtdPaginas - 2)
+                      paginas.push(<span key="dots2">...</span>);
+                    paginas.push(
+                      <button
+                        key="last"
+                        className={styles.pageBtn}
+                        onClick={() => buscarLocacoes(filtros, qtdPaginas - 1)}
+                      >
+                        {qtdPaginas}
+                      </button>
+                    );
+                  }
+
+                  return paginas;
+                })()}
+
+                <button
+                  onClick={proximaPagina}
+                  disabled={paginaAtual + 1 === qtdPaginas}
+                  className={styles.pageBtn}
+                >
+                  Próxima →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
