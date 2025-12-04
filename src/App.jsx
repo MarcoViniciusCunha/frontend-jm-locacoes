@@ -2,7 +2,6 @@ import { AuthProvider } from "./context/AuthContext";
 import PublicRoute from "./hooks/PublicRoute";
 import PrivateRoute from "./hooks/PrivateRoute";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import "./App.css";
 import { setAuthToken } from "./utils/config";
 
@@ -17,28 +16,33 @@ import Locacoes from "./pages/locacoes/Locacoes";
 import Veiculos from "./pages/veiculos/Veiculos";
 import Clientes from "./pages/clientes/Clientes";
 import ClienteDetalhe from "./pages/clientes/ClienteDetalhe";
+import LocacaoDetalhe from "./pages/locacoes/LocacaoDetalhe";
+import VeiculoDetalhes from "./pages/veiculos/VeiculoDetalhes";
+import Pagamentos from "./pages/pagamentos/Pagamentos";
+import PagamentosDetalhes from "./pages/pagamentos/PagamentosDetalhes";
+import MultasList from "./pages/multas/MultasList";
+import MultaDetalhe from "./pages/multas/MultaDetalhe";
+const token = localStorage.getItem("token");
+if (token) {
+  setAuthToken(token);
+}
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideNavFooter = location.pathname === "/login"; // esconder em login
+  const hideNavFooter = location.pathname === "/login";
 
   return (
-    <>
+    <div className="layout">
       {!hideNavFooter && <NavBar />}
-      {children}
+
+      <main className="conteudo">{children}</main>
+
       {!hideNavFooter && <Footer />}
-    </>
+    </div>
   );
 }
 
 function App() {
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setAuthToken(token); // garante que axios já tenha o token antes de qualquer chamada
-    }
-  }, []);
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -69,10 +73,26 @@ function App() {
               }
             />
             <Route
+              path="/locacoes/:id"
+              element={
+                <PrivateRoute>
+                  <LocacaoDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/veiculos"
               element={
                 <PrivateRoute>
                   <Veiculos />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/veiculos/:placa"
+              element={
+                <PrivateRoute>
+                  <VeiculoDetalhes />
                 </PrivateRoute>
               }
             />
@@ -89,6 +109,46 @@ function App() {
               element={
                 <PrivateRoute>
                   <ClienteDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pagamentos"
+              element={
+                <PrivateRoute>
+                  <Pagamentos />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pagamentos/:id"
+              element={
+                <PrivateRoute>
+                  <PagamentosDetalhes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/multas"
+              element={
+                <PrivateRoute>
+                  <MultasList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/multas/:id"
+              element={
+                <PrivateRoute>
+                  <MultaDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <PrivateRoute>
+                  <h1>404 - Página não encontrada</h1>
                 </PrivateRoute>
               }
             />

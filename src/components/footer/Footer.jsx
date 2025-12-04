@@ -1,12 +1,16 @@
-import React from 'react'
-import "./Footer.css"
+import styles from "./Footer.module.css";
 
 const Footer = () => {
-  return (
-    <footer>
-        <h1>&copy; JM Locações - Todos os Direitos Reservados. </h1>
-    </footer>
-  )
-}
+  const year = new Date().getFullYear();
 
-export default Footer
+  return (
+    <footer className={styles.footer}>
+      <p className={styles.text}>
+        &copy; {year} <span className={styles.brand}>JM Locações</span> — Todos
+        os direitos reservados.
+      </p>
+    </footer>
+  );
+};
+
+export default Footer;

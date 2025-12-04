@@ -1,0 +1,169 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 80px 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  color: var(--text-dark);
+  background-color: var(--neutral);
+}
+
+.header,
+.crudHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+  margin-bottom: 1.5em;
+}
+
+.header button,
+.crudHeader button {
+  color: var(--text-dark);
+  padding: 0.6em 1.2em;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  font-weight: 400;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.header button:hover,
+.crudHeader button:hover {
+  color: var(--primary);
+}
+
+.header button.active,
+.crudHeader button.active {
+  background-color: var(--primary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.main {
+  width: 90%;
+  max-width: 1200px;
+  background: var(--card-bg);
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.main h2 {
+  margin-bottom: 1em;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.main form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.main input {
+  padding: 0.5em;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.main button[type="submit"],
+.main button[type="button"] {
+  padding: 0.5em 1em;
+  font-size: 16px;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.main button[type="submit"]:hover,
+.main button[type="button"]:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 0;
+  }
+
+  .header,
+  .crudHeader {
+    gap: 0.5em;
+  }
+
+  .header button,
+  .crudHeader button {
+    padding: 0.5em 1em;
+    font-size: 14px;
+  }
+
+  .main {
+    width: 95%;
+    padding: 1.5em;
+  }
+
+  .main h2 {
+    font-size: 1.2rem;
+  }
+
+  .main form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 0;
+  }
+
+  .header,
+  .crudHeader {
+    flex-direction: column;
+    gap: 0.7em;
+    width: 100%;
+  }
+
+  .header button,
+  .crudHeader button {
+    width: 100%;
+    font-size: 15px;
+    padding: 0.7em;
+  }
+
+  .main {
+    width: 95%;
+    padding: 1em;
+    border-radius: 10px;
+  }
+
+  .main h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8em;
+  }
+
+  .main input,
+  .main select,
+  .main textarea {
+    font-size: 0.95rem;
+    padding: 0.6em;
+  }
+
+  .main button[type="submit"],
+  .main button[type="button"] {
+    width: 100%;
+    padding: 0.7em;
+    font-size: 0.95rem;
+  }
+}

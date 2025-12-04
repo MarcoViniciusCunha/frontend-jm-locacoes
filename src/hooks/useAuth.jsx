@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import jwtDecode from "jwt-decode";
+import { setAuthToken } from "../utils/config";
 
 export const useAuth = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
@@ -21,8 +22,12 @@ export const useAuth = () => {
   const login = (token) => {
     const decoded = jwtDecode(token);
     const expirationDate = new Date(decoded.exp * 1000);
+
     localStorage.setItem("token", token);
     localStorage.setItem("expiresAt", expirationDate.toISOString());
+
+    setAuthToken(token);
+
     setToken(token);
     setExpiresAt(expirationDate);
   };

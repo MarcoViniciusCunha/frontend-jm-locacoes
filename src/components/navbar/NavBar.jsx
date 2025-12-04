@@ -1,44 +1,60 @@
-import "./NavBar.css";
+import styles from "./NavBar.module.css";
 import logo from "../../assets/logo.png";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
-const NavBar = () => {
+export default function BarraNavegacao() {
   const { logout } = useAuthContext();
-  const navigate = useNavigate();
+  const navegar = useNavigate();
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm(
-      "Você tem certeza de que deseja sair?"
-    );
-    if (confirmLogout) {
-      logout();
-      navigate("/login");
-    }
+  const confirmarLogout = () => {
+    const desejaSair = window.confirm("Você tem certeza de que deseja sair?");
+    if (!desejaSair) return;
+
+    logout();
+    navegar("/login");
   };
 
+  const gerarClasseLink = ({ isActive }) =>
+    `${styles.link} ${isActive ? styles.active : ""}`;
+
   return (
-    <header className="cabecalho">
-      <Link to="/">
-        <img src={logo} alt="Logo" />
-      </Link>
-      <nav>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/locacoes">Locações</NavLink>
-        <NavLink to="/veiculos">Veículos</NavLink>
-        <NavLink to="/clientes">Clientes</NavLink>
-        <NavLink to="/seguros">Seguros</NavLink>
-        <NavLink to="/pagamentos">Pagamentos</NavLink>
-        <NavLink to="/multas">Multas</NavLink>
-        <NavLink to="/inspecao">Inspeção</NavLink>
-        <NavLink to="/manutencao">Manutenção</NavLink>
-        <button onClick={handleLogout} className="logout-button">
-          Sair
-        </button>
+    <header className={styles.cabecalho}>
+      <div className={styles.logoContainer}>
+        <Link to="/">
+          <img src={logo} alt="Logo JM Locações" className={styles.logo} />
+        </Link>
+      </div>
+
+      <nav className={styles.nav}>
+        <NavLink to="/" className={gerarClasseLink}>
+          Home
+        </NavLink>
+
+        <NavLink to="/locacoes" className={gerarClasseLink}>
+          Locações
+        </NavLink>
+
+        <NavLink to="/veiculos" className={gerarClasseLink}>
+          Veículos
+        </NavLink>
+
+        <NavLink to="/clientes" className={gerarClasseLink}>
+          Clientes
+        </NavLink>
+
+        <NavLink to="/pagamentos" className={gerarClasseLink}>
+          Pagamentos
+        </NavLink>
+
+        <NavLink to="/multas" className={gerarClasseLink}>
+          Multas
+        </NavLink>
       </nav>
+
+      <button onClick={confirmarLogout} className={styles.logoutButton}>
+        Sair
+      </button>
     </header>
   );
-};
-
-export default NavBar;
+}

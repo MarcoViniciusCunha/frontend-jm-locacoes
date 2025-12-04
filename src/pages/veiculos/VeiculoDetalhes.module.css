@@ -1,0 +1,283 @@
+.veiculoDetalhes {
+  background: var(--card-bg);
+  padding: 2rem;
+  padding-bottom: 8rem;
+  margin: 2rem auto;
+  border-radius: 16px;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.veiculoDetalhes h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.veiculoDetalhes p {
+  font-size: 1rem;
+  margin: 0.4rem 0;
+  line-height: 1.5;
+}
+
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.botoes button,
+.voltarBtn {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+  color: #fff;
+}
+
+button:hover,
+.voltarBtn:hover {
+  transform: translateY(-1px);
+}
+
+.voltarBtn {
+  background: var(--neutral);
+  color: var(--text-dark);
+  border: 1px solid var(--border);
+}
+
+.voltarBtn:hover {
+  background: #e1e5eb;
+}
+
+.locarBtn {
+  background: var(--primary);
+}
+.locarBtn:hover {
+  background: var(--primary-hover);
+}
+
+.manutencaoBtn {
+  background: var(--warning);
+}
+.manutencaoBtn:hover {
+  background: #e88c3d;
+}
+
+.editarBtn {
+  background: var(--success);
+}
+.editarBtn:hover {
+  background: #04c38f;
+}
+
+.excluirBtn {
+  background: var(--danger);
+}
+.excluirBtn:hover {
+  background: #c82333;
+}
+
+.formulario {
+  margin-top: 2rem;
+  background: var(--neutral);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.formulario h3 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 0.3rem;
+}
+
+.formulario label {
+  font-weight: 600;
+}
+
+.formulario input,
+.formulario select,
+.formulario textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formulario input:focus,
+.formulario select:focus,
+.formulario textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 4px rgba(18, 173, 214, 0.4);
+}
+
+.formulario textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.enviarBtn {
+  margin-top: 1rem;
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.enviarBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.statusBadge {
+  padding: 3px 7px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+.statusDisponivel {
+  background-color: #d4f8df;
+  color: #1b8f3e;
+  border: 2px solid #1b8f3e;
+}
+
+.statusAlugado {
+  background-color: #d9e9ff;
+  color: #0b5ed7;
+  border: 2px solid #0b5ed7;
+}
+
+.statusManutencao {
+  background-color: #ffe2d6;
+  color: #d9534f;
+  border: 2px solid #d9534f;
+}
+
+.campoCpf {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.campoCpf input {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.listaClientesWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btnAcao,
+button svg,
+a svg,
+h3 svg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+@media (max-width: 600px) {
+  .veiculoDetalhes {
+    padding: 1.2rem;
+  }
+
+  .botoes {
+    flex-direction: column;
+  }
+
+  .botoes button,
+  .voltarBtn {
+    width: 100%;
+  }
+
+  .formulario {
+    padding: 1rem;
+  }
+
+  .listaClientesWrapper {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .veiculoDetalhes {
+    padding: 1.2rem;
+    margin: 1rem;
+  }
+
+  .veiculoDetalhes h1 {
+    font-size: 1.3rem;
+  }
+
+  .botoes {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .botoes button,
+  .voltarBtn {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .formulario {
+    padding: 1rem;
+  }
+
+  .formulario h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .formulario input,
+  .formulario select,
+  .formulario textarea {
+    font-size: 0.9rem;
+  }
+
+  .enviarBtn {
+    width: 100%;
+  }
+}

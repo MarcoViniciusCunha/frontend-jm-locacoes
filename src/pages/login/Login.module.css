@@ -4,10 +4,16 @@
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-  padding-top: 40px;
+  padding: 40px 20px;
   background-color: black;
   font-family: "Arial", sans-serif;
   color: #ffffff;
+}
+
+.loginContainer img {
+  width: 260px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 .loginContainer h2 {
@@ -18,8 +24,8 @@
 }
 
 .loginContainer form {
-  background: rgba(49, 49, 49, 0.096);
-  padding: 30px 40px;
+  background: rgba(49, 49, 49, 0.15);
+  padding: 30px;
   border-radius: 12px;
   backdrop-filter: blur(10px);
   display: flex;
@@ -67,4 +73,56 @@
   margin-bottom: 10px;
   font-size: 0.9rem;
   color: #ffb3b3;
+}
+
+@media (max-width: 768px) {
+  .loginContainer img {
+    width: 220px;
+  }
+
+  .loginContainer h2 {
+    font-size: 1.7rem;
+  }
+
+  .loginContainer form {
+    padding: 25px;
+    max-width: 350px;
+  }
+}
+
+/* Mobile médio (≤ 480px) */
+@media (max-width: 480px) {
+  .loginContainer img {
+    width: 180px;
+  }
+
+  .loginContainer h2 {
+    font-size: 1.5rem;
+  }
+
+  .loginContainer form {
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .loginContainer input,
+  .loginContainer button {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+}
+
+/* Mobile pequeno (≤ 360px) */
+@media (max-width: 360px) {
+  .loginContainer img {
+    width: 150px;
+  }
+
+  .loginContainer h2 {
+    font-size: 1.3rem;
+  }
+
+  .loginContainer form {
+    padding: 15px;
+  }
 }

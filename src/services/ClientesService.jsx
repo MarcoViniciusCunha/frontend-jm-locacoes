@@ -11,3 +11,7 @@ export const ClientesService = {
       params: { nome },
     }),
 };
+
+export const CepService = {
+  buscar: async (cep) => api.get(`/cep/${cep}`),
+};

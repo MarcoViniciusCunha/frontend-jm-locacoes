@@ -1,0 +1,24 @@
+.box {
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.error {
+  background: #ffe0e0;
+  border-left: 5px solid #cc0000;
+  color: #660000;
+}
+
+.success {
+  background: #e0ffe4;
+  border-left: 5px solid #009926;
+  color: #004d13;
+}
+
+.info {
+  background: #e7f0ff;
+  border-left: 5px solid #0275d8;
+  color: #03396c;
+}

@@ -1,0 +1,87 @@
+.modalContent {
+  background: var(--white);
+  padding: 28px;
+  border-radius: 12px;
+  width: 420px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--neutral-800);
+}
+
+/* Campos padrão */
+.campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.campo label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--neutral-600);
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  padding: 10px;
+  border: 1px solid var(--neutral-300);
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  resize: none;
+}
+
+.campo textarea {
+  height: 90px;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--primary);
+}
+
+.campoCheckbox {
+  margin-bottom: 16px;
+}
+
+.campoCheckbox label {
+  font-size: 15px;
+  color: var(--neutral-700);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.campoCheckbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.btnSalvar {
+  width: 100%;
+  padding: 10px;
+  background: var(--success);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btnSalvar:hover {
+  background: #05c18f;
+}

@@ -1,0 +1,586 @@
+:root {
+  --neutral-50: #f7f8fa;
+  --neutral-100: #f1f3f5;
+  --neutral-200: #e9ecef;
+  --neutral-300: #dee2e6;
+  --neutral-600: #5c6770;
+  --neutral-800: #2c3e50;
+
+  --danger: #e63946;
+  --warning: #f4a261;
+
+  --radius: 12px;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.pagina {
+  padding: 80px 20px 40px;
+  min-height: 100vh;
+  background-color: var(--neutral-50);
+}
+
+/* CONTEÚDO */
+.conteudo {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+/* VOLTAR */
+.botaoVoltar {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  margin-bottom: 26px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.botaoVoltar:hover {
+  opacity: 0.7;
+}
+
+/* CABEÇALHO */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.cabecalho h1 {
+  margin: 0;
+  color: var(--neutral-800);
+  font-weight: 600;
+}
+
+/* STATUS */
+.status {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.nao_iniciada {
+  background: #fff4d6;
+  color: rgb(207, 135, 1);
+}
+
+.ativa {
+  background: #e8f0fa;
+  color: #1a4f9b;
+}
+
+.devolvida {
+  background: #e8f7ef;
+  color: #1f7b47;
+}
+
+.atrasada {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 26px;
+  margin-bottom: 40px;
+}
+
+/* CARD */
+.card {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.card h2 {
+  color: var(--neutral-800);
+  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--neutral-100);
+}
+
+.iconeTitulo {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+/* CARDS SEÇÃO EXTRA */
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.subCard {
+  background: #fff;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--neutral-200);
+}
+
+/* LINHAS */
+.linha {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--neutral-600);
+}
+
+.valor {
+  color: var(--neutral-800);
+}
+
+.valorDestaque {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.valorTotal {
+  color: var(--success);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* GRUPOS */
+.linhaGrupo {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+/* BOTÕES */
+.acoes {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 35px;
+}
+
+.botaoImprimir,
+.botaoDevolver {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.botaoImprimir {
+  background: var(--neutral-800);
+  color: white;
+}
+
+.botaoImprimir:hover {
+  background: #1e2a38;
+}
+
+.botaoDevolver {
+  background: var(--success);
+  color: #fff;
+}
+
+.botaoDevolver:hover {
+  background: #27ae60;
+}
+
+.botaoExcluir {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.2s;
+  background: #e63946;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoExcluir:hover {
+  background: #c5303d;
+}
+
+.cardTituloLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* NOVO — Botão Registrar Pagamento */
+.botaoRegistrarPgto {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botaoRegistrarPgto:hover {
+  background: var(--primary-hover);
+}
+
+.botaoDetalhesPagto {
+  padding: 8px 18px;
+  background: #6b6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 8px;
+}
+
+.botaoDetalhesPagto:hover {
+  background: #505050;
+}
+
+.linhaBotoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  justify-content: flex-end; /* alinha à direita */
+}
+
+.linhaBotoes button {
+  padding: 6px 12px; /* padding uniforme */
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 80px;
+  box-sizing: border-box;
+}
+
+.linhaBotoes .botaoEditar {
+  background: #6b6b6b;
+  color: #fff;
+}
+
+.linhaBotoes .botaoEditar:hover {
+  background: #505050;
+}
+
+.linhaBotoes .botaoExcluir {
+  background: #e63946;
+  color: #fff;
+}
+
+.linhaBotoes .botaoExcluir:hover {
+  background: #c5303d;
+}
+
+.botaoEditarInspecao,
+.botaoExcluirInspecao {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px; /* altura fixa */
+  min-width: 80px; /* largura mínima igual */
+  gap: 4px; /* espaço entre ícone e texto */
+}
+
+.botaoEditarInspecao {
+  background: #6b6b6b;
+  color: #fff;
+}
+
+.botaoEditarInspecao:hover {
+  background: #505050;
+}
+
+.botaoExcluirInspecao {
+  background: #e63946;
+  color: #fff;
+}
+
+.botaoExcluirInspecao:hover {
+  background: #c5303d;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modalConteudo {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neutral-300) transparent;
+}
+
+.modalConteudo::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalConteudo::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modalConteudo::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 10px;
+}
+
+.modalConteudo::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+.modalClose {
+  position: sticky;
+  top: 0;
+  right: 0;
+  float: right;
+  z-index: 10001;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin-bottom: 16px;
+}
+
+.modalClose:hover {
+  opacity: 0.6;
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .pagina {
+    padding: 60px 10px 20px;
+  }
+
+  .conteudo {
+    padding: 22px;
+  }
+
+  .cabecalho {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .acoes {
+    flex-direction: column;
+  }
+
+  .botaoImprimir,
+  .botaoDevolver {
+    width: 100%;
+  }
+
+  .modalOverlay {
+    padding: 10px;
+  }
+
+  .modalConteudo {
+    width: 100% !important;
+    max-height: 85vh;
+  }
+
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .card h2 {
+    font-size: 16px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .linhaBotoes button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagina {
+    padding: 50px 6px 16px;
+  }
+
+  .conteudo {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .cabecalho h1 {
+    font-size: 20px;
+  }
+
+  .status {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .card h2 {
+    font-size: 15px;
+  }
+
+  .linha {
+    gap: 4px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .valor,
+  .valorDestaque {
+    font-size: 14px;
+  }
+
+  .valorTotal {
+    font-size: 16px;
+  }
+
+  .acoes {
+    gap: 10px;
+  }
+
+  .botaoImprimir,
+  .botaoDevolver,
+  .botaoExcluir {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .linhaBotoes button {
+    width: 100%;
+    font-size: 12px;
+    height: 30px;
+  }
+
+  .subCard {
+    padding: 10px 14px;
+  }
+
+  .modalConteudo {
+    width: 100% !important;
+    max-height: 80vh;
+    padding: 16px;
+  }
+
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .modalClose {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 360px) {
+  .botaoRegistrarPgto,
+  .botaoEditarInspecao,
+  .botaoExcluirInspecao,
+  .botaoDetalhesPagto {
+    width: 100%;
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cardTitulo h2 {
+    font-size: 16px;
+  }
+}

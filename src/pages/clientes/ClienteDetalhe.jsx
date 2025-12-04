@@ -1,123 +1,118 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClientesService } from "../../services/ClientesService";
+import ClienteForm from "../../components/clientes/ClienteForm";
 import styles from "./ClienteDetalhe.module.css";
+
+import {
+  FaArrowLeft,
+  FaEdit,
+  FaTrashAlt,
+  FaSave,
+  FaTimesCircle,
+  FaUserCircle,
+} from "react-icons/fa";
+
+import MessageBox from "../../components/erro/MensagemErro";
 
 const ClienteDetalhe = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [customer, setCustomer] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [editing, setEditing] = useState(false);
 
-  const camposEditaveis = [
-    "nome",
-    "cpf",
-    "cnh",
-    "email",
-    "telefone",
-    "endereco",
-    "data_nasc",
-  ];
+  const [cliente, setCliente] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [editando, setEditando] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
 
-  const fetchCliente = async () => {
-    try {
-      const res = await ClientesService.getById(id);
-      setCustomer(res.data);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const exibirMensagem = (tipo, texto) => {
+    setTipoMensagem(tipo);
+    setMensagem(texto);
   };
 
-  useEffect(() => {
-    fetchCliente();
+  const carregarCliente = useCallback(async () => {
+    try {
+      const { data } = await ClientesService.getById(id);
+      setCliente(data);
+    } catch (e) {
+      console.error(e);
+      exibirMensagem("error", "Erro ao carregar cliente: " + e.message);
+    } finally {
+      setCarregando(false);
+    }
   }, [id]);
 
-  const handleChange = (e) => {
-    setCustomer({
-      ...customer,
-      [e.target.name]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    setMensagem("");
+    carregarCliente();
+  }, [carregarCliente]);
 
-  const handleEditClick = () => {
-    setEditing(true);
-  };
-
-  const handleSave = async () => {
+  const salvarAlteracoes = async (dadosForm) => {
     try {
-      await ClientesService.editar(id, customer);
-      await fetchCliente();
-      setEditing(false);
-      alert("Cliente atualizado com sucesso!");
-    } catch (err) {
-      console.log(err);
-      alert(err.message);
+      await ClientesService.editar(id, dadosForm);
+      await carregarCliente();
+
+      setEditando(false);
+      exibirMensagem("success", "Cliente atualizado com sucesso!");
+    } catch (e) {
+      const msg = e.response?.data.error || "Erro ao salvar cliente";
+      exibirMensagem("error", msg);
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("Tem certeza que deseja excluir este cliente?")) {
-      try {
-        await ClientesService.excluir(id);
-        alert("Cliente excluído com sucesso!");
-        navigate("/clientes");
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao excluir cliente: " + err.message);
-      }
+  const excluirCliente = async () => {
+    if (!window.confirm("Tem certeza que deseja excluir este cliente?")) return;
+
+    try {
+      await ClientesService.excluir(id);
+      exibirMensagem("success", "Cliente excluído com sucesso!");
+
+      setTimeout(() => navigate("/clientes"), 1200);
+    } catch (e) {
+      const msg = e.response?.data.error || "Erro ao excluir cliente";
+      exibirMensagem("error", msg);
     }
   };
 
-  const clickCancel = async () => {
-    setEditing(false);
-    await fetchCliente();
-  };
-
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>{error}</p>;
+  if (carregando) return <p>Carregando...</p>;
 
   return (
     <div className={styles.container}>
-      <h1>{customer.nome}</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
-        {camposEditaveis.map((key) => (
-          <div className={styles.formGroup} key={key}>
-            <label>{key}</label>
-            <input
-              type={key === "data_nasc" ? "date" : "text"}
-              name={key}
-              value={customer[key]}
-              disabled={!editing}
-              onChange={handleChange}
-            />
-          </div>
-        ))}
-      </form>
+      <div className={styles.titleBar}>
+        <h1>
+          <FaUserCircle /> {cliente?.nome}
+        </h1>
+      </div>
+
+      <MessageBox type={tipoMensagem} message={mensagem} />
+
+      <ClienteForm
+        initialData={cliente}
+        onSubmit={salvarAlteracoes}
+        onCancel={() => setEditando(false)}
+        disabled={!editando}
+      />
 
       <div className={styles.buttonGroup}>
-        {!editing ? (
+        {!editando ? (
           <>
-            <button className={styles.editBtn} onClick={handleEditClick}>
-              Editar
+            <button className={styles.backBtn} onClick={() => navigate(-1)}>
+              <FaArrowLeft /> Voltar
             </button>
-            <button className={styles.deleteBtn} onClick={handleDelete}>
-              Excluir
+
+            <button
+              className={styles.editBtn}
+              onClick={() => setEditando(true)}
+            >
+              <FaEdit /> Editar
+            </button>
+
+            <button className={styles.deleteBtn} onClick={excluirCliente}>
+              <FaTrashAlt /> Excluir
             </button>
           </>
         ) : (
-          <>
-            <button className={styles.saveBtn} onClick={handleSave}>
-              Salvar
-            </button>
-            <button className={styles.cancelBtn} onClick={clickCancel}>
-              Cancelar
-            </button>
-          </>
+          <></>
         )}
       </div>
     </div>
