@@ -239,3 +239,45 @@ h3 svg {
     width: 100%;
   }
 }
+
+@media (max-width: 360px) {
+  .veiculoDetalhes {
+    padding: 1.2rem;
+    margin: 1rem;
+  }
+
+  .veiculoDetalhes h1 {
+    font-size: 1.3rem;
+  }
+
+  .botoes {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .botoes button,
+  .voltarBtn {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .formulario {
+    padding: 1rem;
+  }
+
+  .formulario h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .formulario input,
+  .formulario select,
+  .formulario textarea {
+    font-size: 0.9rem;
+  }
+
+  .enviarBtn {
+    width: 100%;
+  }
+}

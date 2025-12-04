@@ -230,3 +230,92 @@
     gap: 10px;
   }
 }
+
+@media (max-width: 480px) {
+  .titulo {
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+
+  .filtros {
+    width: 100%;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .filtros input,
+  .filtros select {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.9rem;
+    padding: 9px 10px;
+  }
+
+  .filtrosBotoes {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .btnBuscar,
+  .btnLimpar {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .lista {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .topoCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .linha {
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+  }
+
+  .botoes {
+    justify-content: center;
+  }
+
+  .btnDetalhes {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .modal {
+    width: 95%;
+    max-width: 380px;
+    padding: 18px;
+  }
+
+  .closeBtn {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+
+  .paginacao {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .paginacao button {
+    width: 100%;
+    padding: 10px;
+  }
+}

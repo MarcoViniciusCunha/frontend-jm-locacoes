@@ -92,3 +92,78 @@
 .main button[type="button"]:hover {
   background-color: var(--primary-hover);
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 0;
+  }
+
+  .header,
+  .crudHeader {
+    gap: 0.5em;
+  }
+
+  .header button,
+  .crudHeader button {
+    padding: 0.5em 1em;
+    font-size: 14px;
+  }
+
+  .main {
+    width: 95%;
+    padding: 1.5em;
+  }
+
+  .main h2 {
+    font-size: 1.2rem;
+  }
+
+  .main form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 0;
+  }
+
+  .header,
+  .crudHeader {
+    flex-direction: column;
+    gap: 0.7em;
+    width: 100%;
+  }
+
+  .header button,
+  .crudHeader button {
+    width: 100%;
+    font-size: 15px;
+    padding: 0.7em;
+  }
+
+  .main {
+    width: 95%;
+    padding: 1em;
+    border-radius: 10px;
+  }
+
+  .main h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8em;
+  }
+
+  .main input,
+  .main select,
+  .main textarea {
+    font-size: 0.95rem;
+    padding: 0.6em;
+  }
+
+  .main button[type="submit"],
+  .main button[type="button"] {
+    width: 100%;
+    padding: 0.7em;
+    font-size: 0.95rem;
+  }
+}

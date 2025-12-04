@@ -416,7 +416,6 @@
   }
 }
 
-/* RESPONSIVO */
 @media (max-width: 768px) {
   .pagina {
     padding: 60px 10px 20px;
@@ -445,7 +444,143 @@
     width: 100%;
   }
 
-  .modalContent {
-    width: 90%;
+  .modalOverlay {
+    padding: 10px;
+  }
+
+  .modalConteudo {
+    width: 100% !important;
+    max-height: 85vh;
+  }
+
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .card h2 {
+    font-size: 16px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .linhaBotoes button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagina {
+    padding: 50px 6px 16px;
+  }
+
+  .conteudo {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .cabecalho h1 {
+    font-size: 20px;
+  }
+
+  .status {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .card h2 {
+    font-size: 15px;
+  }
+
+  .linha {
+    gap: 4px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .valor,
+  .valorDestaque {
+    font-size: 14px;
+  }
+
+  .valorTotal {
+    font-size: 16px;
+  }
+
+  .acoes {
+    gap: 10px;
+  }
+
+  .botaoImprimir,
+  .botaoDevolver,
+  .botaoExcluir {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .linhaBotoes button {
+    width: 100%;
+    font-size: 12px;
+    height: 30px;
+  }
+
+  .subCard {
+    padding: 10px 14px;
+  }
+
+  .modalConteudo {
+    width: 100% !important;
+    max-height: 80vh;
+    padding: 16px;
+  }
+
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .modalClose {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 360px) {
+  .botaoRegistrarPgto,
+  .botaoEditarInspecao,
+  .botaoExcluirInspecao,
+  .botaoDetalhesPagto {
+    width: 100%;
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .linhaBotoes {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cardTitulo h2 {
+    font-size: 16px;
   }
 }

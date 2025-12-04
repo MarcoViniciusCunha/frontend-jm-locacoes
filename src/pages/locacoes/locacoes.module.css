@@ -134,7 +134,6 @@
   color: var(--primary);
 }
 
-/* 🧩 Botões */
 .buttons {
   display: flex;
   justify-content: space-between;
@@ -154,9 +153,47 @@
   font-size: 0.9rem;
 }
 
-/* 🧩 Alinhamento de ícones */
+.filterButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.clearButton {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.filterButtoon,
+.clearButton {
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 120px;
+  box-sizing: border-box;
+}
+
+.filterButtoon svg,
+.clearButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.clearButton:hover {
+  background-color: #d6d6d6;
+}
+
 .button,
-.filterButton,
+.filterButtoon,
 .closeBtn {
   display: inline-flex;
   align-items: center;
@@ -165,7 +202,7 @@
 }
 
 .button svg,
-.filterButton svg,
+.filterButtoon svg,
 .closeBtn svg {
   flex-shrink: 0;
   font-size: 1rem;
@@ -321,28 +358,67 @@
   transform: translateY(-2px);
 }
 
-/* 📱 Responsividade */
+@media (max-width: 1024px) {
+  .carouselContainer {
+    max-width: 700px;
+  }
+
+  .carItem img {
+    height: 300px;
+  }
+}
+
 @media (max-width: 768px) {
-  .filterForm {
-    flex-direction: column;
-    align-items: center;
+  .homeMain {
+    padding: 1.5rem 1rem;
   }
 
-  .filterForm input,
-  .filterForm select {
-    width: 100%;
-    max-width: 300px;
+  .dashboardContainer h1 {
+    font-size: 1.4rem;
   }
 
-  .button {
-    width: 100%;
+  .carItem img {
+    height: 240px;
+    border-radius: 16px;
   }
 
-  .pagination {
-    gap: 0.25rem;
+  .carItem p {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .homeMain {
+    padding: 1rem 0.5rem;
   }
 
-  .pageBtn {
-    padding: 0.4rem 0.6rem;
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card h3 {
+    font-size: 0.9rem;
+  }
+
+  .card p {
+    font-size: 1.1rem;
+  }
+
+  .carouselContainer {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .carItem img {
+    height: 180px;
+  }
+
+  .carItem p {
+    font-size: 1rem;
   }
 }

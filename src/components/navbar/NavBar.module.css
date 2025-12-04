@@ -89,7 +89,29 @@
   color: white;
   transform: translateY(-1px);
 }
+@media (max-width: 1200px) {
+  .nav {
+    gap: 3rem;
+  }
 
+  .link {
+    font-size: 0.95rem;
+  }
+
+  .cabecalho {
+    padding: 0 1.5rem;
+  }
+
+  .logo {
+    width: 70px;
+    height: 70px;
+  }
+
+  .logoutButton {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}
 @media (max-width: 768px) {
   .cabecalho {
     flex-direction: column;
@@ -112,5 +134,45 @@
 
   .link {
     font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    gap: 0.8rem;
+  }
+
+  .link {
+    font-size: 0.85rem;
+  }
+
+  .logoutButton {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .cabecalho {
+    padding: 0.6rem;
+    gap: 0.6rem;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .nav {
+    gap: 0.5rem;
+  }
+
+  .link {
+    font-size: 0.75rem;
+  }
+
+  .logoutButton {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
   }
 }

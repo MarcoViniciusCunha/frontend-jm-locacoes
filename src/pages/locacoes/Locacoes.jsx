@@ -17,7 +17,12 @@ const Locacoes = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [mensagemErro, setMensagemErro] = useState(null);
 
-  const [filtros, setFiltros] = useState({ cpf: "", placa: "", status: "" });
+  const [filtros, setFiltros] = useState({
+    cpf: "",
+    placa: "",
+    status: "",
+    nome: "",
+  });
   const [mostrarClientes, setMostrarClientes] = useState(false);
 
   const [paginaAtual, setPaginaAtual] = useState(0);
@@ -69,8 +74,17 @@ const Locacoes = () => {
   }, []);
 
   const selecionarCliente = (cliente) => {
-    setFiltros((prev) => ({ ...prev, customerId: cliente.id }));
+    setFiltros((prev) => ({
+      ...prev,
+      customerId: cliente.id,
+      nome: cliente.nome,
+    }));
     setMostrarClientes(false);
+  };
+
+  const limparFiltros = () => {
+    setFiltros({ cpf: "", placa: "", status: "", nome: "" });
+    buscarLocacoes({}, 0);
   };
 
   const paginaAnterior = () => {
@@ -132,9 +146,18 @@ const Locacoes = () => {
             </select>
           </div>
 
-          <button type="submit" className={styles.filterButton}>
-            <FiSearch /> Buscar
-          </button>
+          <div className={styles.filterButtons}>
+            <button type="submit" className={styles.filterButtoon}>
+              <FiSearch /> Buscar
+            </button>
+            <button
+              type="button"
+              className={styles.clearButton}
+              onClick={limparFiltros}
+            >
+              <FiX /> Limpar
+            </button>
+          </div>
         </form>
 
         {mostrarClientes && (

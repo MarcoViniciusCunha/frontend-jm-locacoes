@@ -3,12 +3,17 @@ import styles from "./ClienteForm.module.css";
 import { CepService } from "../../services/ClientesService";
 import MessageBox from "../erro/MensagemErro";
 
-const ClienteForm = ({
-  initialData = {},
+export default function ClienteForm({
+  initialData = null,
   onSubmit,
   onCancel,
   disabled = false,
-}) => {
+}) {
+  const [mensagem, setMensagem] = useState("");
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+  const [enderecoManual, setEnderecoManual] = useState(false);
+  const [editados, setEditados] = useState({});
+
   const [formData, setFormData] = useState({
     nome: "",
     cpf: "",
@@ -23,46 +28,31 @@ const ClienteForm = ({
     estado: "",
   });
 
-  const [originalData, setOriginalData] = useState({});
-  const [enderecoManual, setEnderecoManual] = useState(false);
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState("info");
+  const maskCPF = (v) =>
+    v
+      .replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
-  // Funções de formatação
-  const formatarCPF = (valor) => {
-    valor = valor.replace(/\D/g, "");
-    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    return valor;
-  };
+  const maskTelefone = (v) =>
+    v
+      .replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2");
 
-  const formatarTelefone = (valor) => {
-    valor = valor.replace(/\D/g, "");
-    if (valor.length <= 10) {
-      valor = valor.replace(/(\d{2})(\d)/, "($1) $2");
-      valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
-    } else {
-      valor = valor.replace(/(\d{2})(\d)/, "($1) $2");
-      valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
-    }
-    return valor;
-  };
+  const limpar = (v) => v.replace(/\D/g, "");
 
-  const camposNumericos = ["cpf", "cnh", "telefone", "cep", "numero"];
-
-  // Função para buscar endereço
-  const buscarEndereco = async (cepLimpo) => {
+  const buscarCep = async (cep) => {
     try {
-      const { data } = await CepService.buscar(cepLimpo);
+      const { data } = await CepService.buscar(cep);
 
       if (data.erro) {
-        limparEndereco();
-        setEnderecoManual(true);
-        setMensagem(
-          data?.error || "CEP não encontrado. Digite o endereço manualmente."
-        );
+        setMensagem("CEP não encontrado. Preencha manualmente.");
         setTipoMensagem("error");
+        setEnderecoManual(true);
         return;
       }
 
@@ -73,137 +63,71 @@ const ClienteForm = ({
         localidade: data.localidade,
         estado: data.uf,
       }));
-    } catch (err) {
-      setMensagem(
-        err.response?.data?.error ||
-          "Não foi possível encontrar esse CEP ou a API está fora do ar. Preencha os campos manualmente."
-      );
+    } catch {
+      setMensagem("Erro ao buscar CEP. Preencha manualmente.");
       setTipoMensagem("error");
+      setEnderecoManual(true);
     }
   };
 
-  const limparEndereco = () => {
-    setFormData((prev) => ({
-      ...prev,
-      logradouro: "",
-      localidade: "",
-      estado: "",
-    }));
-  };
-
-  // Atualiza campos do form
-  const atualizarCampo = (campo, valor) => {
-    setFormData((prev) => ({ ...prev, [campo]: valor }));
-  };
-
-  // Inicializa dados
   useEffect(() => {
     if (!initialData) return;
 
-    const cleanedData = {
-      cpf: (initialData.cpf || "").replace(/\D/g, ""),
-      cnh: (initialData.cnh || "").replace(/\D/g, ""),
-      telefone: (initialData.telefone || "").replace(/\D/g, ""),
-      logradouro: initialData.rua || "",
-      localidade: initialData.cidade || "",
-      estado: initialData.estado || "",
-      ...initialData,
-    };
-
-    setOriginalData(cleanedData);
-
     setFormData({
-      ...initialData,
-      cpf: initialData.cpfMasked || formatarCPF(initialData.cpf || ""),
-      cnh:
-        initialData.cnhMasked ||
-        (initialData.cnh ? "******" + initialData.cnh.slice(6) : ""),
+      nome: initialData.nome || "",
+      cpf: initialData.cpfMasked || maskCPF(initialData.cpf || ""),
+      cnh: initialData.cnhMasked || "",
+      email: initialData.email || "",
       telefone:
-        initialData.telefoneMasked ||
-        formatarTelefone(initialData.telefone || ""),
+        initialData.telefoneMasked || maskTelefone(initialData.telefone || ""),
+      cep: initialData.cep || "",
+      numero: initialData.numero || "",
+      data_nasc: initialData.data_nasc || "",
       logradouro: initialData.rua || "",
       localidade: initialData.cidade || "",
       estado: initialData.estado || "",
-      data_nasc: initialData.data_nasc || "",
     });
   }, [initialData]);
 
-  // Handle change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let novoValor = value;
+    let v = value;
 
-    if (camposNumericos.includes(name)) {
-      novoValor = value.replace(/\D/g, "");
-    }
+    if (name === "cpf") v = maskCPF(value);
+    if (name === "telefone") v = maskTelefone(value);
+    if (["cep", "cnh", "numero"].includes(name)) v = limpar(value);
 
-    if (name === "cpf") novoValor = formatarCPF(novoValor);
-    if (name === "telefone") novoValor = formatarTelefone(novoValor);
+    if (name === "cep" && v.length === 8) buscarCep(v);
 
-    if (name === "cep") {
-      const cepLimpo = novoValor;
-      if (cepLimpo.length === 8) buscarEndereco(cepLimpo);
-      else limparEndereco();
-    }
+    setEditados((prev) => ({ ...prev, [name]: true }));
 
-    atualizarCampo(name, novoValor);
+    setFormData((prev) => ({ ...prev, [name]: v }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const dadosAlterados = {};
+    const payload = {};
 
-    Object.keys(formData).forEach((key) => {
-      let valorAtual = formData[key];
+    Object.keys(editados).forEach((campo) => {
+      let valor = formData[campo];
 
-      // Para CPF, CNH e telefone, use o valor limpo
-      if (["cpf", "cnh", "telefone"].includes(key)) {
-        valorAtual = valorAtual.replace(/\D/g, "");
-      }
+      if (campo === "cpf") valor = limpar(valor);
+      if (campo === "telefone") valor = limpar(valor);
 
-      if (
-        ["cpf", "cnh", "telefone"].includes(key) &&
-        valorAtual === (formData[key] || "").replace(/\D/g, "")
-      ) {
-        valorAtual = originalData[key];
-      }
-
-      if (valorAtual !== (originalData[key] ?? "")) {
-        dadosAlterados[key] = valorAtual;
-      }
+      payload[campo] = valor;
     });
 
-    onSubmit(dadosAlterados);
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      ...initialData,
-      cpf: initialData.cpfMasked || formatarCPF(initialData.cpf || ""),
-      cnh:
-        initialData.cnhMasked ||
-        (initialData.cnh ? "******" + initialData.cnh.slice(6) : ""),
-      telefone:
-        initialData.telefoneMasked ||
-        formatarTelefone(initialData.telefone || ""),
-      logradouro: initialData.rua || "",
-      localidade: initialData.cidade || "",
-      estado: initialData.estado || "",
-      data_nasc: initialData.data_nasc || "",
-    });
-
-    setEnderecoManual(false);
-    setMensagem("");
-    if (onCancel) onCancel();
+    onSubmit(payload);
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit}>
+      {/* CAMPOS PRINCIPAIS */}
       {[
         { name: "nome", placeholder: "Nome" },
-        { name: "cpf", placeholder: "CPF", required: true },
-        { name: "cnh", placeholder: "CNH", required: true },
+        { name: "cpf", placeholder: "CPF" },
+        { name: "cnh", placeholder: "CNH" },
         { name: "email", placeholder: "E-mail", type: "email" },
         { name: "telefone", placeholder: "Telefone" },
         { name: "cep", placeholder: "CEP" },
@@ -214,67 +138,67 @@ const ClienteForm = ({
           type={campo.type || "text"}
           name={campo.name}
           placeholder={campo.placeholder}
-          required={campo.required}
           value={formData[campo.name]}
           onChange={handleChange}
           disabled={disabled}
+          required
         />
       ))}
 
       <MessageBox type={tipoMensagem} message={mensagem} />
 
-      {/* Campos de endereço */}
+      {/* ENDEREÇO */}
       <div className={styles.addressFields}>
         <input
           type="text"
-          placeholder="Rua"
           name="logradouro"
+          placeholder="Rua"
           value={formData.logradouro}
           onChange={handleChange}
           disabled={!enderecoManual || disabled}
         />
         <input
           type="text"
-          placeholder="Cidade"
           name="localidade"
+          placeholder="Cidade"
           value={formData.localidade}
           onChange={handleChange}
           disabled={!enderecoManual || disabled}
         />
         <input
           type="text"
-          placeholder="Estado"
           name="estado"
+          placeholder="UF"
           value={formData.estado}
           onChange={handleChange}
           disabled={!enderecoManual || disabled}
         />
       </div>
 
-      {/* Data de nascimento */}
+      {/* DATA NASC */}
       <div className={styles.dateWrapper}>
-        <label className={styles.dateLabel}>Data de nascimento</label>
+        <label>Data de Nascimento</label>
         <input
           type="date"
           name="data_nasc"
           value={formData.data_nasc}
           onChange={handleChange}
           disabled={disabled}
-          className={styles.dateInput}
         />
       </div>
 
-      {/* Botões */}
+      {/* BOTÕES */}
       {!disabled && (
         <div className={styles.actions}>
           <button type="submit" className={styles.saveBtn}>
             Salvar
           </button>
+
           {onCancel && (
             <button
               type="button"
               className={styles.cancelBtn}
-              onClick={handleCancel}
+              onClick={onCancel}
             >
               Cancelar
             </button>
@@ -283,6 +207,4 @@ const ClienteForm = ({
       )}
     </form>
   );
-};
-
-export default ClienteForm;
+}

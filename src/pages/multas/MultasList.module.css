@@ -281,3 +281,69 @@
     transform: translateY(0);
   }
 }
+
+/* TELAS MUITO PEQUENAS — CELULARES ATÉ 480px */
+@media (max-width: 480px) {
+  .cabecalho {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .botaoRegistrar {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+
+  .filtros {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .filtros input,
+  .filtros select {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.9rem;
+    padding: 9px 10px;
+  }
+
+  .btnsFiltro {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btnBuscar,
+  .btnLimpar {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .lista {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .linha {
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .modalConteudo {
+    width: 95%;
+    padding: 18px;
+  }
+
+  .botaoSalvar {
+    font-size: 1rem;
+    padding: 12px;
+  }
+}

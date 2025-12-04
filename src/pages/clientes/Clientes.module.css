@@ -195,12 +195,18 @@ li button {
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 }
-
 li button:hover {
   background-color: var(--primary-hover);
 }
 
-/* Mensagem quando não há clientes */
+.backButton {
+  background-color: var(--text-dark);
+}
+
+.backButton:hover {
+  background-color: var(--text-dark-hover);
+}
+
 .empty {
   text-align: center;
   color: #555;

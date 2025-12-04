@@ -7,22 +7,36 @@ export default function MessageBox({
   duration = 4000,
   onClose,
 }) {
+  const [visible, setVisible] = useState(false);
   const [internalMessage, setInternalMessage] = useState("");
 
   useEffect(() => {
-    if (!message) return;
-
-    setInternalMessage(message);
-
-    const timer = setTimeout(() => {
+    if (!message) {
+      setVisible(false);
       setInternalMessage("");
+      return;
+    }
+
+    setVisible(false);
+    setInternalMessage("");
+
+    const showTimer = setTimeout(() => {
+      setInternalMessage(message);
+      setVisible(true);
+    }, 10);
+
+    const hideTimer = setTimeout(() => {
+      setVisible(false);
       if (onClose) onClose();
     }, duration);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
   }, [message, duration, onClose]);
 
-  if (!internalMessage) return null;
+  if (!visible) return null;
 
   return (
     <div className={`${styles.box} ${styles[type]}`}>{internalMessage}</div>

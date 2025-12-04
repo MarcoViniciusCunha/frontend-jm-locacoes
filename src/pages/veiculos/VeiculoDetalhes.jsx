@@ -5,6 +5,8 @@ import { LocacoesService } from "../../services/LocacoesService";
 import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./VeiculoDetalhes.module.css";
 import ClientesList from "../../components/clientes/ClientesList";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   FiArrowLeft,
   FiEdit,
@@ -51,11 +53,25 @@ export default function VeiculoDetalhes() {
   const [categorias, setCategorias] = useState([]);
   const [seguros, setSeguros] = useState([]);
 
+  const [locacoesExistentes, setLocacoesExistentes] = useState([]);
+
   const [msg, setMsg] = useState({ type: "", text: "" });
 
   useEffect(() => {
     carregarVeiculo();
     carregarListas();
+  }, [placa]);
+
+  useEffect(() => {
+    const carregarLocacoes = async () => {
+      try {
+        const res = await LocacoesService.filtrar({ placa });
+        setLocacoesExistentes(res.data.content || []);
+      } catch (err) {
+        console.error("Erro ao buscar locações:", err);
+      }
+    };
+    carregarLocacoes();
   }, [placa]);
 
   useEffect(() => {
@@ -92,20 +108,35 @@ export default function VeiculoDetalhes() {
     }
   };
 
+  const normalizeStatus = (status) => {
+    switch (status) {
+      case "Disponível":
+        return "DISPONIVEL";
+      case "Alugado":
+        return "ALUGADO";
+      case "Manutenção":
+        return "MANUTENCAO";
+      default:
+        return status?.toUpperCase() || "DISPONIVEL";
+    }
+  };
+
   const carregarVeiculo = async () => {
     try {
       const response = await VeiculosService.veiculos.buscarPorPlaca(placa);
       const v = response.data;
-      setVeiculo(v);
+      const statusNormalized = normalizeStatus(v.status);
+
+      setVeiculo({ ...v, status: statusNormalized });
+      setStatus(statusNormalized);
       setDescricao(v.descricao || "");
-      setStatus(v.status.toUpperCase());
       setAno(v.ano || "");
       setValorDiario(v.valorDiario || "");
       setMarca(v.brand?.id || "");
       setModelo(v.model?.id || "");
       setCor(v.color?.id || "");
       setCategoria(v.category?.id || "");
-      setSeguro(v.insurance?.id || "");
+      setSeguro(v.insurance?.id?.toString() || "");
     } catch (error) {
       console.error("Erro ao buscar veículo:", error);
       alert("Não foi possível carregar o veículo.");
@@ -133,7 +164,8 @@ export default function VeiculoDetalhes() {
       setEndDate("");
       setPrice("");
     } catch (e) {
-      const msg = e.response?.data?.message || "Erro ao cadastrar locação.";
+      console.error(e);
+      const msg = e.response?.data?.error || "Erro ao cadastrar locação.";
       showMessage("error", msg);
     }
   };
@@ -161,6 +193,12 @@ export default function VeiculoDetalhes() {
         error.response?.data?.message || "Erro ao alterar status do veículo.";
       showMessage("error", backendMsg);
     }
+  };
+
+  const statusMap = {
+    DISPONIVEL: { label: "DISPONÍVEL", style: styles.statusDisponivel },
+    ALUGADO: { label: "ALUGADO", style: styles.statusAlugado },
+    MANUTENCAO: { label: "MANUTENÇÃO", style: styles.statusManutencao },
   };
 
   const handleEditar = async (e) => {
@@ -216,8 +254,6 @@ export default function VeiculoDetalhes() {
         {veiculo.brand?.nome} {veiculo.model?.nome} ({veiculo.ano})
       </h1>
 
-      <MessageBox type={msg.type} message={msg.text} />
-
       <p>
         <strong>Placa:</strong> {veiculo.placa}
       </p>
@@ -228,14 +264,10 @@ export default function VeiculoDetalhes() {
         <strong>Status:</strong>{" "}
         <span
           className={`${styles.statusBadge} ${
-            veiculo.status.toUpperCase() === "MANUTENÇÃO"
-              ? styles.statusManutencao
-              : veiculo.status.toUpperCase() === "ALUGADO"
-              ? styles.statusAlugado
-              : styles.statusDisponivel
+            statusMap[veiculo.status]?.style
           }`}
         >
-          {veiculo.status.toUpperCase()}
+          {statusMap[veiculo.status]?.label || veiculo.status}
         </span>
       </p>
 
@@ -254,6 +286,8 @@ export default function VeiculoDetalhes() {
       <p>
         <strong>Valor diário:</strong> R$ {veiculo.valorDiario}
       </p>
+
+      <MessageBox type={msg.type} message={msg.text} />
 
       <div className={styles.botoes}>
         <Link
@@ -286,9 +320,7 @@ export default function VeiculoDetalhes() {
           className={`${styles.btnAcao} ${styles.manutencaoBtn}`}
         >
           <FiTool />
-          {veiculo.status.toUpperCase() === "MANUTENCAO"
-            ? "Retornar"
-            : "Manutenção"}
+          {veiculo.status === "MANUTENCAO" ? "Retornar" : "Manutenção"}
         </button>
 
         <button
@@ -344,21 +376,38 @@ export default function VeiculoDetalhes() {
           </div>
 
           <label>Data de Início:</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            onFocus={(e) => e.target.showPicker?.()}
+          <DatePicker
+            selected={startDate ? new Date(startDate) : null}
+            onChange={(date) => setStartDate(date.toISOString().split("T")[0])}
+            selectsStart
+            startDate={startDate ? new Date(startDate) : null}
+            endDate={endDate ? new Date(endDate) : null}
+            excludeDateIntervals={locacoesExistentes.map((loc) => ({
+              start: new Date(loc.startDate),
+              end: new Date(loc.endDate),
+            }))}
+            dateFormat="dd/MM/yyyy"
+            placeholderText="Selecione a data de início"
             required
           />
+
           <label>Data de Término:</label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            onFocus={(e) => e.target.showPicker?.()}
+          <DatePicker
+            selected={endDate ? new Date(endDate) : null}
+            onChange={(date) => setEndDate(date.toISOString().split("T")[0])}
+            selectsEnd
+            startDate={startDate ? new Date(startDate) : null}
+            endDate={endDate ? new Date(endDate) : null}
+            minDate={startDate ? new Date(startDate) : null}
+            excludeDateIntervals={locacoesExistentes.map((loc) => ({
+              start: new Date(loc.startDate),
+              end: new Date(loc.endDate),
+            }))}
+            dateFormat="dd/MM/yyyy"
+            placeholderText="Selecione a data de término"
             required
           />
+
           <button type="submit" className={styles.enviarBtn}>
             <FiSend /> Enviar Locação
           </button>
@@ -431,10 +480,17 @@ export default function VeiculoDetalhes() {
           >
             <option value="">Selecione...</option>
             {seguros.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.empresa}
+              <option key={s.id} value={s.id.toString()}>
+                {s.company.name} {s.validade}
               </option>
             ))}
+            {veiculo.insurance &&
+              !seguros.some((s) => s.id === veiculo.insurance.id) && (
+                <option value={veiculo.insurance.id.toString()}>
+                  {veiculo.insurance.company.name} -{" "}
+                  {veiculo.insurance.validade}
+                </option>
+              )}
           </select>
 
           <label>Ano:</label>
