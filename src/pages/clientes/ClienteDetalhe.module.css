@@ -1,0 +1,99 @@
+.container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 30px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  font-family: "Inter", sans-serif;
+}
+
+.titleBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.titleBar h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.titleBar h1 svg {
+  color: var(--primary);
+}
+
+/* 🔘 Botões */
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+button {
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  color: #fff;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* 🟦 Estilos individuais */
+.backBtn {
+  background-color: var(--text-dark);
+}
+.backBtn:hover {
+  background-color: var(--text-dark-hover);
+}
+
+.editBtn {
+  background-color: var(--primary);
+}
+.editBtn:hover {
+  background-color: var(--primary-hover);
+}
+
+.saveBtn {
+  background-color: var(--success);
+}
+.saveBtn:hover {
+  background-color: var(--success-hover);
+}
+
+.deleteBtn {
+  background-color: var(--danger);
+}
+.cancelBtn {
+  background-color: #505050;
+}
+
+/* 🧱 Responsivo */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* CADA ITEM DA LISTA */
+li {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  margin-bottom: 10px;
+}
+
+/* MODO EDITANDO */
+.editando {
+  background: #eef5ff;
+  border-color: var(--primary);
+}
+
+/* COLUNA DAS INFORMAÇÕES */
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  color: var(--text-dark);
+}
+
+/* CONTAINER DOS BOTÕES (Editar + Excluir) */
+.editBtn {
+  display: flex;
+  gap: 10px;
+}
+
+/* BOTÕES PADRÃO */
+.editBtn button,
+.itemActions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* BOTÃO EDITAR */
+.editBtn button:first-child {
+  background: var(--primary);
+  color: white;
+}
+
+.editBtn button:first-child:hover {
+  background: var(--primary-hover);
+}
+
+/* BOTÃO EXCLUIR (VERMELHO) */
+.deleteBtn {
+  background: var(--danger) !important;
+  color: white !important;
+}
+
+.deleteBtn:hover {
+  background: #c12737 !important;
+}
+
+/* BOTÕES DO MODO EDITANDO */
+.itemActions {
+  display: flex;
+  gap: 10px;
+}
+
+.itemActions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+.cancelar {
+  background: #b0b0b0;
+  color: white;
+}
+
+.cancelar:hover {
+  background: #8f8f8f;
+}

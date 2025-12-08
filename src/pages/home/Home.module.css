@@ -1,0 +1,228 @@
+.homeMain {
+  min-height: calc(100vh - 60px); /* respeita o espaço do navbar */
+  background-color: var(--neutral);
+  display: flex;
+  justify-content: center;
+  padding: 3rem 2rem 2rem;
+}
+
+.dashboardContainer {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.dashboardContainer h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  background-color: #ebebebd3;
+}
+
+.card h3 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.card p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  word-wrap: break-word;
+}
+
+.card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card h3 svg {
+  color: black;
+  flex-shrink: 0;
+}
+
+.totalVeiculos p {
+  color: var(--primary);
+}
+
+.totalClientes p {
+  color: var(--success);
+}
+
+.reservas p {
+  color: var(--primary-hover);
+}
+
+.manutencao p {
+  color: var(--danger);
+}
+
+.faturamento p {
+  color: var(--text-dark);
+}
+
+.pendencias p {
+  color: var(--danger);
+}
+
+.proximaDevolucao p,
+.proximaLocacao p {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.carouselContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+}
+
+.carItem {
+  text-align: center;
+}
+
+.carItem img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.carItem p {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.6rem;
+}
+
+.carouselWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 50px;
+}
+
+.carouselContainer {
+  width: 100%;
+  max-width: 900px;
+  padding: 0 10px;
+}
+
+.carItem img {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.carItem {
+  position: relative;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.carItem:hover {
+  transform: scale(1.03);
+}
+
+.carItem img {
+  width: 100%;
+  height: 380px; /* AUMENTADO */
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
+}
+
+.carItem p {
+  margin-top: 15px;
+  font-size: 1.4rem; /* maior */
+  font-weight: 700;
+  color: #222;
+}
+
+/* Dots maiores e centralizados */
+.slick-dots li button:before {
+  font-size: 16px;
+  opacity: 0.4;
+}
+
+.slick-dots li.slick-active button:before {
+  opacity: 1 !important;
+  color: var(--primary);
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .carouselContainer {
+    max-width: 600px;
+  }
+
+  .carItem img {
+    max-height: 260px;
+  }
+
+  .carItem p {
+    font-size: 1.1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .carouselContainer {
+    padding: 0 5px;
+    max-width: 100%;
+  }
+
+  .carItem {
+    padding: 5px;
+  }
+
+  .carItem img {
+    border-radius: 12px;
+    max-height: 200px;
+  }
+
+  .carItem p {
+    font-size: 0.95rem;
+  }
+
+  .slick-dots li button:before {
+    font-size: 10px;
+  }
+}

@@ -1,47 +1,72 @@
 import { useState } from "react";
-import { api } from "../../utils/config";
+import { api, setAuthToken } from "../../utils/config";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import styles from "./Login.module.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const { login } = useAuthContext(); // ✅ pegar do contexto
-  const navigate = useNavigate();
+  const [credenciais, setCredenciais] = useState({ usuario: "", senha: "" });
+  const [mensagemErro, setMensagemErro] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const { login } = useAuthContext();
+  const navegar = useNavigate();
+
+  const atualizarCampo = (campo, valor) => {
+    setCredenciais((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const autenticarUsuario = async () => {
+    const resposta = await api.post("/login", {
+      username: credenciais.usuario,
+      password: credenciais.senha,
+    });
+
+    return resposta.data.token;
+  };
+
+  const enviarFormulario = async (evento) => {
+    evento.preventDefault();
+    setMensagemErro(null);
+
     try {
-      const res = await api.post("/login", { email, password });
-      const { token } = res.data;
+      const token = await autenticarUsuario();
+
+      setAuthToken(token);
       login(token);
-      navigate("/"); // redireciona após login
-    } catch (err) {
-      setError(err.response?.data?.message || "Erro no login");
+      navegar("/");
+    } catch (erro) {
+      const mensagemApi = erro.response?.data?.error;
+      setMensagemErro(
+        mensagemApi || "Erro ao realizar login. Tente novamente."
+      );
     }
   };
 
   return (
-    <div className="login-container">
+    <div className={styles.loginContainer}>
+      <img src="src/assets/logo.png" alt="Logo" width={350} height={350} />
+
       <h2>Login</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
+
+      {mensagemErro && <p className={styles.error}>{mensagemErro}</p>}
+
+      <form onSubmit={enviarFormulario}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Usuário"
+          value={credenciais.usuario}
+          onChange={(e) => atualizarCampo("usuario", e.target.value)}
           required
         />
+
         <input
           type="password"
           placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={credenciais.senha}
+          onChange={(e) => atualizarCampo("senha", e.target.value)}
           required
         />
+
         <button type="submit">Entrar</button>
       </form>
     </div>

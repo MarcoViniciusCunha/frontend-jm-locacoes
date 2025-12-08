@@ -1,1 +1,43 @@
+:root {
+  --primary: #12add6;
+  --primary-hover: #35c2e9;
+  --danger: #e63946;
+  --success: #2ecc71;
+  --neutral: #f4f5f7;
+  --card-bg: #ffffff;
+  --text-dark: #2c3e50;
+  --text-dark-hover: #394653;
+  --border: #dcdfe6;
+  --white: #ffffff;
+  --black: #000000;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
 
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.conteudo {
+  flex: 1; /* empurra o footer para o final */
+}
+
+/* Se quiser um estilo bonito pro footer */
+footer {
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+  padding: 14px;
+  text-align: center;
+  color: #2c3e50;
+  font-size: 14px;
+}
