@@ -56,6 +56,7 @@ export default function VeiculoDetalhes() {
   const [locacoesExistentes, setLocacoesExistentes] = useState([]);
 
   const [msg, setMsg] = useState({ type: "", text: "" });
+  const hoje = new Date();
 
   useEffect(() => {
     carregarVeiculo();
@@ -382,6 +383,7 @@ export default function VeiculoDetalhes() {
             selectsStart
             startDate={startDate ? new Date(startDate) : null}
             endDate={endDate ? new Date(endDate) : null}
+            minDate={hoje} // 🔹 bloqueia datas anteriores
             excludeDateIntervals={locacoesExistentes.map((loc) => ({
               start: new Date(loc.startDate),
               end: new Date(loc.endDate),
@@ -398,7 +400,7 @@ export default function VeiculoDetalhes() {
             selectsEnd
             startDate={startDate ? new Date(startDate) : null}
             endDate={endDate ? new Date(endDate) : null}
-            minDate={startDate ? new Date(startDate) : null}
+            minDate={startDate ? new Date(startDate) : hoje}
             excludeDateIntervals={locacoesExistentes.map((loc) => ({
               start: new Date(loc.startDate),
               end: new Date(loc.endDate),
