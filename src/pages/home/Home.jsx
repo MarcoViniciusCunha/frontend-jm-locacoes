@@ -29,7 +29,7 @@ const Home = () => {
   const [faturamentoMes, setFaturamentoMes] = useState(0);
   const [pendencias, setPendencias] = useState(0);
 
-  const [proximaDevolucao, setProximaDevolucao] = useState(null);
+  const [locacoesVencendoHoje, setLocacoesVencendoHoje] = useState(0);
   const [proximaLocacao, setProximaLocacao] = useState(null);
 
   const [mensagem, setMensagem] = useState("");
@@ -86,7 +86,7 @@ const Home = () => {
       setFaturamentoMes(d.faturamentoMes);
       setReservasAndamento(d.reservasAndamento);
       setPendencias(d.pendencias);
-      setProximaDevolucao(d.proximaDevolucao);
+      setLocacoesVencendoHoje(d.locacoesVencendoHoje);
       setProximaLocacao(d.proximaLocacao);
     } catch (error) {
       console.error("Erro ao carregar dashboard:", error);
@@ -150,20 +150,13 @@ const Home = () => {
             <p>{pendencias}</p>
           </div>
 
-          <div className={`${styles.card} ${styles.proximaDevolucao}`}>
-            <h3>
-              <FiCalendar /> Próxima Devolução
-            </h3>
-            {proximaDevolucao ? (
-              <p>
-                {proximaDevolucao.customerName} - {proximaDevolucao.modelo}
-                <br />
-                {new Date(proximaDevolucao.endDate).toLocaleDateString()}
-              </p>
-            ) : (
-              <p>Nenhuma devolução próxima</p>
-            )}
-          </div>
+         <div className={`${styles.card} ${styles.proximaDevolucao}`}>
+           <h3>
+             <FiCalendar /> Locações Vencendo Hoje
+           </h3>
+           <p>{locacoesVencendoHoje}</p>
+         </div>
+
 
           <div className={`${styles.card} ${styles.proximaLocacao}`}>
             <h3>
