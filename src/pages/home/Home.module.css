@@ -1,5 +1,6 @@
+/* Container principal */
 .homeMain {
-  min-height: calc(100vh - 60px); /* respeita o espaço do navbar */
+  min-height: calc(100vh - 60px);
   background-color: var(--neutral);
   display: flex;
   justify-content: center;
@@ -19,18 +20,23 @@
   font-weight: 600;
 }
 
+/* Grid de cards principais */
 .cardsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
+/* Cards pequenos */
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   transition: transform 0.2s ease, box-shadow 0.2s ease,
     background-color 0.2s ease;
   cursor: default;
@@ -44,19 +50,9 @@
 
 .card h3 {
   font-size: 1rem;
-  color: var(--text-dark);
   font-weight: 600;
+  color: var(--text-dark);
   margin-bottom: 0.75rem;
-}
-
-.card p {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--primary);
-  word-wrap: break-word;
-}
-
-.card h3 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -67,162 +63,87 @@
   flex-shrink: 0;
 }
 
+.card p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  word-wrap: break-word;
+  margin-bottom: 0.5rem;
+}
+
+/* Cores específicas */
 .totalVeiculos p {
   color: var(--primary);
 }
-
 .totalClientes p {
   color: var(--success);
 }
-
 .reservas p {
   color: var(--primary-hover);
 }
-
 .manutencao p {
   color: var(--danger);
 }
-
 .faturamento p {
   color: var(--text-dark);
 }
-
 .pendencias p {
   color: var(--danger);
 }
 
-.proximaDevolucao p,
-.proximaLocacao p {
+/* Container separado para cards grandes */
+.largeCardsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.cardLarge {
+  min-height: 200px;
+  padding: 1.5rem;
+}
+
+.cardLarge ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0 0 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.cardLarge ul li {
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-dark);
+  margin-bottom: 0.5rem;
 }
 
-.carouselContainer {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto 40px auto;
+/* Scroll customizado */
+.cardLarge ul::-webkit-scrollbar {
+  width: 6px;
+}
+.cardLarge ul::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 
-.carItem {
-  text-align: center;
-}
-
-.carItem img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.carItem p {
-  margin-top: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.sectionTitle {
-  text-align: center;
-  margin-bottom: 15px;
-  font-size: 1.6rem;
-}
-
-.carouselWrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 50px;
-}
-
-.carouselContainer {
-  width: 100%;
-  max-width: 900px;
-  padding: 0 10px;
-}
-
-.carItem img {
-  width: 100%;
-  height: auto;
-  max-height: 320px;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-.carItem {
-  position: relative;
-  padding: 10px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.carItem:hover {
-  transform: scale(1.03);
-}
-
-.carItem img {
-  width: 100%;
-  height: 380px; /* AUMENTADO */
-  object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
-}
-
-.carItem p {
-  margin-top: 15px;
-  font-size: 1.4rem; /* maior */
-  font-weight: 700;
-  color: #222;
-}
-
-/* Dots maiores e centralizados */
-.slick-dots li button:before {
-  font-size: 16px;
-  opacity: 0.4;
-}
-
-.slick-dots li.slick-active button:before {
-  opacity: 1 !important;
-  color: var(--primary);
-}
-
-/* Tablet */
 @media (max-width: 768px) {
-  .carouselContainer {
-    max-width: 600px;
+  .cardsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
-  .carItem img {
-    max-height: 260px;
-  }
-
-  .carItem p {
-    font-size: 1.1rem;
+  .largeCardsContainer {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
-  .carouselContainer {
-    padding: 0 5px;
-    max-width: 100%;
+  .cardsGrid {
+    grid-template-columns: 1fr;
   }
 
-  .carItem {
-    padding: 5px;
-  }
-
-  .carItem img {
-    border-radius: 12px;
-    max-height: 200px;
-  }
-
-  .carItem p {
-    font-size: 0.95rem;
-  }
-
-  .slick-dots li button:before {
-    font-size: 10px;
+  .cardLarge ul {
+    max-height: 120px;
   }
 }

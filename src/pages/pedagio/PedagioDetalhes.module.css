@@ -1,0 +1,132 @@
+/* PedagioDetalhes.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+}
+
+.titulo {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.grupo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: bold;
+  min-width: 120px;
+  color: #555;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btnVoltar {
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btnVoltar:hover {
+  background-color: #e0e0e0;
+}
+
+.btnEditar,
+.btnExcluir,
+.btnSalvar {
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btnEditar {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.btnEditar:hover {
+  background-color: #45a049;
+}
+
+.btnExcluir {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.btnExcluir:hover {
+  background-color: #d7372f;
+}
+
+.formContainer {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.formContainer label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.formContainer input,
+.formContainer select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.btnSalvarContainer {
+  text-align: right;
+}
+
+.subtitulo {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}

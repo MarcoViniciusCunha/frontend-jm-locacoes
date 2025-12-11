@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import styles from "./ComponentVeiculos.module.css";
 import MessageBox from "../erro/MensagemErro";
+import useApiError from "../../hooks/UseApiError";
 
 export default function ComponentVeiculos({ action, service, label }) {
   const [lista, setLista] = useState([]);
@@ -15,8 +16,9 @@ export default function ComponentVeiculos({ action, service, label }) {
   const [seguros, setSeguros] = useState([]);
   const [modelos, setModelos] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState("info");
+
+  const { mensagem, tipoMensagem, handleApiError, showSuccess, clearError } =
+    useApiError();
 
   const anos = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => 2026 - i);
 
@@ -47,11 +49,7 @@ export default function ComponentVeiculos({ action, service, label }) {
 
         if (action === "Lista") await listarVeiculos();
       } catch (err) {
-        console.error(err);
-        setMensagem(
-          err.response?.data?.error || "Erro ao carregar dados iniciais."
-        );
-        setTipoMensagem("error");
+        handleApiError(err, "Erro ao carregar dados iniciais.");
       } finally {
         setCarregando(false);
       }
@@ -65,9 +63,7 @@ export default function ComponentVeiculos({ action, service, label }) {
       const res = await service.lista();
       setLista(res.data || []);
     } catch (err) {
-      console.error(err);
-      setMensagem(err.response?.data?.error || `Erro ao listar ${label}`);
-      setTipoMensagem("error");
+      handleApiError(err, "Erro ao carregar dados iniciais.");
     }
   };
 
@@ -77,9 +73,7 @@ export default function ComponentVeiculos({ action, service, label }) {
       const res = await VeiculosService.veiculos.search(params);
       setLista(res.data || []);
     } catch (err) {
-      console.error(err);
-      setMensagem(err.response?.data?.error || "Erro ao buscar veículos.");
-      setTipoMensagem("error");
+      handleApiError(err, "Erro ao buscar veículos.");
     }
   };
 
@@ -108,12 +102,7 @@ export default function ComponentVeiculos({ action, service, label }) {
       const res = await VeiculosService.modelos.buscarPorMarca(idMarca);
       setModelos(res.data || []);
     } catch (err) {
-      console.error(err);
-      setMensagem(
-        err.response?.data?.error ||
-          "Erro ao carregar modelos da marca escolhida."
-      );
-      setTipoMensagem("error");
+      handleApiError(err, "Erro ao carregar modelos da marca escolhida.");
     }
   };
 
@@ -127,14 +116,12 @@ export default function ComponentVeiculos({ action, service, label }) {
 
       await service.add(payload);
 
-      setMensagem("Cadastro realizado com sucesso!");
-      setTipoMensagem("success");
+      showSuccess("Cadastro realizado com sucesso!");
       setNovoVeiculo({});
       listarVeiculos();
     } catch (err) {
       console.error(err);
-      setMensagem(err.response?.data?.error || `Erro ao adicionar ${label}`);
-      setTipoMensagem("error");
+      handleApiError(err, `Erro ao listar ${label}`);
     }
   };
 
@@ -152,18 +139,10 @@ export default function ComponentVeiculos({ action, service, label }) {
     opt?.empresa ||
     String(opt);
 
-  useEffect(() => {
-    if (mensagem) {
-      const timer = setTimeout(() => setMensagem(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [mensagem]);
-
   if (carregando) return <p>Carregando...</p>;
 
   return (
     <>
-      <MessageBox type={tipoMensagem} message={mensagem} />
       <div className={styles.container}>
         {/* CADASTRAR */}
         {action === "Cadastrar" && (
@@ -230,7 +209,11 @@ export default function ComponentVeiculos({ action, service, label }) {
                   <option value="">Selecione {campo.label}</option>
                   {campo.options?.map((opt) => (
                     <option key={opt.id ?? opt} value={opt.id ?? opt}>
-                      {getNomeOpcao(opt)}
+                      {campo.key === "idSeguro"
+                        ? `${opt.company?.name ?? "Seguradora"} — ${
+                            opt.validade
+                          }`
+                        : getNomeOpcao(opt)}
                     </option>
                   ))}
                 </select>
@@ -252,16 +235,25 @@ export default function ComponentVeiculos({ action, service, label }) {
                   type={campo.type || "text"}
                   placeholder={campo.label}
                   value={novoVeiculo[campo.key] || ""}
+                  maxLength={campo.key === "placa" ? 7 : undefined} // só para placa
                   onChange={(e) =>
                     setNovoVeiculo({
                       ...novoVeiculo,
-                      [campo.key]: e.target.value,
+                      [campo.key]:
+                        campo.key === "placa"
+                          ? e.target.value.toUpperCase()
+                          : e.target.value,
                     })
                   }
                 />
               )
             )}
 
+            <MessageBox
+              type={tipoMensagem}
+              message={mensagem}
+              onClose={clearError}
+            />
             <button type="button" onClick={salvarVeiculo}>
               Salvar
             </button>
@@ -271,6 +263,11 @@ export default function ComponentVeiculos({ action, service, label }) {
         {/* LISTAR */}
         {action === "Lista" && (
           <>
+            <MessageBox
+              type={tipoMensagem}
+              message={mensagem}
+              onClose={clearError}
+            />
             <div className={styles.filtros}>
               <input
                 type="text"

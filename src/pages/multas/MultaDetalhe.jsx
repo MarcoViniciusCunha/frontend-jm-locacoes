@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { MultasService } from "../../services/LocacoesService";
 import styles from "./MultaDetalhe.module.css";
 import MessageBox from "../../components/erro/MensagemErro";
+import ConfirmModal from "../../components/erro/ConfirmModal";
 import { FaArrowLeft, FaSave, FaTrashAlt } from "react-icons/fa";
 
 const MultaDetalhe = () => {
@@ -19,8 +20,10 @@ const MultaDetalhe = () => {
     descricao: "",
   });
 
-  const [mensagem, setMensagem] = useState(null); // texto da mensagem
-  const [tipoMensagem, setTipoMensagem] = useState("info"); // 'info', 'error', etc.
+  const [mensagem, setMensagem] = useState(null);
+  const [tipoMensagem, setTipoMensagem] = useState("info");
+
+  const [abrirConfirmExcluir, setAbrirConfirmExcluir] = useState(false);
 
   const carregarMulta = async () => {
     try {
@@ -60,8 +63,6 @@ const MultaDetalhe = () => {
   };
 
   const excluirMulta = async () => {
-    if (!window.confirm("Tem certeza que deseja excluir esta multa?")) return;
-
     try {
       await MultasService.excluir(id);
       setTipoMensagem("success");
@@ -71,6 +72,8 @@ const MultaDetalhe = () => {
       console.log(err);
       setTipoMensagem("error");
       setMensagem(err.response?.data?.error || "Erro ao excluir multa");
+    } finally {
+      setAbrirConfirmExcluir(false);
     }
   };
 
@@ -137,11 +140,24 @@ const MultaDetalhe = () => {
             </button>
           )}
 
-          <button className={styles.deleteBtn} onClick={excluirMulta}>
+          <button
+            className={styles.deleteBtn}
+            onClick={() => setAbrirConfirmExcluir(true)}
+          >
             <FaTrashAlt /> Excluir
           </button>
         </div>
       </div>
+
+      {/* MODAL DE CONFIRMAÇÃO */}
+      {abrirConfirmExcluir && (
+        <ConfirmModal
+          title="Confirmar Exclusão"
+          message="Tem certeza que deseja excluir esta multa?"
+          onCancel={() => setAbrirConfirmExcluir(false)}
+          onConfirm={excluirMulta}
+        />
+      )}
     </>
   );
 };

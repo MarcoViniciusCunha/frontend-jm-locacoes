@@ -55,6 +55,29 @@
   font-size: 0.95rem;
 }
 
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dateRange span {
+  font-weight: 500;
+  color: #555;
+}
+
+.inputField {
+  flex: 1 1 150px;
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
 .btnsFiltro {
   display: flex;
   gap: 10px;
@@ -282,7 +305,6 @@
   }
 }
 
-/* TELAS MUITO PEQUENAS — CELULARES ATÉ 480px */
 @media (max-width: 480px) {
   .cabecalho {
     flex-direction: column;

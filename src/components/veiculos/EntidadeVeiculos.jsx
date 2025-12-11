@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./EntidadeVeiculos.module.css";
 import MessageBox from "../erro/MensagemErro";
+import ConfirmModal from "../erro/ConfirmModal";
 
 export default function CrudEntidade({ action, service, label, fields }) {
   const [items, setItems] = useState([]);
@@ -10,6 +11,8 @@ export default function CrudEntidade({ action, service, label, fields }) {
   const [selectOptions, setSelectOptions] = useState({});
   const [mensagem, setMensagem] = useState("");
   const [tipoMensagem, setTipoMensagem] = useState("");
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   const loadItems = async () => {
     try {
@@ -118,6 +121,19 @@ export default function CrudEntidade({ action, service, label, fields }) {
     }
   };
 
+  const abrirConfirmacao = (id) => {
+    setSelectedId(id);
+    setConfirmModalOpen(true);
+  };
+
+  const confirmarExclusao = async () => {
+    if (selectedId != null) {
+      await handleDelete(selectedId);
+      setConfirmModalOpen(false);
+      setSelectedId(null);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       await service.excluir(id);
@@ -220,7 +236,7 @@ export default function CrudEntidade({ action, service, label, fields }) {
 
                         <button
                           className={styles.deleteBtn}
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => abrirConfirmacao(item.id)}
                         >
                           Excluir
                         </button>
@@ -231,6 +247,14 @@ export default function CrudEntidade({ action, service, label, fields }) {
               );
             })}
           </ul>
+        )}
+        {confirmModalOpen && (
+          <ConfirmModal
+            title="Confirmar Exclusão"
+            message={`Tem certeza que deseja excluir este ${label}?`}
+            onCancel={() => setConfirmModalOpen(false)}
+            onConfirm={confirmarExclusao}
+          />
         )}
       </div>
     </>

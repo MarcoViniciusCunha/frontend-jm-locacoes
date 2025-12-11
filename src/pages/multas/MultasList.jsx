@@ -18,6 +18,13 @@ const MultasList = () => {
   const [abrirModal, setAbrirModal] = useState(false);
   const [abrirModalClientes, setAbrirModalClientes] = useState(false);
 
+  const now = new Date();
+  const pad = (n) => n.toString().padStart(2, "0");
+
+  const hoje = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+    now.getDate()
+  )}`;
+
   const [form, setForm] = useState({
     placa: "",
     descricao: "",
@@ -150,23 +157,28 @@ const MultasList = () => {
           onClick={() => setAbrirModalClientes(true)}
         />
 
-        {/* DATA INICIAL */}
-        <input
-          type="date"
-          value={filtros.dataInicial}
-          onChange={(e) =>
-            setFiltros((f) => ({ ...f, dataInicial: e.target.value }))
-          }
-        />
-
-        {/* DATA FINAL */}
-        <input
-          type="date"
-          value={filtros.dataFinal}
-          onChange={(e) =>
-            setFiltros((f) => ({ ...f, dataFinal: e.target.value }))
-          }
-        />
+        <div className={styles.dateRange}>
+          <label>Período:</label>
+          <input
+            type="date"
+            value={filtros.dataInicial}
+            onChange={(e) =>
+              setFiltros((f) => ({ ...f, dataInicial: e.target.value }))
+            }
+            placeholder="Data inicial"
+            className={styles.inputField}
+          />
+          <span>até</span>
+          <input
+            type="date"
+            value={filtros.dataFinal}
+            onChange={(e) =>
+              setFiltros((f) => ({ ...f, dataFinal: e.target.value }))
+            }
+            placeholder="Data final"
+            className={styles.inputField}
+          />
+        </div>
 
         <div className={styles.btnsFiltro}>
           <button className={styles.btnBuscar} onClick={aplicarFiltros}>
@@ -279,6 +291,7 @@ const MultasList = () => {
                 type="date"
                 value={form.dataMulta}
                 onChange={lidarMudanca}
+                max={hoje}
               />
             </div>
 

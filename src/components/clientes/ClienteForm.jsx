@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./ClienteForm.module.css";
 import { CepService } from "../../services/ClientesService";
 import MessageBox from "../erro/MensagemErro";
+import useApiError from "../../hooks/UseApiError";
 
 export default function ClienteForm({
   initialData = null,
@@ -9,10 +10,9 @@ export default function ClienteForm({
   onCancel,
   disabled = false,
 }) {
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState("info");
   const [enderecoManual, setEnderecoManual] = useState(false);
   const [editados, setEditados] = useState({});
+  const { mensagem, tipoMensagem, messageKey, handleApiError } = useApiError();
 
   const [formData, setFormData] = useState({
     nome: "",
@@ -50,9 +50,7 @@ export default function ClienteForm({
       const { data } = await CepService.buscar(cep);
 
       if (data.erro) {
-        setMensagem("CEP não encontrado. Preencha manualmente.");
-        setTipoMensagem("error");
-        setEnderecoManual(true);
+        handleApiError({ response: { data: { cep: "CEP não encontrado." } } });
         return;
       }
 
@@ -64,9 +62,11 @@ export default function ClienteForm({
         estado: data.uf,
       }));
     } catch {
-      setMensagem("Erro ao buscar CEP. Preencha manualmente.");
-      setTipoMensagem("error");
-      setEnderecoManual(true);
+      handleApiError({
+        response: {
+          data: { message: "CEP não encontrado. Preencha manualmente." },
+        },
+      });
     }
   };
 
@@ -145,7 +145,12 @@ export default function ClienteForm({
         />
       ))}
 
-      <MessageBox type={tipoMensagem} message={mensagem} />
+      <MessageBox
+        key={messageKey}
+        msgKey={messageKey}
+        type={tipoMensagem}
+        message={mensagem}
+      />
 
       {/* ENDEREÇO */}
       <div className={styles.addressFields}>
