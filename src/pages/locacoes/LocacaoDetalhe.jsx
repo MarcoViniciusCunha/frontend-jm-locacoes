@@ -18,6 +18,8 @@ import {
   FiTrash2,
 } from "react-icons/fi";
 import RegistrarInspecao from "../../components/inspecao/RegistrarInspection";
+import ConfirmModal from "../../components/erro/ConfirmModal";
+import TollModal from "../../components/toll/TollModal";
 
 export default function LocacaoDetalhe() {
   const { id } = useParams();
@@ -31,7 +33,13 @@ export default function LocacaoDetalhe() {
 
   const [abrirModalPagamento, setAbrirModalPagamento] = useState(false);
   const [abrirModalInspecao, setAbrirModalInspecao] = useState(false);
+  const [abrirModalToll, setAbrirModalToll] = useState(false);
   const [editarInspecao, setEditarInspecao] = useState(null);
+
+  const [abrirConfirmExcluir, setAbrirConfirmExcluir] = useState(false);
+  const [inspecaoParaExcluir, setInspecaoParaExcluir] = useState(null);
+  const [abrirConfirmExcluirInspecao, setAbrirConfirmExcluirInspecao] =
+    useState(false);
 
   useEffect(() => {
     const carregar = async () => {
@@ -82,8 +90,6 @@ export default function LocacaoDetalhe() {
     .replace(/\s+/g, "_");
 
   const lidarExclusao = async () => {
-    if (!window.confirm("Deseja realmente excluir esta locação?")) return;
-
     try {
       await LocacoesService.excluir(id);
       setTipoMensagem("success");
@@ -98,13 +104,12 @@ export default function LocacaoDetalhe() {
   const baixarContrato = async () => {
     try {
       const response = await api.get(`/contrato/${id}`, {
-        responseType: "blob", // IMPORTANTE
+        responseType: "blob",
       });
 
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
 
-      // Abre o PDF em nova aba
       window.open(url, "_blank");
     } catch (error) {
       setTipoMensagem("error");
@@ -133,21 +138,25 @@ export default function LocacaoDetalhe() {
 
         <div className={styles.grid}>
           {/* CLIENTE */}
-          <div className={styles.card}>
-            <h2 className={styles.cardTitulo}>
-              <FiUser className={styles.iconeTitulo} /> Cliente
-            </h2>
+          {dadosLocacao.customerName !== "" && (
+            <div className={styles.card}>
+              <h2 className={styles.cardTitulo}>
+                <FiUser className={styles.iconeTitulo} /> Cliente
+              </h2>
 
-            <div className={styles.linha}>
-              <span className={styles.label}>CNH:</span>
-              <span className={styles.valor}>{dadosLocacao.customerCnh}</span>
-            </div>
+              <div className={styles.linha}>
+                <span className={styles.label}>CNH:</span>
+                <span className={styles.valor}>{dadosLocacao.customerCnh}</span>
+              </div>
 
-            <div className={styles.linha}>
-              <span className={styles.label}>Nome:</span>
-              <span className={styles.valor}>{dadosLocacao.customerName}</span>
+              <div className={styles.linha}>
+                <span className={styles.label}>Nome:</span>
+                <span className={styles.valor}>
+                  {dadosLocacao.customerName}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* VEÍCULO */}
           <div className={styles.card}>
@@ -197,20 +206,36 @@ export default function LocacaoDetalhe() {
         </div>
 
         <div className={styles.acoes}>
-          <button className={styles.botaoImprimir} onClick={baixarContrato}>
-            <FiPrinter className={styles.iconeBotao} /> Imprimir Contrato
-          </button>
-
-          {!dadosLocacao.returned && (
+          {!dadosLocacao.returned && status !== "Não iniciada" && (
             <button className={styles.botaoDevolver} onClick={lidarDevolucao}>
               <FiCornerDownLeft className={styles.iconeBotao} /> Registrar
               Devolução
             </button>
           )}
 
-          <button className={styles.botaoExcluir} onClick={lidarExclusao}>
-            <FiTrash2 className={styles.iconeBotao} /> Excluir Locação
-          </button>
+          {dadosLocacao.customerName !== "" && (
+            <button className={styles.botaoImprimir} onClick={baixarContrato}>
+              <FiPrinter className={styles.iconeBotao} /> Imprimir Contrato
+            </button>
+          )}
+
+          <div>
+            <button
+              className={styles.botaoExcluir}
+              onClick={() => setAbrirConfirmExcluir(true)}
+            >
+              <FiTrash2 className={styles.iconeBotao} /> Excluir Locação
+            </button>
+
+            {abrirConfirmExcluir && (
+              <ConfirmModal
+                title="Confirmar Exclusão"
+                message="Deseja realmente excluir esta locação?"
+                onCancel={() => setAbrirConfirmExcluir(false)}
+                onConfirm={lidarExclusao}
+              />
+            )}
+          </div>
         </div>
 
         {/* PAGAMENTOS */}
@@ -311,6 +336,92 @@ export default function LocacaoDetalhe() {
           </div>
         </div>
 
+        {/* PEDÁGIOS */}
+        <div className={styles.cardsContainer}>
+          <div className={styles.card}>
+            <div className={styles.cardTituloLinha}>
+              <h2 className={styles.cardTitulo}>Pedágios</h2>
+
+              {/* BOTÃO PARA ABRIR MODAL */}
+              <button
+                className={styles.botaoRegistrarPgto}
+                onClick={() => setAbrirModalToll(true)}
+              >
+                Registrar Pedágio
+              </button>
+            </div>
+
+            {dadosLocacao.tolls?.length > 0 ? (
+              dadosLocacao.tolls.map((toll, index) =>
+                toll ? (
+                  <div key={toll.id || index} className={styles.linhaGrupo}>
+                    <div className={styles.linha}>
+                      <span className={styles.label}>Rodovia:</span>
+                      <span className={styles.valor}>{toll.rodovia}</span>
+                    </div>
+                    <div className={styles.linha}>
+                      <span className={styles.label}>Cidade:</span>
+                      <span className={styles.valor}>{toll.cidade}</span>
+                    </div>
+                    <div className={styles.linha}>
+                      <span className={styles.label}>Valor:</span>
+                      <span className={styles.valor}>
+                        R$ {toll.valor?.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className={styles.linha}>
+                      <span className={styles.label}>Data e hora:</span>
+                      <span className={styles.valor}>
+                        {toll.date &&
+                          new Date(toll.date).toLocaleString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                      </span>
+                    </div>
+                    <button
+                      className={styles.botaoEditarInspecao}
+                      onClick={() => navigate(`/pedagios/${toll.id}`)}
+                    >
+                      Editar
+                    </button>
+                  </div>
+                ) : null
+              )
+            ) : (
+              <p className={styles.semPagamentos}>Nenhum pedágio registrado.</p>
+            )}
+          </div>
+        </div>
+
+        {/* MODAL DE PEDÁGIO */}
+        {abrirModalToll && (
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setAbrirModalToll(false)}
+          >
+            <div
+              className={styles.modalConteudo}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <TollModal
+                placaVeiculo={dadosLocacao.placa}
+                onClose={() => setAbrirModalToll(false)}
+                onSuccess={(novoToll) => {
+                  setAbrirModalToll(false);
+                  setDadosLocacao((prev) => ({
+                    ...prev,
+                    tolls: [...(prev.tolls || []), novoToll],
+                  }));
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* INSPEÇÕES */}
         <div className={styles.cardsContainer}>
           <div className={styles.card}>
@@ -358,23 +469,9 @@ export default function LocacaoDetalhe() {
 
                     <button
                       className={styles.botaoExcluirInspecao}
-                      onClick={async () => {
-                        if (!window.confirm("Deseja excluir esta inspeção?"))
-                          return;
-                        try {
-                          await InspecoesService.excluir(insp.id);
-                          setDadosLocacao((prev) => ({
-                            ...prev,
-                            inspections: prev.inspections.filter(
-                              (i) => i.id !== insp.id
-                            ),
-                          }));
-                          setTipoMensagem("success");
-                          setMensagem("Inspeção excluída com sucesso!");
-                        } catch {
-                          setTipoMensagem("error");
-                          setMensagem("Erro ao excluir inspeção.");
-                        }
+                      onClick={() => {
+                        setInspecaoParaExcluir(insp);
+                        setAbrirConfirmExcluirInspecao(true);
                       }}
                     >
                       Excluir
@@ -402,6 +499,7 @@ export default function LocacaoDetalhe() {
             >
               <RegistrarPagamento
                 locacaoId={id}
+                placaVeiculo={dadosLocacao.placa}
                 onConcluido={(novoPagamento) => {
                   setAbrirModalPagamento(false);
                   setDadosLocacao((prev) => ({
@@ -450,6 +548,36 @@ export default function LocacaoDetalhe() {
               />
             </div>
           </div>
+        )}
+        {/* MODAL DE CONFIRMAÇÃO PARA EXCLUSÃO DE INSPEÇÃO */}
+        {abrirConfirmExcluirInspecao && (
+          <ConfirmModal
+            title="Confirmar Exclusão"
+            message="Deseja realmente excluir esta inspeção?"
+            onCancel={() => {
+              setAbrirConfirmExcluirInspecao(false);
+              setInspecaoParaExcluir(null);
+            }}
+            onConfirm={async () => {
+              try {
+                await InspecoesService.excluir(inspecaoParaExcluir.id);
+                setDadosLocacao((prev) => ({
+                  ...prev,
+                  inspections: prev.inspections.filter(
+                    (i) => i.id !== inspecaoParaExcluir.id
+                  ),
+                }));
+                setTipoMensagem("success");
+                setMensagem("Inspeção excluída com sucesso!");
+              } catch {
+                setTipoMensagem("error");
+                setMensagem("Erro ao excluir inspeção.");
+              } finally {
+                setAbrirConfirmExcluirInspecao(false);
+                setInspecaoParaExcluir(null);
+              }
+            }}
+          />
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LocacoesService } from "../../services/LocacoesService";
 import ClientesList from "../../components/clientes/ClientesList";
+import TollModal from "../../components/toll/TollModal";
 import styles from "./locacoes.module.css";
 import { FiSearch, FiX, FiEye } from "react-icons/fi";
 import {
@@ -22,6 +23,8 @@ const Locacoes = () => {
     placa: "",
     status: "",
     nome: "",
+    startDate: "",
+    endDate: "",
   });
   const [mostrarClientes, setMostrarClientes] = useState(false);
 
@@ -121,6 +124,7 @@ const Locacoes = () => {
               value={filtros.nome}
               onClick={() => setMostrarClientes(!mostrarClientes)}
               readOnly
+              className={styles.inputField}
             />
 
             <input
@@ -130,6 +134,7 @@ const Locacoes = () => {
               onChange={(e) =>
                 setFiltros({ ...filtros, placa: e.target.value })
               }
+              className={styles.inputField}
             />
 
             <select
@@ -137,6 +142,7 @@ const Locacoes = () => {
               onChange={(e) =>
                 setFiltros({ ...filtros, status: e.target.value })
               }
+              className={styles.inputField}
             >
               <option value="">Todos</option>
               <option value="ativa">Ativa</option>
@@ -144,10 +150,45 @@ const Locacoes = () => {
               <option value="atrasada">Atrasada</option>
               <option value="nao_iniciada">Não iniciada</option>
             </select>
+
+            <div className={styles.dateRange}>
+              <label>Período:</label>
+              <input
+                type="date"
+                value={filtros.startDate || ""}
+                onChange={(e) =>
+                  setFiltros({ ...filtros, startDate: e.target.value })
+                }
+                placeholder="Data inicial"
+                className={styles.inputField}
+              />
+              <span>até</span>
+              <input
+                type="date"
+                value={filtros.endDate || ""}
+                onChange={(e) =>
+                  setFiltros({ ...filtros, endDate: e.target.value })
+                }
+                placeholder="Data final"
+                className={styles.inputField}
+              />
+            </div>
+            <div className={styles.checkboxWrapper}>
+              <label className={styles.checkboxLabel}>
+                Locações a Vencer
+                <input
+                  type="checkbox"
+                  checked={filtros.aVencer || false}
+                  onChange={(e) =>
+                    setFiltros({ ...filtros, aVencer: e.target.checked })
+                  }
+                />
+              </label>
+            </div>
           </div>
 
           <div className={styles.filterButtons}>
-            <button type="submit" className={styles.filterButtoon}>
+            <button type="submit" className={styles.filterButton}>
               <FiSearch /> Buscar
             </button>
             <button
@@ -182,14 +223,17 @@ const Locacoes = () => {
             <div className={styles.grid}>
               {locacoes.map((loc) => {
                 const statusNormalized = loc.status.trim().toLowerCase();
+                const nomeCliente =
+                  loc.customerName !== ""
+                    ? loc.customerName
+                    : "Cliente deletado";
+
                 return (
                   <div key={loc.id} className={styles.card}>
-                    <h2 className={styles.cardTitle}>
-                      {loc.customerName} — {loc.placa}
-                    </h2>
+                    <h2 className={styles.cardTitle}>{nomeCliente}</h2>
 
                     <p>
-                      <strong>Modelo:</strong> {loc.modelo}
+                      <strong>Veículo:</strong> {loc.modelo} - {loc.placa}
                     </p>
 
                     <p>

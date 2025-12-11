@@ -38,7 +38,7 @@ export default function Pagamentos() {
         }
       }
       params.page = page;
-      params.size = 60;
+      params.size = 15;
 
       const resposta = await PaymentsService.filtrar(params);
       const data = resposta.data;
@@ -114,8 +114,8 @@ export default function Pagamentos() {
           onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
         >
           <option value="">Status...</option>
-          <option value="PAGO">Pago</option>
-          <option value="PENDENTE">Pendente</option>
+          <option value="Pago">Pago</option>
+          <option value="Pendente">Pendente</option>
         </select>
 
         <select
@@ -221,21 +221,88 @@ export default function Pagamentos() {
 
       {/* PAGINAÇÃO */}
       {totalPaginas > 1 && (
-        <div className={styles.paginacao}>
+        <div className={styles.pagination}>
+          {/* Botão Anterior */}
           <button
-            disabled={paginaAtual === 0}
             onClick={() => carregarPagamentos(paginaAtual - 1)}
+            disabled={paginaAtual === 0}
+            className={styles.paginationNav}
           >
-            ⬅ Anterior
+            ← Anterior
           </button>
-          <span>
-            Página {paginaAtual + 1} de {totalPaginas}
-          </span>
+
+          {/* Botões numéricos */}
+          {(() => {
+            const maxButtons = 5;
+            const pages = [];
+            let start = Math.max(0, paginaAtual - Math.floor(maxButtons / 2));
+            let end = start + maxButtons - 1;
+
+            if (end >= totalPaginas) {
+              end = totalPaginas - 1;
+              start = Math.max(0, end - maxButtons + 1);
+            }
+
+            if (start > 0) {
+              pages.push(
+                <button
+                  key="first"
+                  className={styles.pageBtn}
+                  onClick={() => carregarPagamentos(0)}
+                >
+                  1
+                </button>
+              );
+              if (start > 1)
+                pages.push(
+                  <span key="dots1" className={styles.paginationEllipsis}>
+                    ...
+                  </span>
+                );
+            }
+
+            for (let i = start; i <= end; i++) {
+              pages.push(
+                <button
+                  key={i}
+                  className={`${styles.pageBtn} ${
+                    i === paginaAtual ? styles.activePage : ""
+                  }`}
+                  onClick={() => carregarPagamentos(i)}
+                >
+                  {i + 1}
+                </button>
+              );
+            }
+
+            if (end < totalPaginas - 1) {
+              if (end < totalPaginas - 2)
+                pages.push(
+                  <span key="dots2" className={styles.paginationEllipsis}>
+                    ...
+                  </span>
+                );
+              pages.push(
+                <button
+                  key="last"
+                  className={styles.pageBtn}
+                  onClick={() => carregarPagamentos(totalPaginas - 1)}
+                >
+                  {totalPaginas}
+                </button>
+              );
+            }
+
+            return pages;
+          })()}
+
+          {/* Botão Próxima */}
           <button
-            disabled={paginaAtual + 1 >= totalPaginas}
             onClick={() => carregarPagamentos(paginaAtual + 1)}
+            disabled={paginaAtual + 1 === totalPaginas}
+            className={styles.paginationNav}
           >
-            Próxima ➡
+            Próxima →
           </button>
         </div>
       )}

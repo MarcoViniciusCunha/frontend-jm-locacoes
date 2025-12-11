@@ -11,54 +11,182 @@
 .filterForm {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .filterRow {
   display: flex;
-  justify-content: center;
   gap: 1rem;
-  flex-wrap: wrap;
-  width: 100%;
+  flex-wrap: wrap; /* mantém flexível para telas menores */
+  justify-content: flex-start; /* ou center se quiser centralizar */
+  align-items: center; /* alinha inputs na mesma linha */
 }
 
-.filterForm input,
-.filterForm select {
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 1rem;
-  width: 220px;
-  background: #fff;
-  transition: all 0.2s ease;
+.inputField {
+  flex: 1 1 180px; /* cresce, encolhe, e tamanho base */
+  min-width: 150px; /* garante tamanho mínimo */
 }
 
-.filterForm input:focus,
-.filterForm select:focus {
+.inputField:focus {
   outline: none;
   border-color: var(--primary-hover);
   box-shadow: 0 0 0 3px rgba(10, 102, 227, 0.2);
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dateRange span {
+  font-weight: 500;
+  color: #555;
+}
+
+.inputField {
+  flex: 1 1 150px;
+  min-width: 120px;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--primary-hover);
+  box-shadow: 0 0 0 3px rgba(10, 102, 227, 0.2);
+}
+/* Checkbox Locações a Vencer estilizado */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  user-select: none;
+  position: relative;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  appearance: none;
+  width: 40px;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 20px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.checkboxLabel input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.checkboxLabel input[type="checkbox"]:checked {
+  background: var(--primary);
+}
+
+.checkboxLabel input[type="checkbox"]:checked::after {
+  transform: translateX(20px);
+}
+
+.checkboxWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filterButton,
+.clearButton {
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 120px;
 }
 
 .filterButton {
   background: var(--primary);
   color: #fff;
   border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
   transition: background 0.3s ease;
-  margin-top: 0.5rem;
 }
 
 .filterButton:hover {
   background: var(--primary-hover);
 }
 
-/* 💳 Cards */
+.clearButton {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+  background-color: #d6d6d6;
+}
+
+/* Top Actions */
+.topActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.tollButton {
+  flex: none;
+  width: auto;
+  padding: 0.7rem 0.9rem;
+  background: #1e90ff;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 3px 6px rgba(30, 144, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tollButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(30, 144, 255, 0.4);
+  background: #187bcd;
+}
+
+/* Grid Cards */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -96,7 +224,6 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  color: var(--text-dark);
 }
 
 .statusValue {
@@ -111,29 +238,27 @@
   flex-shrink: 0;
 }
 
-/* cores */
 .statusValue.ativa {
   color: var(--primary);
 }
-
 .statusValue.devolvida {
   color: var(--success);
 }
-
 .statusValue.atrasada {
   color: var(--danger);
 }
-
 .statusValue.naoIniciada {
   color: orange;
 }
 
+/* Preço */
 .price {
   margin-top: 0.8rem;
   font-weight: 600;
   color: var(--primary);
 }
 
+/* Botões dentro do card */
 .buttons {
   display: flex;
   justify-content: space-between;
@@ -153,66 +278,10 @@
   font-size: 0.9rem;
 }
 
-.filterButtons {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.clearButton {
-  background-color: #e0e0e0;
-  color: #333;
-  border: none;
-  transition: background-color 0.2s ease;
-}
-
-.filterButtoon,
-.clearButton {
-  padding: 0.8rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 120px;
-  box-sizing: border-box;
-}
-
-.filterButtoon svg,
-.clearButton svg {
-  width: 16px;
-  height: 16px;
-}
-
-.clearButton:hover {
-  background-color: #d6d6d6;
-}
-
-.button,
-.filterButtoon,
-.closeBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-}
-
-.button svg,
-.filterButtoon svg,
-.closeBtn svg {
-  flex-shrink: 0;
-  font-size: 1rem;
-}
-
 .details {
   background: var(--primary);
   color: #fff;
 }
-
 .details:hover {
   background: var(--primary-hover);
 }
@@ -221,7 +290,6 @@
   background: var(--success);
   color: #fff;
 }
-
 .devolver:hover {
   filter: brightness(1.1);
 }
@@ -230,12 +298,11 @@
   background: var(--danger);
   color: #fff;
 }
-
 .excluir:hover {
   filter: brightness(1.1);
 }
 
-/* ⏳ Estados */
+/* Estados da página */
 .loading,
 .error,
 .empty {
@@ -248,16 +315,14 @@
 .loading {
   color: var(--primary);
 }
-
 .error {
   color: var(--danger);
 }
-
 .empty {
   color: #666;
 }
 
-/* 👥 Modal de clientes */
+/* Modal de clientes */
 .overlay {
   position: fixed;
   inset: 0;
@@ -292,7 +357,7 @@
   background: #d52b38;
 }
 
-/* 🔢 Paginação moderna */
+/* Paginação */
 .pagination {
   display: flex;
   justify-content: center;
@@ -335,90 +400,28 @@
   transform: scale(1.05);
 }
 
-.paginationEllipsis {
-  color: #888;
-  font-weight: bold;
-  padding: 0 0.5rem;
-  user-select: none;
-}
-
-.paginationNav {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.paginationNav:hover:not(:disabled) {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 1024px) {
-  .carouselContainer {
-    max-width: 700px;
-  }
-
-  .carItem img {
-    height: 300px;
-  }
-}
-
+/* Responsivo */
 @media (max-width: 768px) {
-  .homeMain {
-    padding: 1.5rem 1rem;
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
   }
-
-  .dashboardContainer h1 {
-    font-size: 1.4rem;
+  .inputField {
+    width: 100%;
   }
-
-  .carItem img {
-    height: 240px;
-    border-radius: 16px;
-  }
-
-  .carItem p {
-    font-size: 1.2rem;
+  .filterButtons {
+    justify-content: stretch;
   }
 }
 
 @media (max-width: 480px) {
-  .homeMain {
-    padding: 1rem 0.5rem;
-  }
-
-  .cardsGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
   .card {
     padding: 1rem;
   }
-
-  .card h3 {
-    font-size: 0.9rem;
-  }
-
-  .card p {
-    font-size: 1.1rem;
-  }
-
-  .carouselContainer {
-    max-width: 100%;
-    padding: 0 10px;
-  }
-
-  .carItem img {
-    height: 180px;
-  }
-
-  .carItem p {
+  .cardTitle {
     font-size: 1rem;
+  }
+  .card p {
+    font-size: 0.9rem;
   }
 }

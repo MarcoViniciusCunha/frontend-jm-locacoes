@@ -10,6 +10,8 @@ export const ClientesService = {
     api.get("/customers/search", {
       params: { nome },
     }),
+  desativar: (id) => api.patch(`/customers/${id}/desativar`),
+  ativar: (id) => api.patch(`/customers/${id}/ativar`),
 };
 
 export const CepService = {

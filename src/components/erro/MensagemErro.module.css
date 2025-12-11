@@ -3,6 +3,18 @@
   border-radius: 6px;
   margin-bottom: 15px;
   font-size: 0.95rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  display: none;
+}
+
+.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .error {
@@ -15,10 +27,4 @@
   background: #e0ffe4;
   border-left: 5px solid #009926;
   color: #004d13;
-}
-
-.info {
-  background: #e7f0ff;
-  border-left: 5px solid #0275d8;
-  color: #03396c;
 }

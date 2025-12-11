@@ -22,6 +22,7 @@ import Pagamentos from "./pages/pagamentos/Pagamentos";
 import PagamentosDetalhes from "./pages/pagamentos/PagamentosDetalhes";
 import MultasList from "./pages/multas/MultasList";
 import MultaDetalhe from "./pages/multas/MultaDetalhe";
+import PedagiosDetalhes from "./pages/pedagio/PedagiosDetalhes";
 const token = localStorage.getItem("token");
 if (token) {
   setAuthToken(token);
@@ -141,6 +142,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <MultaDetalhe />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pedagios/:id"
+              element={
+                <PrivateRoute>
+                  <PedagiosDetalhes />
                 </PrivateRoute>
               }
             />

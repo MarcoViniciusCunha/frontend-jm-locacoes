@@ -2,6 +2,7 @@ import { useState } from "react";
 import { InspecoesService } from "../../services/LocacoesService";
 import styles from "./registrarInspecao.module.css";
 import MessageBox from "../erro/MensagemErro";
+import useApiMessage from "../../hooks/UseApiError";
 
 export default function RegistrarInspecao({
   locacaoId,
@@ -14,7 +15,8 @@ export default function RegistrarInspecao({
   const [descricao, setDescricao] = useState(inspecao?.descricao || "");
   const [danificado, setDanificado] = useState(inspecao?.danificado || false);
   const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState("");
+  const { mensagem, tipoMensagem, messageKey, handleApiError, showSuccess } =
+    useApiMessage();
 
   const camposInvalidos = () => !dataInspecao || !descricao;
 
@@ -22,7 +24,8 @@ export default function RegistrarInspecao({
     evento.preventDefault();
 
     if (camposInvalidos()) {
-      setErro("Preencha todos os campos obrigatórios.");
+      handleApiError(null, "Preencha todos os campos obrigatórios.");
+
       return;
     }
 
@@ -39,18 +42,16 @@ export default function RegistrarInspecao({
 
       if (inspecao) {
         resposta = await InspecoesService.editar(inspecao.id, dadosParaEnviar);
+        showSuccess("Inspeção atualizada com sucesso!");
       } else {
         resposta = await InspecoesService.add(dadosParaEnviar);
+        showSuccess("Inspeção registrada com sucesso!");
       }
 
       onConcluido(resposta.data);
-    } catch (erro) {
-      console.error("Erro ao salvar inspeção:", erro);
-      const msg =
-        erro.response?.data?.error ||
-        "Erro ao salvar inspeção. Tente novamente.";
-
-      setErro(msg);
+    } catch (err) {
+      console.error("Erro ao salvar inspeção:", err);
+      handleApiError(err, "Erro ao salvar inspeção. Tente novamente.");
     } finally {
       setCarregando(false);
     }
@@ -63,13 +64,12 @@ export default function RegistrarInspecao({
       </h2>
 
       <MessageBox
-        type="error"
-        message={erro}
+        type={tipoMensagem}
+        message={mensagem}
+        msgKey={messageKey}
         duration={4000}
-        onClose={() => setErro("")}
+        onClose={() => {}}
       />
-
-      {erro && <div className={styles.erro}>{erro}</div>}
 
       <form onSubmit={registrarInspecao}>
         <div className={styles.campo}>
