@@ -53,7 +53,42 @@ button:hover {
   opacity: 0.9;
 }
 
-/* 🟦 Estilos individuais */
+.statusContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.statusAtivo,
+.statusDesativado {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  text-align: center;
+  min-width: 90px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.statusAtivo {
+  background-color: #27ae60; /* verde */
+}
+
+.statusAtivo:hover {
+  background-color: #2ecc71;
+}
+
+.statusDesativado {
+  background-color: #c0392b; /* vermelho */
+}
+
+.statusDesativado:hover {
+  background-color: #e74c3c;
+}
+
 .backBtn {
   background-color: var(--text-dark);
 }
@@ -78,11 +113,25 @@ button:hover {
 .deleteBtn {
   background-color: var(--danger);
 }
+
 .cancelBtn {
   background-color: #505050;
 }
 
-/* 🧱 Responsivo */
+.deactivateBtn {
+  background-color: #c0392b;
+}
+.deactivateBtn:hover {
+  background-color: #e74c3c;
+}
+
+.activateBtn {
+  background-color: #27ae60;
+}
+.activateBtn:hover {
+  background-color: #2ecc71;
+}
+
 @media (max-width: 600px) {
   .container {
     padding: 20px;

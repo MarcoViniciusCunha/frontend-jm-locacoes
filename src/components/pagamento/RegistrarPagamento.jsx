@@ -2,31 +2,30 @@ import { useState } from "react";
 import { PaymentsService } from "../../services/LocacoesService";
 import styles from "./registrarPagamento.module.css";
 import MessageBox from "../erro/MensagemErro";
+import useApiMessage from "../../hooks/UseApiError";
+import TollModal from "../toll/TollModal";
 
-export default function RegistrarPagamento({ locacaoId, onConcluido }) {
+export default function RegistrarPagamento({
+  locacaoId,
+  placaVeiculo,
+  onConcluido,
+}) {
   const [dataPagamento, setDataPagamento] = useState("");
   const [formaPagto, setFormaPagto] = useState("");
   const [parcelas, setParcelas] = useState(1);
-  const [status, setStatus] = useState("");
-  const [juros, setJuros] = useState(0);
-  const [usarJuros, setUsarJuros] = useState(false); // <<< checkbox
   const [carregando, setCarregando] = useState(false);
+  const [modalTollAberto, setModalTollAberto] = useState(false);
 
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState("info");
+  const { mensagem, tipoMensagem, messageKey, handleApiError, showSuccess } =
+    useApiMessage();
 
-  const exibirMensagem = (tipo, texto) => {
-    setTipoMensagem(tipo);
-    setMensagem(texto);
-  };
-
-  const camposInvalidos = () => !dataPagamento || !formaPagto || !status;
+  const camposInvalidos = () => !dataPagamento || !formaPagto;
 
   const registrarPagamento = async (evento) => {
     evento.preventDefault();
 
     if (camposInvalidos()) {
-      exibirMensagem("error", "Preencha todos os campos obrigatórios.");
+      handleApiError(null, "Preencha todos os campos obrigatórios.");
       return;
     }
 
@@ -38,22 +37,15 @@ export default function RegistrarPagamento({ locacaoId, onConcluido }) {
         dataPagamento,
         formaPagto,
         parcelas: Number(parcelas),
-        status,
-        juros: usarJuros ? Number(juros) / 100 : 0, // <<< só envia juros se ativado
       };
 
       const resposta = await PaymentsService.add(dadosParaEnviar);
 
-      exibirMensagem("success", "Pagamento registrado com sucesso!");
+      showSuccess("Pagamento registrado com sucesso!");
       onConcluido(resposta.data);
     } catch (err) {
       console.error("Erro ao registrar pagamento:", err);
-
-      exibirMensagem(
-        "error",
-        err.response?.data?.error ||
-          "Erro ao registrar pagamento. Tente novamente."
-      );
+      handleApiError(err, "Erro ao registrar pagamento. Tente novamente.");
     } finally {
       setCarregando(false);
     }
@@ -63,7 +55,13 @@ export default function RegistrarPagamento({ locacaoId, onConcluido }) {
     <div className={styles.modalContent}>
       <h2 className={styles.modalTitle}>Registrar Pagamento</h2>
 
-      <MessageBox type={tipoMensagem} message={mensagem} />
+      <MessageBox
+        type={tipoMensagem}
+        message={mensagem}
+        msgKey={messageKey}
+        duration={4000}
+        onClose={() => {}}
+      />
 
       <form onSubmit={registrarPagamento}>
         <div className={styles.campo}>
@@ -73,9 +71,9 @@ export default function RegistrarPagamento({ locacaoId, onConcluido }) {
             value={dataPagamento}
             onChange={(e) => setDataPagamento(e.target.value)}
             required
+            max={new Date().toISOString().slice(0, 10)} // bloqueia datas futuras
           />
         </div>
-
         <div className={styles.campo}>
           <label>Forma de Pagamento</label>
           <select
@@ -90,7 +88,6 @@ export default function RegistrarPagamento({ locacaoId, onConcluido }) {
             <option value="DEBITO">Débito</option>
           </select>
         </div>
-
         <div className={styles.campo}>
           <label>Parcelas</label>
           <input
@@ -100,46 +97,20 @@ export default function RegistrarPagamento({ locacaoId, onConcluido }) {
             onChange={(e) => setParcelas(e.target.value)}
           />
         </div>
-
-        <div className={styles.campo}>
-          <label>Status</label>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            required
+        <div className={styles.topActions}>
+          <button
+            type="button"
+            className={styles.tollButton}
+            onClick={() => setModalTollAberto(true)}
           >
-            <option value="">Selecione...</option>
-            <option value="PAGO">Pago</option>
-            <option value="PENDENTE">Pendente</option>
-          </select>
+            Cadastrar Pedágio
+          </button>
         </div>
-
-        <div className={`${styles.campo} ${styles.checkbox}`}>
-          <input
-            type="checkbox"
-            checked={usarJuros}
-            onChange={() => {
-              setUsarJuros((prev) => !prev);
-              if (usarJuros) setJuros(0);
-            }}
+        {modalTollAberto && (
+          <TollModal
+            placaVeiculo={placaVeiculo}
+            onClose={() => setModalTollAberto(false)}
           />
-          <label>Aplicar juros</label>
-        </div>
-
-        {/* Campo de juros habilitado somente se a checkbox estiver marcada */}
-        {usarJuros && (
-          <div className={styles.campo}>
-            <label>Juros (%)</label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.01"
-              value={juros}
-              onChange={(e) => setJuros(e.target.value)}
-              required={usarJuros}
-            />
-          </div>
         )}
 
         <button

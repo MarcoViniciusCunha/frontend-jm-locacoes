@@ -6,6 +6,7 @@ import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./VeiculoDetalhes.module.css";
 import ClientesList from "../../components/clientes/ClientesList";
 import DatePicker from "react-datepicker";
+import ConfirmModal from "../../components/erro/ConfirmModal";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   FiArrowLeft,
@@ -30,8 +31,8 @@ export default function VeiculoDetalhes() {
   // Campos de locação
   const [clienteId, setClienteId] = useState("");
   const [cpf, setCpf] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [price, setPrice] = useState("");
 
   // Campos de edição
@@ -54,8 +55,10 @@ export default function VeiculoDetalhes() {
   const [seguros, setSeguros] = useState([]);
 
   const [locacoesExistentes, setLocacoesExistentes] = useState([]);
+  const [abrirConfirmExcluir, setAbrirConfirmExcluir] = useState(false);
 
   const [msg, setMsg] = useState({ type: "", text: "" });
+  const hoje = new Date();
 
   useEffect(() => {
     carregarVeiculo();
@@ -228,15 +231,19 @@ export default function VeiculoDetalhes() {
   };
 
   const handleExcluir = async () => {
-    if (window.confirm("Tem certeza que deseja excluir este veículo?")) {
-      try {
-        await VeiculosService.veiculos.excluir(placa);
-        showMessage("success", "Veículo excluído com sucesso!");
-        navigate("/veiculos");
-      } catch (e) {
-        const msg = e.response?.data?.message || "Erro ao excluir veículo.";
-        showMessage("error", msg);
-      }
+    setAbrirConfirmExcluir(true);
+  };
+
+  const confirmarExcluir = async () => {
+    try {
+      await VeiculosService.veiculos.excluir(placa);
+      showMessage("success", "Veículo excluído com sucesso!");
+      navigate("/veiculos");
+    } catch (e) {
+      const msg = e.response?.data?.message || "Erro ao excluir veículo.";
+      showMessage("error", msg);
+    } finally {
+      setAbrirConfirmExcluir(false);
     }
   };
 
@@ -344,6 +351,14 @@ export default function VeiculoDetalhes() {
         >
           <FiTrash2 /> Excluir
         </button>
+        {abrirConfirmExcluir && (
+          <ConfirmModal
+            title="Confirmar Exclusão"
+            message="Deseja realmente excluir este veículo?"
+            onCancel={() => setAbrirConfirmExcluir(false)}
+            onConfirm={confirmarExcluir}
+          />
+        )}
       </div>
 
       {mostrarFormulario && (
@@ -377,11 +392,12 @@ export default function VeiculoDetalhes() {
 
           <label>Data de Início:</label>
           <DatePicker
-            selected={startDate ? new Date(startDate) : null}
-            onChange={(date) => setStartDate(date.toISOString().split("T")[0])}
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
             selectsStart
-            startDate={startDate ? new Date(startDate) : null}
-            endDate={endDate ? new Date(endDate) : null}
+            startDate={startDate}
+            endDate={endDate}
+            minDate={hoje}
             excludeDateIntervals={locacoesExistentes.map((loc) => ({
               start: new Date(loc.startDate),
               end: new Date(loc.endDate),
@@ -393,12 +409,12 @@ export default function VeiculoDetalhes() {
 
           <label>Data de Término:</label>
           <DatePicker
-            selected={endDate ? new Date(endDate) : null}
-            onChange={(date) => setEndDate(date.toISOString().split("T")[0])}
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
             selectsEnd
-            startDate={startDate ? new Date(startDate) : null}
-            endDate={endDate ? new Date(endDate) : null}
-            minDate={startDate ? new Date(startDate) : null}
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate || hoje}
             excludeDateIntervals={locacoesExistentes.map((loc) => ({
               start: new Date(loc.startDate),
               end: new Date(loc.endDate),

@@ -18,6 +18,7 @@ export const PaymentsService = {
   editar: async (id, data) => api.patch(`/payment/${id}`, data),
   excluir: async (id) => api.delete(`/payment/${id}`),
   filtrar: async (params) => api.get("/payment/filter", { params }),
+  gerarPdfPagamento: (id, config) => api.get(`/payment/${id}/pdf`, config),
 };
 
 export const MultasService = {
@@ -35,4 +36,11 @@ export const InspecoesService = {
   add: async (data) => api.post("/inspection", data),
   editar: async (id, data) => api.patch(`/inspection/${id}`, data),
   excluir: async (id) => api.delete(`/inspection/${id}`),
+};
+
+export const TollService = {
+  add: async (data) => api.post("/toll", data),
+  buscarPorId: async (id) => api.get(`/toll/${id}`),
+  editar: async (id, data) => api.put(`/toll/${id}`, data),
+  excluir: async (id) => api.delete(`/toll/${id}`),
 };

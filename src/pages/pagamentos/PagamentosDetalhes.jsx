@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PaymentsService } from "../../services/LocacoesService";
 import MessageBox from "../../components/erro/MensagemErro";
 import styles from "./PagamentosDetalhes.module.css";
+import ConfirmModal from "../../components/erro/ConfirmModal";
 import {
   FiDollarSign,
   FiCalendar,
@@ -11,6 +12,7 @@ import {
   FiTrash2,
   FiCreditCard,
   FiHash,
+  FiFileText,
 } from "react-icons/fi";
 
 export default function PagamentosDetalhes() {
@@ -22,11 +24,13 @@ export default function PagamentosDetalhes() {
   const [mensagem, setMensagem] = useState(null);
   const [editando, setEditando] = useState(false);
 
+  const [abrirConfirmExcluir, setAbrirConfirmExcluir] = useState(false);
+
   const [dadosEdicao, setDadosEdicao] = useState({
     status: "",
     dataPagamento: "",
     formaPagto: "",
-    parcelas: "",
+    parcelas: 1,
   });
 
   useEffect(() => {
@@ -43,10 +47,12 @@ export default function PagamentosDetalhes() {
 
       setPagamento(p);
       setDadosEdicao({
-        status: p.status,
-        dataPagamento: p.dataPagamento,
-        formaPagto: p.formaPagto,
-        parcelas: p.parcelas,
+        status: p.status?.toUpperCase() || "PENDENTE",
+        dataPagamento: p.dataPagamento
+          ? new Date(p.dataPagamento).toISOString().split("T")[0]
+          : "",
+        formaPagto: p.formaPagto || "",
+        parcelas: p.parcelas || 1,
       });
     } catch (erro) {
       console.error(erro);
@@ -61,11 +67,6 @@ export default function PagamentosDetalhes() {
   };
 
   const excluirPagamento = async () => {
-    const confirmado = window.confirm(
-      "Deseja realmente excluir este pagamento?"
-    );
-    if (!confirmado) return;
-
     try {
       await PaymentsService.excluir(id);
       setMensagem({
@@ -76,13 +77,21 @@ export default function PagamentosDetalhes() {
     } catch (erro) {
       console.error(erro);
       setMensagem({ type: "error", message: "Erro ao excluir pagamento." });
+    } finally {
+      setAbrirConfirmExcluir(false);
     }
   };
 
   const salvarAlteracoes = async () => {
     try {
       await PaymentsService.editar(id, dadosEdicao);
-      setPagamento((p) => ({ ...p, ...dadosEdicao }));
+      setPagamento((p) => ({
+        ...p,
+        ...{
+          ...dadosEdicao,
+          dataPagamento: new Date(dadosEdicao.dataPagamento).toISOString(),
+        },
+      }));
       setEditando(false);
       setMensagem({
         type: "success",
@@ -91,6 +100,28 @@ export default function PagamentosDetalhes() {
     } catch (erro) {
       console.error(erro);
       setMensagem({ type: "error", message: "Erro ao salvar alterações." });
+    }
+  };
+
+  const gerarPdf = async () => {
+    try {
+      const response = await PaymentsService.gerarPdfPagamento(id, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `comprovante_pagamento_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (erro) {
+      console.error(erro);
+      setMensagem({
+        type: "error",
+        message: "Erro ao gerar PDF do pagamento.",
+      });
     }
   };
 
@@ -124,7 +155,7 @@ export default function PagamentosDetalhes() {
           <span className={styles.label}>Status:</span>
           <span
             className={`${styles.status} ${
-              pagamento.status === "Pago" || pagamento.status === "PAGO"
+              pagamento.status?.toUpperCase() === "PAGO"
                 ? styles.pago
                 : styles.pendente
             }`}
@@ -137,7 +168,9 @@ export default function PagamentosDetalhes() {
         <div className={styles.grupo}>
           <FiCalendar />
           <span className={styles.label}>Data do pagamento:</span>
-          <span>{pagamento.dataPagamento}</span>
+          <span>
+            {new Date(pagamento.dataPagamento).toLocaleDateString("pt-BR")}
+          </span>
         </div>
 
         {/* Forma pgto */}
@@ -153,6 +186,11 @@ export default function PagamentosDetalhes() {
           <span className={styles.label}>Parcelas:</span>
           <span>{pagamento.parcelas}</span>
         </div>
+
+        <button className={styles.btnPdf} onClick={gerarPdf}>
+          <FiFileText size={18} />
+          Comprovante
+        </button>
 
         <div className={styles.separador}></div>
 
@@ -176,15 +214,43 @@ export default function PagamentosDetalhes() {
       <div className={styles.acoes}>
         <button
           className={styles.btnEditar}
-          onClick={() => setEditando(!editando)}
+          onClick={() => {
+            setEditando(!editando);
+            if (editando && pagamento) {
+              // Resetar ao cancelar
+              setDadosEdicao({
+                status: pagamento.status?.toUpperCase() || "PENDENTE",
+                dataPagamento: pagamento.dataPagamento
+                  ? new Date(pagamento.dataPagamento)
+                      .toISOString()
+                      .split("T")[0]
+                  : "",
+                formaPagto: pagamento.formaPagto || "",
+                parcelas: pagamento.parcelas || 1,
+              });
+            }
+          }}
         >
           {editando ? "Cancelar" : "Editar"}
         </button>
 
-        <button className={styles.btnExcluir} onClick={excluirPagamento}>
+        <button
+          className={styles.btnExcluir}
+          onClick={() => setAbrirConfirmExcluir(true)}
+        >
           <FiTrash2 size={18} /> Excluir
         </button>
       </div>
+
+      {/* MODAL DE CONFIRMAÇÃO */}
+      {abrirConfirmExcluir && (
+        <ConfirmModal
+          title="Confirmar Exclusão"
+          message="Deseja realmente excluir este pagamento?"
+          onCancel={() => setAbrirConfirmExcluir(false)}
+          onConfirm={excluirPagamento}
+        />
+      )}
 
       {/* FORMULÁRIO DE EDIÇÃO */}
       {editando && (
@@ -194,10 +260,12 @@ export default function PagamentosDetalhes() {
           <label>Status</label>
           <select
             value={dadosEdicao.status}
-            onChange={(e) => atualizarCampo("status", e.target.value)}
+            onChange={(e) =>
+              atualizarCampo("status", e.target.value.toUpperCase())
+            }
           >
-            <option value="Pago">Pago</option>
-            <option value="Pendente">Pendente</option>
+            <option value="PAGO">Pago</option>
+            <option value="PENDENTE">Pendente</option>
           </select>
 
           <label>Data de pagamento</label>
@@ -208,21 +276,32 @@ export default function PagamentosDetalhes() {
           />
 
           <label>Forma de pagamento</label>
-          <input
-            type="text"
+          <select
             value={dadosEdicao.formaPagto}
             onChange={(e) => atualizarCampo("formaPagto", e.target.value)}
-          />
+            required
+          >
+            <option value="">Selecione...</option>
+            <option value="PIX">PIX</option>
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="CREDITO">Crédito</option>
+            <option value="DEBITO">Débito</option>
+          </select>
 
           <label>Parcelas</label>
           <input
             type="number"
+            min="1"
             value={dadosEdicao.parcelas}
-            onChange={(e) => atualizarCampo("parcelas", e.target.value)}
+            onChange={(e) => atualizarCampo("parcelas", Number(e.target.value))}
           />
 
           <div className={styles.btnSalvarContainer}>
-            <button className={styles.btnSalvar} onClick={salvarAlteracoes}>
+            <button
+              type="button"
+              className={styles.btnSalvar}
+              onClick={salvarAlteracoes}
+            >
               Salvar
             </button>
           </div>

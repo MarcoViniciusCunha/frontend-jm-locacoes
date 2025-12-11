@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 import MessageBox from "../../components/erro/MensagemErro";
+import ConfirmModal from "../../components/erro/ConfirmModal";
 
 const ClienteDetalhe = () => {
   const { id } = useParams();
@@ -24,6 +25,11 @@ const ClienteDetalhe = () => {
   const [editando, setEditando] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [tipoMensagem, setTipoMensagem] = useState("info");
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState(() => () => {});
 
   const exibirMensagem = (tipo, texto) => {
     setTipoMensagem(tipo);
@@ -60,13 +66,45 @@ const ClienteDetalhe = () => {
     }
   };
 
-  const excluirCliente = async () => {
-    if (!window.confirm("Tem certeza que deseja excluir este cliente?")) return;
+  const abrirConfirmacao = (title, message, acao) => {
+    setConfirmTitle(title);
+    setConfirmMessage(message);
+    setOnConfirmAction(() => acao);
+    setConfirmModalOpen(true);
+  };
 
+  const desativarCliente = async () => {
+    try {
+      await ClientesService.desativar(id);
+      exibirMensagem("success", "Cliente desativado com sucesso!");
+      await carregarCliente();
+    } catch (e) {
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Erro ao desativar cliente.";
+      exibirMensagem("error", msg);
+    }
+  };
+
+  const ativarCliente = async () => {
+    try {
+      await ClientesService.ativar(id);
+      exibirMensagem("success", "Cliente reativado com sucesso!");
+      await carregarCliente();
+    } catch (e) {
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Erro ao reativar cliente.";
+      exibirMensagem("error", msg);
+    }
+  };
+
+  const excluirCliente = async () => {
     try {
       await ClientesService.excluir(id);
       exibirMensagem("success", "Cliente excluído com sucesso!");
-
       setTimeout(() => navigate("/clientes"), 1200);
     } catch (e) {
       const msg = e.response?.data.error || "Erro ao excluir cliente";
@@ -82,6 +120,16 @@ const ClienteDetalhe = () => {
         <h1>
           <FaUserCircle /> {cliente?.nome}
         </h1>
+      </div>
+
+      <div className={styles.statusContainer}>
+        <div
+          className={
+            cliente?.ativo ? styles.statusAtivo : styles.statusDesativado
+          }
+        >
+          {cliente?.ativo ? "ATIVO" : "DESATIVADO"}
+        </div>
       </div>
 
       <MessageBox type={tipoMensagem} message={mensagem} />
@@ -100,21 +148,71 @@ const ClienteDetalhe = () => {
               <FaArrowLeft /> Voltar
             </button>
 
-            <button
-              className={styles.editBtn}
-              onClick={() => setEditando(true)}
-            >
-              <FaEdit /> Editar
-            </button>
+            {cliente?.ativo && (
+              <button
+                className={styles.editBtn}
+                onClick={() => setEditando(true)}
+              >
+                <FaEdit /> Editar
+              </button>
+            )}
 
-            <button className={styles.deleteBtn} onClick={excluirCliente}>
+            {cliente?.ativo ? (
+              <button
+                className={styles.deactivateBtn}
+                onClick={() =>
+                  abrirConfirmacao(
+                    "Desativar Cliente",
+                    "Deseja realmente desativar este cliente? Ele não poderá mais realizar locações.",
+                    desativarCliente
+                  )
+                }
+              >
+                <FaTimesCircle /> Desativar
+              </button>
+            ) : (
+              <button
+                className={styles.activateBtn}
+                onClick={() =>
+                  abrirConfirmacao(
+                    "Ativar Cliente",
+                    "Deseja realmente reativar este cliente?",
+                    ativarCliente
+                  )
+                }
+              >
+                <FaSave /> Ativar
+              </button>
+            )}
+
+            <button
+              className={styles.deleteBtn}
+              onClick={() =>
+                abrirConfirmacao(
+                  "Excluir Cliente",
+                  "Tem certeza que deseja excluir este cliente?",
+                  excluirCliente
+                )
+              }
+            >
               <FaTrashAlt /> Excluir
             </button>
           </>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </div>
+
+      {/* Modal de confirmação */}
+      {confirmModalOpen && (
+        <ConfirmModal
+          title={confirmTitle}
+          message={confirmMessage}
+          onConfirm={() => {
+            onConfirmAction();
+            setConfirmModalOpen(false);
+          }}
+          onCancel={() => setConfirmModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
